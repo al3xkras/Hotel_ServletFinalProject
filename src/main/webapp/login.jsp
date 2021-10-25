@@ -1,7 +1,12 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 
-<html xmlns:th="http://www.thymeleaf.org">
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="messages"/>
+
+<html lang="${sessionScope.lang}">
 <head>
     <meta charset="UTF-8">
     <title>Login page</title>
@@ -29,25 +34,30 @@
     </style>
 </head>
 <body>
+    <c:set var="username_regex">
+        <fmt:message key="regexp.username"/>
+    </c:set>
 
     <div style="width: 70%; height: 70%; margin: 15%">
-        <form class="form-signin" method="post" action="/auth/login" autocomplete="off">
-            <h2 class="form-signin-heading" th:text="#{login.header}"></h2>
+        <form class="form-signin" method="post" action="/app/login" autocomplete="off">
+            <h2 class="form-signin-heading"><fmt:message key="login.header"/></h2>
             <p>
-                <label for="username" th:text="#{form.username}"></label>
+                <label for="username"><fmt:message key="form.username"/></label>
                 <input type="text" id="username" name="username"
-                       class="form-control" th:pattern="#{regexp.username}" required>
+                       class="form-control" pattern="${username_regex}" required/><fmt:message key="form.username"/>
 
-            <div class="alert alert-warning" style="margin-left: 15px"
-                 th:if="${(param.error != null)}" th:text="#{login.alert.invalid_data}"></div>
+                <c:if test="${param.error != null}">
+                    <div class="alert alert-warning" style="margin-left: 15px"><fmt:message key="login.alert.invalid_data"/></div>
+                </c:if>
             </p>
 
             <p>
-                <label for="password" th:text="#{form.password}"></label>
+                <label for="password"><fmt:message key="form.password"/></label>
                 <input type="password" id="password" name="password"
                        class="form-control" required>
             </p>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{form.sign_in}"></button>
+            <button class="btn btn-lg btn-primary btn-block"
+                    type="submit"><fmt:message key="form.sign_in"/></button>
         </form>
     </div>
 

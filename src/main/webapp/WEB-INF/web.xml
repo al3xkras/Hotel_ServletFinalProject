@@ -12,6 +12,6 @@
 
   <servlet-mapping>
     <servlet-name>HotelServlet</servlet-name>
-    <url-pattern>/app</url-pattern>
+    <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
 </web-app>
