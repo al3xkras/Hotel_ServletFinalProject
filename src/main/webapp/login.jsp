@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false" %>
@@ -39,7 +39,7 @@
     </c:set>
 
     <div style="width: 70%; height: 70%; margin: 15%">
-        <form class="form-signin" method="post" action="/app/login" autocomplete="off">
+        <form class="form-signin" method="post" action="${pageContext.request.contextPath}/app/login" autocomplete="off">
             <h2 class="form-signin-heading"><fmt:message key="login.header"/></h2>
             <p>
                 <label for="username"><fmt:message key="form.username"/></label>

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false" %>
@@ -96,7 +96,7 @@
             background-color: #f9f9f9;
             min-width: 160px;
 
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
             z-index: 1;
         }
 
@@ -136,7 +136,7 @@
             </div>
         </div>
 
-        <a href="${pageContext.request.contextPath}/app/register" style="float: right"><fmt:message key="navbar.registration"/></a>
+        <a href="${pageContext.request.contextPath}/app/registration" style="float: right"><fmt:message key="navbar.registration"/></a>
         <a href="${pageContext.request.contextPath}/app/login" style="float: right"><fmt:message key="navbar.login"/></a>
 
     </div>
