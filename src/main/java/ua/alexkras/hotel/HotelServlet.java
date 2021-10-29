@@ -12,6 +12,18 @@ import java.util.Map;
 
 public class HotelServlet extends HttpServlet {
 
+    private final Command defaultCommand = new Command() {
+        @Override
+        public String executeGet(HttpServletRequest request) {
+            return "index.jsp";
+        }
+
+        @Override
+        public String executePost(HttpServletRequest request) {
+            return "index.jsp";
+        }
+    };
+
     private final Map<String, Command> commands = new HashMap<>();
 
     public void init(){
@@ -29,9 +41,10 @@ public class HotelServlet extends HttpServlet {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/app/" , "");
 
-        log("get: "+path);
-        GetCommand getCommand = (GetCommand) commands.getOrDefault(path , r->"index.jsp");
-        String page = getCommand.execute(request);
+
+        Command getCommand = (Command)commands.getOrDefault(path , defaultCommand);
+
+        String page = getCommand.executeGet(request);
 
         request.getRequestDispatcher(page).forward(request,response);
     }
@@ -44,16 +57,14 @@ public class HotelServlet extends HttpServlet {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/app/" , "");
 
-        log("post: "+path);
-        PostCommand postCommand = (PostCommand) commands.getOrDefault(path , r->"index.jsp");
+        Command postCommand =  commands.getOrDefault(path , defaultCommand);
 
-        String page = postCommand.execute(request);
+        String page = postCommand.executePost(request);
         /*
         request.setAttribute("students" , null);
         request.getRequestDispatcher("./WEB-INF/studentlist.jsp")
                 .forward(request,response);
-
          */
-        request.getRequestDispatcher(page).forward(request,response);
+        response.sendRedirect(request.getContextPath() + page);
     }
 }

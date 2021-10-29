@@ -3,13 +3,12 @@ package ua.alexkras.hotel.controller;
 import ua.alexkras.hotel.dto.RegistrationRequest;
 import javax.servlet.http.HttpServletRequest;
 
-public class RegistrationCommand implements GetCommand,PostCommand {
-    @Override
-    public String execute(HttpServletRequest request) {
-        return (this instanceof GetCommand) ? executeGet(request) : executePost(request);
-    }
+public class RegistrationCommand implements Command {
 
+    @Override
     public String executeGet(HttpServletRequest request){
+        request.getServletContext().log("registration: get");
+
         request.setAttribute("registrationRequest",new RegistrationRequest());
         request.setAttribute("usernameExists",false);
         request.setAttribute("passwordMismatch",false);
@@ -17,7 +16,11 @@ public class RegistrationCommand implements GetCommand,PostCommand {
         return "/WEB-INF/registration.jsp";
     }
 
+    @Override
     public String executePost(HttpServletRequest request) {
-        return "/WEB-INF/index.jsp";
+        request.getServletContext().log("registration: get");
+
+        //request.getAttribute("usernameExists");
+        return "/";
     }
 }

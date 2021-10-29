@@ -2,17 +2,19 @@ package ua.alexkras.hotel.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class LoginCommand implements GetCommand, PostCommand {
-    @Override
-    public String execute(HttpServletRequest request) {
-        return (this instanceof GetCommand) ? executeGet(request) : executePost(request);
-    }
+public class LoginCommand implements Command {
 
-    private String executeGet(HttpServletRequest request){
+    @Override
+    public String executeGet(HttpServletRequest request){
+        request.getServletContext().log("login: get");
+
         return "/login.jsp";
     }
 
-    private String executePost(HttpServletRequest request){
-        return "/WEB-INF/index.jsp";
+    @Override
+    public String executePost(HttpServletRequest request){
+        request.getServletContext().log("login: post");
+
+        return "/";
     }
 }
