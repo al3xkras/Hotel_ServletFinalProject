@@ -21,7 +21,7 @@
 </head>
 <body style="background: #f6f6f6;">
     <div class="custom-navbar">
-        <a class="active" href="/" th:text="#{navbar.hotel}"></a>
+        <a class="active" href="${pageContext.request.contextPath}/" th:text="#{navbar.hotel}"></a>
         <div class="custom-navbar-dropdown" style="float: left">
             <button class="dropdown-btn" th:text="#{navbar.language}">
                 <i class="fa fa-caret-down"></i>
@@ -43,9 +43,9 @@
             </div>
         </div>
 
-        <form class="custom-navbar-dropdown" action="/auth/logout" method="post" style="float: right">
-            <button class="dropdown-btn" type="submit" th:text="#{navbar.logout}"></button>
-        </form>
+        <a href="${pageContext.request.contextPath}/logout" style="float:right;">
+            <fmt:message key="navbar.logout"/>
+        </a>
     </div>
 
     <div class="reservations-list">

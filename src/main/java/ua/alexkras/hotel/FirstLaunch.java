@@ -38,7 +38,7 @@ public class FirstLaunch {
 
         UserDAO.addUser(-3L,User.builder()
                 .name("AdminName").surname("AdminSurname")
-                .username("l").password("q")
+                .username("zzz").password("q")
                 .phoneNumber("+404-12-3456789")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.USER).build());

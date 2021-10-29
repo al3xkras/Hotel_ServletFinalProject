@@ -7,89 +7,72 @@
 <fmt:setBundle basename="messages"/>
 
 <html lang="${sessionScope.lang}">
-
 <head>
     <meta charset="UTF-8">
     <title>Admin</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/style_navbar.css}">
-    <link rel="stylesheet" th:href="@{/css/style_reservation_status.css}" />
-    <link rel="stylesheet" th:href="@{/css/style_personal_area.css}" />
-    <link rel="stylesheet" th:href="@{/css/style_apartment.css}" />
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_navbar.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_reservation_status.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_personal_area.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_apartment.css" />
 </head>
 <body>
-    <div class="custom-navbar">
-        <a class="active" href="/" th:text="#{navbar.hotel}"></a>
+    <div class="custom-navbar" style="">
+        <a class="active" href="${pageContext.request.contextPath}/">
+            <fmt:message key="navbar.hotel"/>
+        </a>
 
         <div class="custom-navbar-dropdown" style="float: left">
-            <button class="dropdown-btn" th:text="#{navbar.language}">
+            <button class="dropdown-btn">
+                <fmt:message key="navbar.language"/>
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content">
-                <a href="?lang=ua" th:text="#{navbar.language.ua}"></a>
-                <a href="?lang=en" th:text="#{navbar.language.en}"></a>
+                <a href="?lang=ua"><fmt:message key="navbar.language.ua"/></a>
+                <a href="?lang=en"><fmt:message key="navbar.language.en"/></a>
             </div>
         </div>
 
         <div class="custom-navbar-dropdown" style="float: right">
-            <button class="dropdown-btn" th:text="#{navbar.admin}">
+            <button class="dropdown-btn">
+                <fmt:message key="navbar.admin"/>
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content" style="left: 85%; width: 14.5%">
-                <a href="/add_apartment" th:text="#{new_apartment.header}"></a>
-                <a href="/apartments" th:text="#{navbar.all_apartments}"></a>
-                <a href="/personal_data" th:text="#{navbar.personal_data}"></a>
+                <a href="${pageContext.request.contextPath}/add_apartment"><fmt:message key="new_apartment.header"/></a>
+                <a href="${pageContext.request.contextPath}/apartments"><fmt:message key="navbar.all_apartments"/></a>
+                <a href="${pageContext.request.contextPath}/personal_data"><fmt:message key="navbar.personal_data"/></a>
             </div>
         </div>
 
-        <form class="custom-navbar-dropdown" action="/auth/logout" method="post" style="float: right">
-            <button class="dropdown-btn" type="submit" th:text="#{navbar.logout}"></button>
-        </form>
+        <a href="${pageContext.request.contextPath}/logout" style="float:right;">
+            <fmt:message key="navbar.logout"/>
+        </a>
+
     </div>
 
     <div style="flex: available; justify-content: center; margin: 5% 5% 5% 5%;">
 
-        <h2 th:text="#{navbar.pending_reservations}" style="text-align: center"></h2>
+        <h2 style="text-align: center"><fmt:message key="navbar.pending_reservations"/></h2>
 
         <table class="reservations">
             <tr class="align-middle">
-                <th th:text="#{table.id}"></th>
-                <th th:text="#{table.user.id}"></th>
-                <th th:text="#{new_apartment.places}"></th>
-                <th th:text="#{reservation.form.from_date}"></th>
-                <th th:text="#{reservation.form.to_date}"></th>
-                <th th:text="#{reservation.submit_date}"></th>
-                <th th:text="#{new_apartment.class}"></th>
-                <th th:text="#{apartment.id}"></th>
-                <th th:text="#{new_apartment.price}"></th>
-                <th th:text="#{reservation.status}"></th>
-                <th th:text="#{reservation.payment_status}"></th>
+                <th><fmt:message key="table.id"/></th>
+                <th><fmt:message key="table.user.id"/></th>
+                <th><fmt:message key="new_apartment.places"/></th>
+                <th><fmt:message key="reservation.form.from_date"/></th>
+                <th><fmt:message key="reservation.form.to_date"/></th>
+                <th><fmt:message key="reservation.submit_date"/></th>
+                <th><fmt:message key="new_apartment.class"/></th>
+                <th><fmt:message key="apartment.id"/></th>
+                <th><fmt:message key="new_apartment.price"/></th>
+                <th><fmt:message key="reservation.status"/></th>
+                <th><fmt:message key="reservation.payment_status"/></th>
             </tr>
 
-            <tr class="align-middle"
-                th:each="reservation : ${pendingReservations}"
-                th:onclick="'window.location=window.location+\'/reservation/'+${reservation.id}+'\';'">
-                <td class="align-middle" th:text="${reservation.id}"></td>
-                <td class="align-middle" th:text="${reservation.userId}"></td>
-                <td class="align-middle" th:text="${reservation.places}"></td>
-                <td class="align-middle"
-                    th:text='${reservation.fromDate.toString().replace("T"," time: ")}'></td>
-                <td class="align-middle"
-                    th:text='${reservation.toDate.toString().replace("T"," time: ")}'></td>
-                <td class="align-middle"
-                    th:text='${reservation.submitDate.toString().replace("T"," time: ")}'></td>
-                <td th:class="${reservation.apartmentClass.htmlClass}"
-                    th:text="#{${reservation.apartmentClass.resName}}"></td>
-                <td th:class="${reservation.apartmentId==null?'red':'green'}"
-                    th:text="${reservation.apartmentId==null?'indefined by admin':reservation.apartmentId}"></td>
-                <td th:class="${reservation.apartmentPrice==null?'red':'green'}"
-                    th:text="${reservation.apartmentPrice==null?'indefined':reservation.apartmentPrice}"></td>
-                <td th:class="${reservation.reservationStatus.htmlClass}"
-                    th:text="#{${reservation.reservationStatus.resourceName}}"></td>
-                <td th:text="#{${reservation.paid?'reservation.paid':'reservation.unpaid'}}"
-                    th:class="${reservation.paid?'reservation-paid':'reservation-unpaid'}"></td>
+            <tr class="align-middle">
+
             </tr>
         </table>
     </div>

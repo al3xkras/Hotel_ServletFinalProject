@@ -6,6 +6,7 @@ import ua.alexkras.hotel.exception.UsernameNotFoundException;
 import ua.alexkras.hotel.model.Command;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public class LoginCommand implements Command {
 
@@ -24,15 +25,15 @@ public class LoginCommand implements Command {
         String login = request.getParameter("username");
         String password = request.getParameter("password");
 
-        User user = UserDAO.getUserByUsername(login).orElseThrow(()->new UsernameNotFoundException(login));
+        Optional<User> user = UserDAO.getUserByUsername(login);
 
-        if (!password.equals(user.getPassword())){
-            return "/";
+        if (!user.isPresent() || !password.equals(user.get().getPassword())){
+            return "/app/login?error";
         }
 
         context.log(user.toString());
-        context.setAttribute("user",user);
+        context.setAttribute("user",user.get());
 
-        return "/personal_area";
+        return "/app/personal_area";
     }
 }
