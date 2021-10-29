@@ -1,11 +1,6 @@
 package ua.alexkras.hotel.controller;
 
-
-import ua.alexkras.hotel.dto.RegistrationRequest;
-import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.UserService;
-import javax.validation.Valid;
 
 public class RegistrationController {
 
@@ -15,13 +10,6 @@ public class RegistrationController {
     }
 
     /*
-    @GetMapping("/registration")
-    public String registrationPage(Model model){
-        model.addAttribute("registrationRequest", new RegistrationRequest());
-        model.addAttribute("usernameExists",false);
-        model.addAttribute("passwordMismatch",false);
-        return "registration";
-    }
 
     @PostMapping("/registration")
     public String sendRegistrationRequest(

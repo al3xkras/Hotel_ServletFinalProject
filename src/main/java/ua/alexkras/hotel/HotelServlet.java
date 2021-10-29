@@ -1,9 +1,6 @@
 package ua.alexkras.hotel;
 
-import ua.alexkras.hotel.controller.Command;
-import ua.alexkras.hotel.controller.ExceptionCommand;
-import ua.alexkras.hotel.controller.LoginCommand;
-import ua.alexkras.hotel.controller.RegistrationCommand;
+import ua.alexkras.hotel.controller.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +29,9 @@ public class HotelServlet extends HttpServlet {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/app/" , "");
 
-        log(path);
-        Command command = commands.getOrDefault(path ,r->"index.jsp");
-        String page = command.execute(request);
+        log("get: "+path);
+        GetCommand getCommand = (GetCommand) commands.getOrDefault(path , r->"index.jsp");
+        String page = getCommand.execute(request);
 
         request.getRequestDispatcher(page).forward(request,response);
     }
@@ -43,11 +40,20 @@ public class HotelServlet extends HttpServlet {
             throws IOException, ServletException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        String path = request.getRequestURI();
+        path = path.replaceAll(".*/app/" , "");
+
+        log("post: "+path);
+        PostCommand postCommand = (PostCommand) commands.getOrDefault(path , r->"index.jsp");
+
+        String page = postCommand.execute(request);
         /*
         request.setAttribute("students" , null);
         request.getRequestDispatcher("./WEB-INF/studentlist.jsp")
                 .forward(request,response);
 
          */
+        request.getRequestDispatcher(page).forward(request,response);
     }
 }

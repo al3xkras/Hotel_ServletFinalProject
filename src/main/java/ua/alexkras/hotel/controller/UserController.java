@@ -1,20 +1,8 @@
 package ua.alexkras.hotel.controller;
 
-import ua.alexkras.hotel.entity.Payment;
-import ua.alexkras.hotel.entity.Reservation;
-import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.ApartmentStatus;
-import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.PaymentService;
 import ua.alexkras.hotel.service.ReservationService;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 //@RequestMapping("/user")
 public class UserController {
