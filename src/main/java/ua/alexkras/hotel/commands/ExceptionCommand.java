@@ -1,4 +1,6 @@
-package ua.alexkras.hotel.controller;
+package ua.alexkras.hotel.commands;
+
+import ua.alexkras.hotel.model.Command;
 
 import javax.servlet.http.HttpServletRequest;
 

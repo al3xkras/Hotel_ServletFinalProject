@@ -2,20 +2,15 @@ package ua.alexkras.hotel.service;
 
 import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.entity.User;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class UserService {
 
-    private final UserDAO userDAO;
-
     //@Autowired
-    public UserService(UserDAO userDAO){
-        this.userDAO =userDAO;
-    }
 
-    public Optional<User> getUserById(long id){
-        //return userDAO.findById(id);
-        return null;
+    public Optional<User> getUserById(long id) throws SQLException {
+        return UserDAO.getUserById(id);
     }
 
     /**
@@ -24,9 +19,8 @@ public class UserService {
      * @param username User's login (username)
      * @return Optional\<User>, if user was found, Optional.empty() otherwise.
      */
-    public Optional<User> getUserByUserName(String username){
-        //return userDAO.findByUsername(username);
-        return null;
+    public Optional<User> getUserByUserName(String username) throws SQLException {
+        return UserDAO.getUserByUsername(username);
     }
 
     /**
@@ -51,7 +45,6 @@ public class UserService {
         if (!userWasAdded){
             throw new RuntimeException("Error adding new "+user.toString());
         }
-
          */
     }
 

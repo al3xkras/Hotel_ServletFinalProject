@@ -1,6 +1,6 @@
 package ua.alexkras.hotel.exception;
 
-public class UsernameNotFoundException extends Exception{
+public class UsernameNotFoundException extends RuntimeException{
     private final String username;
     public UsernameNotFoundException(String username){
         this.username=username;

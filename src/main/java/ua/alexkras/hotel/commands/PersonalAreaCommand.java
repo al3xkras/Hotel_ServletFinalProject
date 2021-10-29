@@ -1,19 +1,27 @@
-package ua.alexkras.hotel.controller;
+package ua.alexkras.hotel.commands;
 
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.UserType;
 
-//@RequestMapping("/admin")
-public class AdminController {
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
-    private final ReservationService reservationService;
-    private final ApartmentService apartmentService;
+public class PersonalAreaCommand implements Command {
 
-    //@Autowired
-    public AdminController(ReservationService reservationService,
-                           ApartmentService apartmentService){
-        this.reservationService=reservationService;
-        this.apartmentService=apartmentService;
+    @Override
+    public String executeGet(HttpServletRequest request) {
+        Optional<User> currentUser = Optional.ofNullable((User)request.getServletContext().getAttribute("user"));
+        return currentUser
+                .orElseThrow(IllegalStateException::new)
+                .getUserType().equals(UserType.USER)
+                ?"/WEB-INF/personal_area/user.jsp"
+                :"/WEB-INF/personal_area/admin.jsp";
+    }
+
+    @Override
+    public String executePost(HttpServletRequest request) {
+        return "/";
     }
 
     /*

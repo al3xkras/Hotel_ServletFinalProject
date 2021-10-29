@@ -1,6 +1,8 @@
 package ua.alexkras.hotel;
 
-import ua.alexkras.hotel.controller.*;
+import ua.alexkras.hotel.commands.*;
+import ua.alexkras.hotel.model.Command;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,7 @@ public class HotelServlet extends HttpServlet {
 
         @Override
         public String executePost(HttpServletRequest request) {
-            return "index.jsp";
+            return "/";
         }
     };
 
@@ -30,11 +32,10 @@ public class HotelServlet extends HttpServlet {
         commands.put("login", new LoginCommand());
         commands.put("registration" , new RegistrationCommand());
         commands.put("exception" , new ExceptionCommand());
+        commands.put("personal_area", new PersonalAreaCommand());
     }
 
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -42,29 +43,24 @@ public class HotelServlet extends HttpServlet {
         path = path.replaceAll(".*/app/" , "");
 
 
-        Command getCommand = (Command)commands.getOrDefault(path , defaultCommand);
+        Command getCommand = commands.getOrDefault(path , defaultCommand);
 
         String page = getCommand.executeGet(request);
 
         request.getRequestDispatcher(page).forward(request,response);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String path = request.getRequestURI();
         path = path.replaceAll(".*/app/" , "");
 
         Command postCommand =  commands.getOrDefault(path , defaultCommand);
 
         String page = postCommand.executePost(request);
-        /*
-        request.setAttribute("students" , null);
-        request.getRequestDispatcher("./WEB-INF/studentlist.jsp")
-                .forward(request,response);
-         */
+
         response.sendRedirect(request.getContextPath() + page);
     }
 }

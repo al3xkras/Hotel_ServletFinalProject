@@ -9,7 +9,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
      */
-    private int id;
+    private long id;
 
     //@Column(name = "NAME", nullable = false, length = 25)
     private String name;
@@ -42,19 +42,16 @@ public class User {
         this.surname=dto.getSurname();
         this.username=dto.getUsername();
         this.password=dto.getPassword();
-
         this.birthday=dto.getBirthdayDate();
-
         this.gender=dto.getGender();
         this.phoneNumber=dto.getPhoneNumber();
-
         this.userType=userType;
     }
 
     public User() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -90,42 +87,42 @@ public class User {
         return userType;
     }
 
+    @Override
+    public String toString() {
+        return "User: [" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", birthday=" + birthday +
+                ", gender='" + gender + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", userType=" + userType +
+                ']';
+    }
+
     public static UserBuilder builder(){
         return new UserBuilder();
     }
 
     public static final class UserBuilder {
-        /*@Id
-               @GeneratedValue(strategy = GenerationType.AUTO)
-               @Column(name = "ID")
-                */
-        private int id;
-        //@Column(name = "NAME", nullable = false, length = 25)
+
+        private long id;
         private String name;
-        //@Column(name = "SURNAME", nullable = false, length = 30)
         private String surname;
-        //@Column(name = "USERNAME", nullable = false, length = 15)
         private String username;
-        //@Column(name = "PASSWORD", nullable = false)
         private String password;
-        //@Column(name = "BIRTHDAY", nullable = false)
         private LocalDate birthday;
-        //@Column(name = "GENDER", length = 10, nullable = false)
         private String gender;
-        //@Column(name = "PHONE_NUMBER", length = 30, nullable = false)
         private String phoneNumber;
-        //@Column(name = "USER_TYPE", nullable = false)
-        //@Enumerated(EnumType.STRING)
         private UserType userType;
 
         private UserBuilder() {
+
         }
 
-        public static UserBuilder anUser() {
-            return new UserBuilder();
-        }
-
-        public UserBuilder id(int id) {
+        public UserBuilder id(long id) {
             this.id = id;
             return this;
         }
@@ -180,6 +177,7 @@ public class User {
             user.birthday = this.birthday;
             user.phoneNumber = this.phoneNumber;
             user.username = this.username;
+            user.userType = this.userType;
             return user;
         }
     }
