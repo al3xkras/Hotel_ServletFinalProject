@@ -1,6 +1,6 @@
 package ua.alexkras.hotel.service;
 
-import ua.alexkras.hotel.dao.PaymentDAO;
+import ua.alexkras.hotel.dao.impl.JDBCPaymentDao;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class PaymentService {
 
-    private final PaymentDAO paymentDAO;
+    private final JDBCPaymentDao paymentDAO;
     private final ReservationService reservationService;
 
     private Optional<Reservation> currentPaymentReservation = Optional.empty();
@@ -17,7 +17,7 @@ public class PaymentService {
     }
 
     //@Autowired
-    public PaymentService(PaymentDAO paymentRepository,
+    public PaymentService(JDBCPaymentDao paymentRepository,
                           ReservationService reservationService){
         this.paymentDAO =paymentRepository;
         this.reservationService=reservationService;

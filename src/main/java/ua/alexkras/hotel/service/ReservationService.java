@@ -1,21 +1,17 @@
 package ua.alexkras.hotel.service;
 
-import ua.alexkras.hotel.dao.ReservationDAO;
+import ua.alexkras.hotel.dao.impl.JDBCReservationDao;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
-import ua.alexkras.hotel.model.ApartmentStatus;
-import ua.alexkras.hotel.model.MySqlStrings;
 import ua.alexkras.hotel.model.ReservationStatus;
-import java.sql.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 public class ReservationService {
 
-    private final ReservationDAO reservationDAO;
+    private final JDBCReservationDao reservationDAO;
 
     private Optional<Reservation> currentReservation=Optional.empty();
     private Optional<List<Reservation>> currentUserActiveReservations=Optional.empty();
@@ -29,7 +25,7 @@ public class ReservationService {
     private static final long daysToCancelPayment = 2L;
 
     //@Autowired
-    public ReservationService(ReservationDAO reservationDAO){
+    public ReservationService(JDBCReservationDao reservationDAO){
         this.reservationDAO =reservationDAO;
     }
 

@@ -1,6 +1,7 @@
 package ua.alexkras.hotel.commands;
 
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.UserType;
 
@@ -11,7 +12,8 @@ public class PersonalAreaCommand implements Command {
 
     @Override
     public String executeGet(HttpServletRequest request) {
-        Optional<User> currentUser = Optional.ofNullable((User)request.getServletContext().getAttribute("user"));
+        Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
+
         return currentUser
                 .orElseThrow(IllegalStateException::new)
                 .getUserType().equals(UserType.USER)

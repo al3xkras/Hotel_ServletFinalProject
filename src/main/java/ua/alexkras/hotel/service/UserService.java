@@ -1,6 +1,7 @@
 package ua.alexkras.hotel.service;
 
-import ua.alexkras.hotel.dao.UserDAO;
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
+import ua.alexkras.hotel.dao.impl.JDBCUserDao;
 import ua.alexkras.hotel.entity.User;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -8,9 +9,14 @@ import java.util.Optional;
 public class UserService {
 
     //@Autowired
+    private final JDBCUserDao userDao;
+
+    public UserService(){
+        userDao = JDBCDaoFactory.getInstance().createUserDAO();
+    }
 
     public Optional<User> getUserById(long id) throws SQLException {
-        return UserDAO.getUserById(id);
+        return userDao.findById(id);
     }
 
     /**
@@ -20,7 +26,7 @@ public class UserService {
      * @return Optional\<User>, if user was found, Optional.empty() otherwise.
      */
     public Optional<User> getUserByUserName(String username) throws SQLException {
-        return UserDAO.getUserByUsername(username);
+        return userDao.findByUsername(username);
     }
 
     /**

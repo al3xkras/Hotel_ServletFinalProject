@@ -12,6 +12,9 @@ import java.util.Optional;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = {"/*"})
 public class AuthFilter implements Filter {
+
+    private static Optional<User> currentLoginUser;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -28,11 +31,20 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession();
         ServletContext context = request.getServletContext();
 
-        Optional<User> loggedUser = Optional.ofNullable((User) context.getAttribute("user"));
+        Optional<User> loggedUser = Optional.ofNullable((User)session.getAttribute("user"));
+        currentLoginUser = loggedUser;
 
         loggedUser.ifPresent(user -> context.log(user.toString()));
 
         filterChain.doFilter(request,response);
+    }
+
+    public static Optional<User> getCurrentLoginUser(){
+        return currentLoginUser;
+    }
+
+    public static void clearCurrentLoginUser(){
+        currentLoginUser = Optional.empty();
     }
 
     @Override

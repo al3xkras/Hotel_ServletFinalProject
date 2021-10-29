@@ -1,6 +1,7 @@
 package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.dao.UserDAO;
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.MySqlStrings;
 import ua.alexkras.hotel.model.UserType;
@@ -22,21 +23,23 @@ public class FirstLaunch {
             throw new RuntimeException("Unable to create database: "+MySqlStrings.databaseName);
         }
 
-        UserDAO.addUser(-1L,User.builder()
+        UserDAO userDAO = JDBCDaoFactory.getInstance().createUserDAO();
+
+        userDAO.create(-1L,User.builder()
                 .name("Admin").surname("Adminovich")
                 .username("Admin1").password("password1")
                 .phoneNumber("+404-23-4567890")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.ADMIN).build());
 
-        UserDAO.addUser(-2L,User.builder()
+        userDAO.create(-2L,User.builder()
                 .name("AdminName").surname("AdminSurname")
                 .username("Admin2").password("password2")
                 .phoneNumber("+404-12-3456789")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.ADMIN).build());
 
-        UserDAO.addUser(-3L,User.builder()
+        userDAO.create(-3L,User.builder()
                 .name("AdminName").surname("AdminSurname")
                 .username("zzz").password("q")
                 .phoneNumber("+404-12-3456789")

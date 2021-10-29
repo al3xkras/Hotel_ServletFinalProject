@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <a href="${pageContext.request.contextPath}/logout" style="float:right;">
+        <a href="${pageContext.request.contextPath}/app/logout" style="float:right;">
             <fmt:message key="navbar.logout"/>
         </a>
 

@@ -33,6 +33,7 @@ public class HotelServlet extends HttpServlet {
         commands.put("registration" , new RegistrationCommand());
         commands.put("exception" , new ExceptionCommand());
         commands.put("personal_area", new PersonalAreaCommand());
+        commands.put("logout", new LogoutCommand());
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -42,12 +43,14 @@ public class HotelServlet extends HttpServlet {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/app/" , "");
 
-
         Command getCommand = commands.getOrDefault(path , defaultCommand);
 
         String page = getCommand.executeGet(request);
-
-        request.getRequestDispatcher(page).forward(request,response);
+        if (!page.isEmpty()) {
+            request.getRequestDispatcher(page).forward(request, response);
+        } else {
+            response.sendRedirect("/");
+        }
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

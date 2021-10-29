@@ -1,7 +1,7 @@
 package ua.alexkras.hotel.service;
 
 
-import ua.alexkras.hotel.dao.ApartmentDAO;
+import ua.alexkras.hotel.dao.impl.JDBCApartmentDao;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentStatus;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 public class ApartmentService {
-    private final ApartmentDAO apartmentDAO;
+    private final JDBCApartmentDao apartmentDAO;
     private final ReservationService reservationService;
 
     private Optional<Apartment> currentApartment=Optional.empty();
@@ -23,7 +23,7 @@ public class ApartmentService {
     private Optional<List<Apartment>> apartmentsMatchingCurrentReservation;
 
     //@Autowired
-    public ApartmentService(ApartmentDAO apartmentDAO,
+    public ApartmentService(JDBCApartmentDao apartmentDAO,
                             ReservationService reservationService){
         this.apartmentDAO = apartmentDAO;
         this.reservationService = reservationService;

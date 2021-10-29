@@ -1,5 +1,7 @@
 package ua.alexkras.hotel.dao;
 
-public class PaymentDAO{
+import ua.alexkras.hotel.entity.Payment;
+
+public interface PaymentDAO extends GenericDao<Payment>{
 
 }
