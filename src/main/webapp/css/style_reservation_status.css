@@ -1,0 +1,64 @@
+.reservation-status-pending{
+    color: #bbbb00;
+}
+
+.reservation-status-cancelled{
+    color: red;
+}
+
+.reservation-status-confirmed{
+    color: #008600;
+}
+
+.reservation-status-reserved{
+    color: #00b254;
+}
+
+.reservation-status-expired{
+    color: red;
+}
+
+.reservation-status-pending:hover{
+    color: #ffff00;
+}
+
+.reservation-status-cancelled:hover{
+    color: #8a0000;
+}
+
+.reservation-status-confirmed:hover{
+    color: #006500;
+}
+
+.reservation-status-reserved:hover{
+    color: #005700;
+}
+
+.reservation-status-expired:hover{
+    color: #8a0000;
+}
+
+
+.reservation-paid{
+    color: #008600;
+}
+
+.reservation-paid:hover{
+    color: #006500;
+}
+
+.reservation-unpaid{
+    color: #bdbd00;
+}
+
+.reservation-unpaid:hover{
+    color: #8d8d00;
+}
+
+.reservation-expired{
+    color: red;
+}
+
+.reservation-expired:hover{
+    color: #8a0000;
+}

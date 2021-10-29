@@ -1,0 +1,63 @@
+.apartment-class-a{
+    color: #ffa500;
+}
+
+.apartment-class-b{
+    color: #9d6a00;
+}
+
+.apartment-class-c{
+    color: #815b00;
+}
+
+.apartment-class-d{
+    color: #724e00;
+}
+
+.apartment-class-a:hover{
+    color: #d08900;
+}
+
+.apartment-class-b:hover{
+    color: #7e5700;
+}
+
+.apartment-class-c:hover{
+    color: #644800;
+}
+
+.apartment-class-d:hover{
+    color: #5e4100;
+}
+
+.apartment-available{
+    color: #008600;
+}
+
+.apartment-reserved{
+    color: #bbbb00;
+}
+
+.apartment-occupied{
+    color: purple;
+}
+
+.apartment-unavailable{
+    color: red;
+}
+
+.apartment-available:hover{
+    color: #006500;
+}
+
+.apartment-reserved:hover{
+    color: #ffff00;
+}
+
+.apartment-occupied:hover{
+    color: #520052;
+}
+
+.apartment-unavailable:hover{
+    color: #8a0000;
+}

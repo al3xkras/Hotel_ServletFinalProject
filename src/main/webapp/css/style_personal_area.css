@@ -1,0 +1,65 @@
+label {
+    display: inline-block;
+    width: 200px;
+    margin: 5px;
+    text-align: left;
+}
+
+input[type=text], input[type=password], select {
+    display: inline-block;
+    width: 200px;
+}
+input[type=radio] {
+    margin-left: 45px;
+}
+input[type=checkbox] {
+    margin-right: 190px;
+}
+button {
+    padding: 5px;
+    margin: 10px;
+}
+
+
+
+.align-middle{
+    text-align: center;
+    padding: 5px;
+    margin: 0;
+    background: #d9d9d9;
+}
+
+.align-middle:hover{
+    color: #4040ff;
+}
+
+.align-middle .red{
+    color: red;
+}
+.align-middle .green{
+    color: green
+}
+.align-middle .red:hover{
+    color: #8a0000;
+}
+.align-middle .green:hover{
+    color: #005700;
+}
+
+div.reservations-list{
+    justify-content: center;
+    margin: 2% 2% 2% 2%;
+    width: available;
+    height: available;
+}
+
+table.reservations{
+    width: 100%;
+    height: available;
+}
+
+.align-middle th{
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 3px;
+}
