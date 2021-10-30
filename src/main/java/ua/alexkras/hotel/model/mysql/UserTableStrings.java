@@ -38,9 +38,9 @@ public interface UserTableStrings {
             colUserUserType+
             " FROM "+MySqlStrings.databaseName+'.'+tableUser;
 
-    String getUserByUsername = findAllUsers +" WHERE "+colUserUsername+"=?";
+    String findByUsername = findAllUsers +" WHERE "+colUserUsername+"=?";
 
-    String getUserById = findAllUsers+" WHERE "+colUserId+"=?";
+    String findById = findAllUsers+" WHERE "+colUserId+"=?";
 
     String addUser = "INSERT INTO "+ MySqlStrings.databaseName+"."+ UserTableStrings.tableUser+ " ("+
             colUserId+','+
@@ -68,7 +68,4 @@ public interface UserTableStrings {
             " WHERE "+colUserId+"=?";
 
     String deleteUserById="DELETE FROM "+MySqlStrings.databaseName+"."+tableUser+" WHERE "+colUserId+"=?";
-
-
-
 }

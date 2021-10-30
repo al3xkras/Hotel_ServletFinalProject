@@ -20,7 +20,7 @@ public class JDBCUserDao implements UserDAO {
     @Override
     public Optional<User> findByUsername(String username){
         User user;
-        try(PreparedStatement getUserByName = connection.prepareStatement(UserTableStrings.getUserByUsername);
+        try(PreparedStatement getUserByName = connection.prepareStatement(UserTableStrings.findByUsername);
             ){
             getUserByName.setString(1,username);
             ResultSet result = getUserByName.executeQuery();
@@ -47,31 +47,7 @@ public class JDBCUserDao implements UserDAO {
     }
 
     @Override
-    public Optional<User> findById(long id) {
-        User user;
-        try(PreparedStatement getUserById = connection.prepareStatement(UserTableStrings.getUserById);
-            ){
-            getUserById.setLong(1,id);
-            ResultSet result = getUserById.executeQuery();
-
-            if (result.isBeforeFirst()){
-                return Optional.empty();
-            }
-            result.next();
-
-            user = getUserFromResultSet(result);
-
-        } catch (Exception e){
-            e.printStackTrace();
-            return Optional.empty();
-        }
-
-        return Optional.of(user);
-    }
-
-    @Override
     public void create(long id, User user) {
-
         try(PreparedStatement addUserIfNotExists = connection.prepareStatement(UserTableStrings.addUser)
             ){
 
@@ -92,6 +68,29 @@ public class JDBCUserDao implements UserDAO {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Optional<User> findById(long id) {
+        User user;
+        try(PreparedStatement getUserById = connection.prepareStatement(UserTableStrings.findById);
+        ){
+            getUserById.setLong(1,id);
+            ResultSet result = getUserById.executeQuery();
+
+            if (result.isBeforeFirst()){
+                return Optional.empty();
+            }
+            result.next();
+
+            user = getUserFromResultSet(result);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+        return Optional.of(user);
     }
 
     @Override
@@ -142,11 +141,11 @@ public class JDBCUserDao implements UserDAO {
 
     @Override
     public void delete(long id) {
-        try(PreparedStatement updateUser = connection.prepareStatement(UserTableStrings.deleteUserById);
+        try(PreparedStatement deleteUser = connection.prepareStatement(UserTableStrings.deleteUserById);
             ){
 
-            updateUser.setLong(1,id);
-            updateUser.execute();
+            deleteUser.setLong(1,id);
+            deleteUser.execute();
         } catch (Exception e){
             e.printStackTrace();
         }
