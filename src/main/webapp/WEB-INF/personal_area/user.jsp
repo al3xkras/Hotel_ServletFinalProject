@@ -21,25 +21,27 @@
 </head>
 <body style="background: #f6f6f6;">
     <div class="custom-navbar">
-        <a class="active" href="${pageContext.request.contextPath}/" th:text="#{navbar.hotel}"></a>
+        <a class="active" href="${pageContext.request.contextPath}/"><fmt:message key="navbar.hotel"/> </a>
         <div class="custom-navbar-dropdown" style="float: left">
-            <button class="dropdown-btn" th:text="#{navbar.language}">
+            <button class="dropdown-btn">
+                <fmt:message key="navbar.language"/>
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content">
-                <a href="?lang=ua" th:text="#{navbar.language.ua}"></a>
-                <a href="?lang=en" th:text="#{navbar.language.en}"></a>
+                <a href="?lang=ua"><fmt:message key="navbar.language.ua"/></a>
+                <a href="?lang=en"><fmt:message key="navbar.language.en"/></a>
             </div>
         </div>
 
         <div class="custom-navbar-dropdown" style="float: right">
-            <button class="dropdown-btn" th:text="#{navbar.user}">
+            <button class="dropdown-btn">
+                <fmt:message key="navbar.user"/>
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content" style="left: 80%; width: 19.5%">
-                <a href="/create_reservation" th:text="#{navbar.new_reservation}"></a>
-                <a href="/apartments" th:text="#{navbar.all_apartments}"></a>
-                <a href="/personal_data" th:text="#{navbar.personal_data}"></a>
+                <a href="${pageContext.request.contextPath}/create_reservation"><fmt:message key="navbar.new_reservation"/></a>
+                <a href="${pageContext.request.contextPath}/apartments"><fmt:message key="navbar.all_apartments"/></a>
+                <a href="${pageContext.request.contextPath}/personal_data"><fmt:message key="navbar.personal_data"/></a>
             </div>
         </div>
 
@@ -49,19 +51,20 @@
     </div>
 
     <div class="reservations-list">
-        <h2 style="text-align: center" th:text="#{navbar.my_reservations}"></h2>
+        <h2 style="text-align: center"><fmt:message key="navbar.my_reservations"/></h2>
         <table class="reservations">
             <tr class="align-middle">
-                <th th:text="#{reservation.submit_date}"></th>
-                <th th:text="#{new_apartment.places}"></th>
-                <th th:text="#{reservation.form.from_date}"></th>
-                <th th:text="#{reservation.form.to_date}"></th>
-                <th th:text="#{new_apartment.class}"></th>
-                <th th:text="#{apartment.id}"></th>
-                <th th:text="#{new_apartment.price}"></th>
-                <th th:text="#{reservation.status}"></th>
-                <th th:text="#{reservation.payment_status}"></th>
+                <th><fmt:message key="reservation.submit_date"/></th>
+                <th><fmt:message key="new_apartment.places"/></th>
+                <th><fmt:message key="reservation.form.from_date"/></th>
+                <th><fmt:message key="reservation.form.to_date"/></th>
+                <th><fmt:message key="new_apartment.class"/></th>
+                <th><fmt:message key="apartment.id"/></th>
+                <th><fmt:message key="new_apartment.price"/></th>
+                <th><fmt:message key="reservation.status"/></th>
+                <th><fmt:message key="reservation.payment_status"/></th>
             </tr>
+
 
             <tr class="align-middle"
                 th:each="reservation : ${allReservations}"

@@ -1,7 +1,6 @@
 package ua.alexkras.hotel.commands;
 
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
-import ua.alexkras.hotel.dao.impl.JDBCUserDao;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.Command;
 import javax.servlet.ServletContext;

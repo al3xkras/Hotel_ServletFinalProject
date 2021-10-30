@@ -3,7 +3,8 @@ package ua.alexkras.hotel;
 import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.UserTableStrings;
 import ua.alexkras.hotel.model.UserType;
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,13 +15,13 @@ public class FirstLaunch {
         //Create database if not exists before starting Spring Boot application
         try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
              PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
-             PreparedStatement createUserTable = conn.prepareStatement(MySqlStrings.sqlCreateUserTableIfNotExists);
+             PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
         ) {
             createDB.execute();
             createUserTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Unable to create database: "+MySqlStrings.databaseName);
+            throw new RuntimeException("Unable to create database: "+ MySqlStrings.databaseName);
         }
 
         UserDAO userDAO = JDBCDaoFactory.getInstance().createUserDAO();

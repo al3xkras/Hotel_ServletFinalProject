@@ -1,7 +1,8 @@
 package ua.alexkras.hotel.dao.impl;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import ua.alexkras.hotel.model.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.UserTableStrings;
 
 import javax.sql.DataSource;
 

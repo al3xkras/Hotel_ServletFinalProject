@@ -1,8 +1,6 @@
-package ua.alexkras.hotel.model;
+package ua.alexkras.hotel.model.mysql;
 
-public interface MySqlStrings {
-    String root = "jdbc:mysql://localhost:3306/";
-    String databaseName="hotel_db_servlet";
+public interface UserTableStrings {
     String tableUser = "user";
 
     String colUserId = "id";
@@ -15,22 +13,9 @@ public interface MySqlStrings {
     String colUserGender = "gender";
     String colUserUserType = "user_type";
 
-    String[] tableUserColumns = new String[]{
-        colUserId,colUserName, colUserSurname, colUserUsername,
-                colUserPassword, colUserPhoneNumber, colUserBirthday,
-                colUserGender, colUserUserType};
-
-    String connectionUrl = root+databaseName+"?serverTimezone=UTC";
-
-    String user = "root";
-    String password = "root";
-
-
-    String sqlCreateDatabaseIfNotExists = String.format("CREATE DATABASE IF NOT EXISTS %s;",
-            databaseName);
 
     String sqlCreateUserTableIfNotExists = "CREATE TABLE IF NOT EXISTS " +
-            MySqlStrings.databaseName+"."+MySqlStrings.tableUser+ " (" +
+            MySqlStrings.databaseName+"."+ UserTableStrings.tableUser+ " (" +
             colUserId+" int unique primary key auto_increment, " +
             colUserName+" varchar(25) not null," +
             colUserSurname+" varchar(30) not null," +
@@ -41,11 +26,8 @@ public interface MySqlStrings {
             colUserPhoneNumber+" varchar(30) not null," +
             colUserUserType+" varchar(20) not null);";
 
-    String getUserByUsername = "SELECT" +
-            " id,name,surname,password,birthday,gender,phone_number,user_type " +
-            "FROM "+MySqlStrings.databaseName+"."+ MySqlStrings.tableUser +" WHERE "+colUserUsername+"=?";
-
-    String getUserById = "SELECT "+
+    String findAllUsers = "SELECT "+
+            colUserId+','+
             colUserName+','+
             colUserSurname+','+
             colUserUsername+','+
@@ -54,9 +36,13 @@ public interface MySqlStrings {
             colUserGender+','+
             colUserPhoneNumber+','+
             colUserUserType+
-            " FROM "+databaseName+','+tableUser+" WHERE "+colUserId+"=?";
+            " FROM "+MySqlStrings.databaseName+'.'+tableUser;
 
-    String addUser = "INSERT INTO "+MySqlStrings.databaseName+"."+MySqlStrings.tableUser+ " ("+
+    String getUserByUsername = findAllUsers +" WHERE "+colUserUsername+"=?";
+
+    String getUserById = findAllUsers+" WHERE "+colUserId+"=?";
+
+    String addUser = "INSERT INTO "+ MySqlStrings.databaseName+"."+ UserTableStrings.tableUser+ " ("+
             colUserId+','+
             colUserName+ ','+
             colUserSurname+','+
@@ -67,5 +53,22 @@ public interface MySqlStrings {
             colUserPhoneNumber+','+
             colUserUserType+") VALUES " +
             "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    String updateUser = "UPDATE " +
+            MySqlStrings.databaseName+'.'+tableUser+
+            " SET "+
+            colUserName+ "=?,"+
+            colUserSurname+"=?,"+
+            colUserUsername+"=?,"+
+            colUserPassword+"=?,"+
+            colUserBirthday+"=?,"+
+            colUserGender+"=?,"+
+            colUserPhoneNumber+"=?,"+
+            colUserUserType+"=?"+
+            " WHERE "+colUserId+"=?";
+
+    String deleteUserById="DELETE FROM "+MySqlStrings.databaseName+"."+tableUser+" WHERE "+colUserId+"=?";
+
+
 
 }
