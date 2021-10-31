@@ -32,21 +32,24 @@ public class FirstLaunch {
 
         UserDAO userDAO = JDBCDaoFactory.getInstance().createUserDAO();
 
-        userDAO.create(-1L,User.builder()
+        userDAO.create(User.builder()
+                .id(-1L)
                 .name("Admin").surname("Adminovich")
                 .username("Admin1").password("password1")
                 .phoneNumber("+404-23-4567890")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.ADMIN).build());
 
-        userDAO.create(-2L,User.builder()
+        userDAO.create(User.builder()
+                .id(-2L)
                 .name("AdminName").surname("AdminSurname")
                 .username("Admin2").password("password2")
                 .phoneNumber("+404-12-3456789")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.ADMIN).build());
 
-        userDAO.create(-3L,User.builder()
+        userDAO.create(User.builder()
+                .id(-3L)
                 .name("AdminName").surname("AdminSurname")
                 .username("zzz").password("q")
                 .phoneNumber("+404-12-3456789")

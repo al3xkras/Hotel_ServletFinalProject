@@ -37,21 +37,8 @@ public class UserService {
      * @param user User to add
      * @throws RuntimeException if User was not added to the data source
      */
-    public void addUser(User user){
-        /*
-        String notEncodedPassword=user.getPassword();
-        boolean userWasAdded = false;
-        try {
-            user.setPassword(HotelUserDetailsService.passwordEncoder().encode(user.getPassword()));
-            userDAO.save(user);
-            userWasAdded=true;
-        } catch (Exception e){
-            user.setPassword(notEncodedPassword);
-        }
-        if (!userWasAdded){
-            throw new RuntimeException("Error adding new "+user.toString());
-        }
-         */
+    public boolean addUser(User user){
+        return userDao.create(user);
     }
 
 

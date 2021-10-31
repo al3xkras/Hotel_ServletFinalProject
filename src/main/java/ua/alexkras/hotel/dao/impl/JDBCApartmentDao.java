@@ -53,14 +53,15 @@ public class JDBCApartmentDao implements ApartmentDao {
     }
 
     @Override
-    public void create(Apartment apartment) {
+    public boolean create(Apartment apartment) {
         if (apartment.getId()!=null){
-            create(apartment.getId(),apartment);
+            return create(apartment.getId(),apartment);
         }
+        return false;
     }
 
     @Override
-    public void create(long id, Apartment apartment){
+    public boolean create(long id, Apartment apartment){
         try(PreparedStatement addApartment = connection.prepareStatement(ApartmentTableStrings.addApartment)
             ){
             addApartment.setLong(1,id);
@@ -75,7 +76,9 @@ public class JDBCApartmentDao implements ApartmentDao {
 
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override

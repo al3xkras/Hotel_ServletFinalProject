@@ -40,41 +40,32 @@ public class JDBCUserDao implements UserDAO {
     }
 
     @Override
-    public void create(User user) {
-        if (user.getId()!=null){
-            create(user.getId(),user);
-        }
-    }
-
-    @Override
-    public void create(long id, User user) {
+    public boolean create(User user) {
         try(PreparedStatement addUserIfNotExists = connection.prepareStatement(UserTableStrings.addUser)
             ){
-
-            addUserIfNotExists.setLong(1,id);
-            addUserIfNotExists.setString(2, user.getName());
-            addUserIfNotExists.setString(3, user.getSurname());
-            addUserIfNotExists.setString(4, user.getUsername());
-            addUserIfNotExists.setString(5, user.getPassword());
-            addUserIfNotExists.setDate(6, Date.valueOf(user.getBirthday()));
-            addUserIfNotExists.setString(7, user.getGender());
-            addUserIfNotExists.setString(8, user.getPhoneNumber());
-            addUserIfNotExists.setString(9, user.getUserType().name());
+            addUserIfNotExists.setString(1, user.getName());
+            addUserIfNotExists.setString(2, user.getSurname());
+            addUserIfNotExists.setString(3, user.getUsername());
+            addUserIfNotExists.setString(4, user.getPassword());
+            addUserIfNotExists.setDate(5, Date.valueOf(user.getBirthday()));
+            addUserIfNotExists.setString(6, user.getGender());
+            addUserIfNotExists.setString(7, user.getPhoneNumber());
+            addUserIfNotExists.setString(8, user.getUserType().name());
 
             addUserIfNotExists.execute();
 
-        } catch (SQLIntegrityConstraintViolationException ignored){
-
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override
     public Optional<User> findById(long id) {
         User user;
         try(PreparedStatement getUserById = connection.prepareStatement(UserTableStrings.findById);
-        ){
+            ){
             getUserById.setLong(1,id);
             ResultSet result = getUserById.executeQuery();
 

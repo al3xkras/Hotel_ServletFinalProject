@@ -31,5 +31,5 @@ public interface ReservationDAO extends GenericDao<Reservation> {
 
     void updateIsPaidById(long id, boolean isPaid);
 
-    void create(long id, Reservation reservation);
+    boolean create(long id, Reservation reservation);
 }

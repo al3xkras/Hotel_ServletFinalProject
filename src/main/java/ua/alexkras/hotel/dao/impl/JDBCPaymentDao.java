@@ -15,8 +15,8 @@ public class JDBCPaymentDao implements PaymentDAO {
     }
 
     @Override
-    public void create(Payment entity) {
-
+    public boolean create(Payment entity) {
+        return false;
     }
 
     @Override

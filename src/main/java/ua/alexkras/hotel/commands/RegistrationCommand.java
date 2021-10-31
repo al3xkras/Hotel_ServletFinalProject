@@ -56,9 +56,13 @@ public class RegistrationCommand implements Command {
 
         String validationErrorMessage = registrationRequest.getValidationErrorMessage();
 
-        if (validationErrorMessage.isEmpty() &&
-            userService.getUserByUserName(registrationRequest.getUsername()).isPresent()){
-            validationErrorMessage="username.exists";
+        User user = new User();
+
+        if (validationErrorMessage.isEmpty()){
+            user = new User(registrationRequest, UserType.USER);
+            if (!userService.addUser(user)){
+                validationErrorMessage="username.exists";
+            }
         }
 
         if (!validationErrorMessage.isEmpty()){
@@ -69,9 +73,7 @@ public class RegistrationCommand implements Command {
             return "/WEB-INF/registration.jsp";
         }
 
-        User user = new User(registrationRequest, UserType.USER);
-
-        request.getServletContext().log("successfully registered: "+user);
+        request.getServletContext().log("Successfully registered: "+user);
 
         return "redirect:/app/login";
     }

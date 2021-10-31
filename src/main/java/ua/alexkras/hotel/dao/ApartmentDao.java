@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApartmentDao extends GenericDao<Apartment> {
-    void create(long id, Apartment apartment);
+    boolean create(long id, Apartment apartment);
 
     Optional<Apartment> findApartmentById(long id);
 

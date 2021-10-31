@@ -52,7 +52,7 @@ public interface UserTableStrings {
             colUserGender+','+
             colUserPhoneNumber+','+
             colUserUserType+") VALUES " +
-            "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "(null, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     String updateUser = "UPDATE " +
             MySqlStrings.databaseName+'.'+tableUser+

@@ -1,10 +1,8 @@
 package ua.alexkras.hotel.dao.impl;
 
 import ua.alexkras.hotel.dao.ReservationDAO;
-import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +10,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
 
 
 public class JDBCReservationDao implements ReservationDAO {
@@ -41,14 +37,15 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public void create(Reservation reservation) {
+    public boolean create(Reservation reservation) {
         if (reservation.getId()!=null){
-            create(reservation.getId(),reservation);
+            return create(reservation.getId(),reservation);
         }
+        return false;
     }
 
     @Override
-    public void create(long id, Reservation reservation){
+    public boolean create(long id, Reservation reservation){
         try(PreparedStatement addApartment = connection.prepareStatement("")
         ){
             addApartment.setLong(1,id);
@@ -58,7 +55,9 @@ public class JDBCReservationDao implements ReservationDAO {
 
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public Optional<Reservation> findById(long reservationId){
