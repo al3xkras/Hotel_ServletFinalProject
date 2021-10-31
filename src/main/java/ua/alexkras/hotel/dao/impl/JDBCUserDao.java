@@ -43,15 +43,7 @@ public class JDBCUserDao implements UserDAO {
     public boolean create(User user) {
         try(PreparedStatement addUserIfNotExists = connection.prepareStatement(UserTableStrings.addUser)
             ){
-            addUserIfNotExists.setString(1, user.getName());
-            addUserIfNotExists.setString(2, user.getSurname());
-            addUserIfNotExists.setString(3, user.getUsername());
-            addUserIfNotExists.setString(4, user.getPassword());
-            addUserIfNotExists.setDate(5, Date.valueOf(user.getBirthday()));
-            addUserIfNotExists.setString(6, user.getGender());
-            addUserIfNotExists.setString(7, user.getPhoneNumber());
-            addUserIfNotExists.setString(8, user.getUserType().name());
-
+            prepareUserStatement(user, addUserIfNotExists);
             addUserIfNotExists.execute();
 
         }catch (Exception e){
@@ -59,6 +51,17 @@ public class JDBCUserDao implements UserDAO {
             return false;
         }
         return true;
+    }
+
+    private void prepareUserStatement(User user, PreparedStatement addUserIfNotExists) throws SQLException {
+        addUserIfNotExists.setString(1, user.getName());
+        addUserIfNotExists.setString(2, user.getSurname());
+        addUserIfNotExists.setString(3, user.getUsername());
+        addUserIfNotExists.setString(4, user.getPassword());
+        addUserIfNotExists.setDate(5, Date.valueOf(user.getBirthday()));
+        addUserIfNotExists.setString(6, user.getGender());
+        addUserIfNotExists.setString(7, user.getPhoneNumber());
+        addUserIfNotExists.setString(8, user.getUserType().name());
     }
 
     @Override
@@ -113,14 +116,7 @@ public class JDBCUserDao implements UserDAO {
         try(PreparedStatement updateUser = connection.prepareStatement(UserTableStrings.updateUser)
             ){
 
-            updateUser.setString(1, user.getName());
-            updateUser.setString(2, user.getSurname());
-            updateUser.setString(3, user.getUsername());
-            updateUser.setString(4, user.getPassword());
-            updateUser.setDate(5, Date.valueOf(user.getBirthday()));
-            updateUser.setString(6, user.getGender());
-            updateUser.setString(7, user.getPhoneNumber());
-            updateUser.setString(8, user.getUserType().name());
+            prepareUserStatement(user, updateUser);
             updateUser.setLong(9,user.getId());
 
             updateUser.execute();
