@@ -11,10 +11,10 @@ public class Reservation {
     @GeneratedValue
     @Column(name = "ID", nullable = false, length = 32)
      */
-    private int id;
+    private Long id;
 
     //@Column(name = "USER_ID", nullable = false)
-    private int userId;
+    private Long userId;
 
     //@Column(name = "APARTMENT_CLASS", nullable = false)
     //@Enumerated(EnumType.STRING)
@@ -46,7 +46,7 @@ public class Reservation {
     private Integer apartmentPrice;
 
     //@Column(name = "IS_PAID", nullable = false)
-    private boolean isPaid = false;
+    private boolean isPaid;
 
     //@Column(name="STATUS", nullable = false)
     //@Enumerated(EnumType.STRING)
@@ -65,12 +65,11 @@ public class Reservation {
         return apartmentId!=null & apartmentPrice!=null;
     }
 
-
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
@@ -132,9 +131,9 @@ public class Reservation {
                @GeneratedValue
                @Column(name = "ID", nullable = false, length = 32)
                 */
-        private int id;
+        private Long id;
         //@Column(name = "USER_ID", nullable = false)
-        private int userId;
+        private Long userId;
         //@Column(name = "APARTMENT_CLASS", nullable = false)
         //@Enumerated(EnumType.STRING)
         private ApartmentClass apartmentClass;
@@ -174,12 +173,12 @@ public class Reservation {
             return new ReservationBuilder();
         }
 
-        public ReservationBuilder id(int id) {
+        public ReservationBuilder id(long id) {
             this.id = id;
             return this;
         }
 
-        public ReservationBuilder userId(int userId) {
+        public ReservationBuilder userId(long userId) {
             this.userId = userId;
             return this;
         }

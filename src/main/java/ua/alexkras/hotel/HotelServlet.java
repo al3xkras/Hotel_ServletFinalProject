@@ -2,6 +2,7 @@ package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.commands.*;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,10 +30,11 @@ public class HotelServlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
 
     public void init(){
-        commands.put("login", new LoginCommand());
-        commands.put("registration" , new RegistrationCommand());
+        commands.put("login", new LoginCommand(new UserService()));
+        commands.put("registration" , new RegistrationCommand(new UserService()));
         commands.put("exception" , new ExceptionCommand());
-        commands.put("personal_area", new PersonalAreaCommand());
+        commands.put("user", new UserCommand());
+        commands.put("admin", new AdminCommand());
         commands.put("logout", new LogoutCommand());
     }
 
@@ -46,14 +48,14 @@ public class HotelServlet extends HttpServlet {
         Command getCommand = commands.getOrDefault(path , defaultCommand);
 
         String page = getCommand.executeGet(request);
-        if (!page.isEmpty()) {
+        if (!page.startsWith("redirect:")) {
             request.getRequestDispatcher(page).forward(request, response);
         } else {
-            response.sendRedirect("/");
+            response.sendRedirect(request.getContextPath()+page.replace("redirect:",""));
         }
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -64,6 +66,10 @@ public class HotelServlet extends HttpServlet {
 
         String page = postCommand.executePost(request);
 
-        response.sendRedirect(request.getContextPath() + page);
+        if (!page.isEmpty() && !page.startsWith("redirect:")) {
+            request.getRequestDispatcher(page).forward(request, response);
+        } else if (!page.isEmpty()){
+            response.sendRedirect(request.getContextPath()+page.replace("redirect:",""));
+        }
     }
 }

@@ -1,36 +1,48 @@
 package ua.alexkras.hotel.dto;
 
-import java.time.LocalDate;
+import ua.alexkras.hotel.model.mysql.MySqlStrings;
+
+import java.text.ParseException;
 
 public class RegistrationRequest {
-    //@NotEmpty
+
     private String name;
-
-    //@NotEmpty
     private String surname;
-
-    //@NotEmpty
     private String username;
-
-    //@NotEmpty
-    //@Size(min=8, max = 25)
     private String password;
-
-    //@NotEmpty
-    //@Size(min=8, max = 25)
     private String passwordConfirm;
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthdayDate;
-
-    //@NotEmpty
+    private String birthdayDate;
     private String gender;
-
-    //@NotEmpty
     private String phoneNumber;
 
     public boolean isValid(){
-        return false;
+        try {
+            MySqlStrings.dateFormat.parse(birthdayDate);
+        } catch (ParseException e){
+            return false;
+        }
+        return name!=null && surname!=null && username!=null && password!=null &&
+                (password.length()>=8 & password.length()<=25) && passwordConfirm!=null &&
+                passwordConfirm.equals(password) && birthdayDate!=null &&
+                gender!=null && phoneNumber!=null;
+    }
+
+    public String getValidationErrorMessage(){
+        try {
+            MySqlStrings.dateFormat.parse(birthdayDate);
+        } catch (ParseException e){
+            return "date.invalid_format";
+        }
+        return name==null? "name.isempty":
+                surname==null? "surname.isempty":
+                username==null? "username.isempty":
+                password==null? "password.isempty":
+                passwordConfirm==null? "passwords.mismatch":
+                !passwordConfirm.equals(password)? "passwords.mismatch":
+                birthdayDate==null? "birthday.isempty":
+                gender==null? "gender.isempty":
+                phoneNumber==null? "phone_number.isempty":
+                "";
     }
 
     public String getName() {
@@ -53,7 +65,7 @@ public class RegistrationRequest {
         return passwordConfirm;
     }
 
-    public LocalDate getBirthdayDate() {
+    public String getBirthdayDate() {
         return birthdayDate;
     }
 
@@ -63,5 +75,76 @@ public class RegistrationRequest {
 
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public static RegistrationRequestBuilder builder() {
+        return new RegistrationRequestBuilder();
+    }
+
+    public static final class RegistrationRequestBuilder {
+        private String name;
+        private String surname;
+        private String username;
+        private String password;
+        private String passwordConfirm;
+        private String birthdayDate;
+        private String gender;
+        private String phoneNumber;
+
+        private RegistrationRequestBuilder() {
+        }
+
+        public RegistrationRequestBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public RegistrationRequestBuilder surname(String surname) {
+            this.surname = surname;
+            return this;
+        }
+
+        public RegistrationRequestBuilder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public RegistrationRequestBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public RegistrationRequestBuilder passwordConfirm(String passwordConfirm) {
+            this.passwordConfirm = passwordConfirm;
+            return this;
+        }
+
+        public RegistrationRequestBuilder birthdayDate(String birthdayDate) {
+            this.birthdayDate = birthdayDate;
+            return this;
+        }
+
+        public RegistrationRequestBuilder gender(String gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public RegistrationRequestBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public RegistrationRequest build() {
+            RegistrationRequest registrationRequest = new RegistrationRequest();
+            registrationRequest.passwordConfirm = this.passwordConfirm;
+            registrationRequest.birthdayDate = this.birthdayDate;
+            registrationRequest.name = this.name;
+            registrationRequest.surname = this.surname;
+            registrationRequest.username = this.username;
+            registrationRequest.password = this.password;
+            registrationRequest.gender = this.gender;
+            registrationRequest.phoneNumber = this.phoneNumber;
+            return registrationRequest;
+        }
     }
 }

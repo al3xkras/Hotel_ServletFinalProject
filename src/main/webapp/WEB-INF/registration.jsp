@@ -34,99 +34,106 @@
             margin-bottom: 5px;
             margin-left: 10px;
         }
-
     </style>
 </head>
 <body>
+    <c:set var="name_regex">
+        <fmt:message key="regexp.name"/>
+    </c:set>
+    <c:set var="surname_regex">
+        <fmt:message key="regexp.surname"/>
+    </c:set>
+    <c:set var="username_regex">
+        <fmt:message key="regexp.username"/>
+    </c:set>
+    <c:set var="phone_regex">
+        <fmt:message key="regexp.phone_number"/>
+    </c:set>
 
     <div style="width: 70%; height: 70%; margin: 15%">
         <h1 class="form-signin-heading"><fmt:message key="registration.header"/></h1>
 
         <form action="${pageContext.request.contextPath}/app/registration"
-            method="post" th:object="${registrationRequest}"
-            class="form" autocomplete="off">
+            method="post" class="form" autocomplete="off">
 
             <div class="form-group">
                 <label for="name"><fmt:message key="form.name"/></label>
-                <input id="name" type="text" th:pattern="#{regexp.name}" th:field="*{name}" required>
-                <c:if test="${fields.hasErrors('name')}">
-                    <div class="alert alert-warning" th:errors="*{name}"></div>
+                <input id="name" minlength="2" name="name" type="text" pattern="${name_regex}"
+                       value="${requestScope.registrationRequest.name}" required>
+                <c:if test='${requestScope.errorField.equals("name")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
-
-
             </div>
 
             <div class="form-group">
                 <label for="surname"><fmt:message key="form.surname"/></label>
-                <input id="surname" type="text" th:pattern="#{regexp.surname}" th:field="*{surname}" required>
+                <input id="surname" minlength="2" name="surname" type="text" pattern="${surname_regex}"
+                       value="${requestScope.registrationRequest.surname}" required>
 
-                <c:if test="${fields.hasErrors('surname')}">
-                    <div class="alert alert-warning" th:errors="*{surname}"></div>
+                <c:if test='${requestScope.errorField.equals("surname")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
             <div class="form-group">
                 <label for="username"><fmt:message key="form.username"/></label>
-                <input id="username" type="text" th:pattern="#{regexp.username}"  th:field="*{username}" required>
-                <c:if test="${fields.hasErrors('username')}">
-                    <div class="alert alert-warning" th:errors="*{username}"></div>
+                <input id="username" minlength="3" maxlength="15" name="username" type="text" pattern="${username_regex}"
+                       value="${requestScope.registrationRequest.username}" required>
+                <c:if test='${requestScope.errorField.equals("username")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
-                <c:if test="${usernameExists}">
-                    <div class="alert alert-warning" th:if="${usernameExists}" th:text="#{form.alert.username_exists}"></div>
-                </c:if>
-
             </div>
 
             <div class="form-group">
                 <label for="password"><fmt:message key="form.password"/></label>
-                <input id="password" type="password" th:field="*{password}" required>
-                <c:if test="${fields.hasErrors('password')}">
-                    <div class="alert alert-warning" th:errors="*{password}"></div>
-                </c:if>
-                <c:if test="${passwordMismatch}">
-                    <div class="alert alert-warning" th:text="#{form.alert.password_mismatch}"></div>
+                <input id="password" minlength="8" maxlength="20" name="password" type="password"
+                       value="${requestScope.registrationRequest.password}" required>
+                <c:if test='${requestScope.errorField.equals("password")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
             <div class="form-group">
                 <label for="password-confirm"><fmt:message key="form.password_confirm"/></label>
-                <input id="password-confirm" type="password" th:field="*{passwordConfirm}" required>
-                <c:if test="${fields.hasErrors('passwordConfirm')}">
-                    <div class="alert alert-warning" th:errors="*{passwordConfirm}"></div>
-                </c:if>
-                <c:if test="${passwordMismatch}">
-                    <div class="alert alert-warning" th:text="#{form.alert.password_mismatch}"></div>
+                <input id="password-confirm" minlength="8" maxlength="20" name="passwordConfirm" type="password"
+                       value="${requestScope.registrationRequest.passwordConfirm}" required>
+                <c:if test='${requestScope.errorField.equals("password")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
             <div class="form-group">
                 <label for="birthday_date"><fmt:message key="form.birthday_date"/></label>
-                <input id="birthday_date" type="date" th:field="*{birthdayDate}" required>
-                <c:if test="${fields.hasErrors('birthdayDate')}">
-                    <div class="alert alert-warning" th:errors="*{birthdayDate}"></div>
+                <input id="birthday_date" name="birthdayDate" value="${requestScope.registrationRequest.birthdayDate}"
+                       type="date" required>
+                <c:if test='${requestScope.errorField.equals("birthdayDate")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
             <div class="form-group">
-                <label th:text="#{form.gender}"><fmt:message key="form.gender"/></label>
+                <label><fmt:message key="form.gender"/></label>
                 <div>
-                    <input type="radio" th:field="*{gender}" value="Male"/><fmt:message key="form.gender.male"/>
-                    <input type="radio" th:field="*{gender}" value="Female"/><fmt:message key="form.gender.female"/>
+                    <input type="radio" name="gender" value="Male"
+                           <c:if test='${requestScope.registrationRequest.gender.equals("Male")}'>checked</c:if>
+                            /><fmt:message key="form.gender.male"/>
+                    <input type="radio" name="gender" value="Female"
+                           <c:if test='${requestScope.registrationRequest.gender.equals("Female")}'>checked</c:if>
+                            /><fmt:message key="form.gender.female"/>
                 </div>
-                <c:if test="${fields.hasErrors('gender')}">
-                    <div class="alert alert-warning" th:errors="*{gender}"></div>
+                <c:if test='${requestScope.errorField.equals("gender")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
             <div class="form-group">
                 <label for="phone-number"><fmt:message key="form.phone_number"/></label>
-                <input id="phone-number" type="text" th:pattern="#{regexp.phone_number}" th:field="*{phoneNumber}" required>
-                <c:if test="${fields.hasErrors('phoneNumber')}">
-                    <div class="alert alert-warning" th:errors="*{phoneNumber}"></div>
+                <input id="phone-number" name="phoneNumber" type="text" pattern="${phone_regex}"
+                       value="${requestScope.registrationRequest.phoneNumber}" required>
+                <c:if test='${requestScope.errorField.equals("phoneNumber")}'>
+                    <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
-
-            <input type="text" th:value="${locale}" id="locale" name="locale" th:hidden="${true}"/>
 
             <button type="submit"><fmt:message key="form.submit"/></button>
         </form>

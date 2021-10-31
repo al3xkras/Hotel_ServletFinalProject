@@ -2,7 +2,12 @@ package ua.alexkras.hotel.entity;
 
 import ua.alexkras.hotel.dto.RegistrationRequest;
 import ua.alexkras.hotel.model.UserType;
+
+
 import java.time.LocalDate;
+import java.time.ZoneId;
+
+import static ua.alexkras.hotel.model.mysql.MySqlStrings.dateFormat;
 
 public class User {
     /*@Id
@@ -42,7 +47,16 @@ public class User {
         this.surname=dto.getSurname();
         this.username=dto.getUsername();
         this.password=dto.getPassword();
-        this.birthday=dto.getBirthdayDate();
+        try {
+            this.birthday = dateFormat
+                    .parse(dto.getBirthdayDate())
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
         this.gender=dto.getGender();
         this.phoneNumber=dto.getPhoneNumber();
         this.userType=userType;

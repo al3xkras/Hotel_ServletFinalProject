@@ -3,7 +3,9 @@ package ua.alexkras.hotel;
 import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.ReservationTableStrings;
 import ua.alexkras.hotel.model.mysql.UserTableStrings;
 import ua.alexkras.hotel.model.UserType;
 import java.sql.*;
@@ -12,13 +14,17 @@ import java.time.LocalDate;
 
 public class FirstLaunch {
     public static void main(String[] args) {
-        //Create database if not exists before starting Spring Boot application
+        //Create database if not exists before starting application
         try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
              PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
              PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
-        ) {
+             PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
+             PreparedStatement createReservationTable = conn.prepareStatement(ReservationTableStrings.sqlCreateReservationTableIfNotExists)
+            ){
             createDB.execute();
             createUserTable.execute();
+            createApartmentTable.execute();
+            createReservationTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to create database: "+ MySqlStrings.databaseName);

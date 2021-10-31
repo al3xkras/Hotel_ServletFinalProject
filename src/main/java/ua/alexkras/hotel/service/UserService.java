@@ -25,7 +25,7 @@ public class UserService {
      * @param username User's login (username)
      * @return Optional\<User>, if user was found, Optional.empty() otherwise.
      */
-    public Optional<User> getUserByUserName(String username) throws SQLException {
+    public Optional<User> getUserByUserName(String username) {
         return userDao.findByUsername(username);
     }
 

@@ -8,17 +8,18 @@ import ua.alexkras.hotel.model.UserType;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-public class PersonalAreaCommand implements Command {
+public class UserCommand implements Command {
 
     @Override
     public String executeGet(HttpServletRequest request) {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
 
-        return currentUser
-                .orElseThrow(IllegalStateException::new)
-                .getUserType().equals(UserType.USER)
-                ?"/WEB-INF/personal_area/user.jsp"
-                :"/WEB-INF/personal_area/admin.jsp";
+        if(!currentUser.orElseThrow(IllegalStateException::new)
+                .getUserType().equals(UserType.USER)){
+            return "redirect:/";
+        }
+
+        return "/WEB-INF/personal_area/user.jsp";
     }
 
     @Override

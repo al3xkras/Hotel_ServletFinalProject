@@ -19,7 +19,7 @@ public class ApartmentService {
         clearCurrentApartment();
     }
 
-    private Optional<Integer> currentReservationId;
+    private Optional<Long> currentReservationId;
     private Optional<List<Apartment>> apartmentsMatchingCurrentReservation;
 
     //@Autowired
@@ -120,7 +120,7 @@ public class ApartmentService {
         if (    !apartmentsMatchingCurrentReservation.isPresent() ||
                 apartmentsMatchingCurrentReservation.get().isEmpty() ||
                 !currentReservationId.isPresent() ||
-                currentReservationId.get()!=reservationService.getCurrentReservation().getId()) {
+                currentReservationId.get().longValue() == reservationService.getCurrentReservation().getId()) {
 
             apartmentsMatchingCurrentReservation =
                     Optional.of(findApartmentsMatchingReservation(reservationService.getCurrentReservation()));

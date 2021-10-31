@@ -2,12 +2,9 @@ package ua.alexkras.hotel.dao.impl;
 
 import ua.alexkras.hotel.dao.ApartmentDao;
 import ua.alexkras.hotel.entity.Apartment;
-import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
-import ua.alexkras.hotel.model.mysql.UserTableStrings;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +20,8 @@ public class JDBCApartmentDao implements ApartmentDao {
         this.connection = connection;
     }
 
-    Optional<Apartment> findApartmentById(int id){
+    @Override
+    public Optional<Apartment> findApartmentById(long id){
         Apartment apartment;
         try(PreparedStatement findApartmentById = connection.prepareStatement(ApartmentTableStrings.findById)){
             findApartmentById.setLong(1,id);
@@ -43,12 +41,13 @@ public class JDBCApartmentDao implements ApartmentDao {
         return Optional.of(apartment);
     }
 
-    //@Query("update Apartment apartment set apartment.status =:apartmentStatus where apartment.id =:id")
-    void updateApartmentStatusById(int id, ApartmentStatus apartmentStatus){
+    @Override
+    public void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus){
 
     }
 
-    List<Apartment> findApartmentsByApartmentClassAndPlacesAndStatus(
+    @Override
+    public List<Apartment> findApartmentsByApartmentClassAndPlacesAndStatus(
             ApartmentClass apartmentClass, int places, ApartmentStatus apartmentStatus){
         return null;
     }

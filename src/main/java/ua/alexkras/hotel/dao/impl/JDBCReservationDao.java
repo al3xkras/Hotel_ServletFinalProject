@@ -1,13 +1,19 @@
 package ua.alexkras.hotel.dao.impl;
 
 import ua.alexkras.hotel.dao.ReservationDAO;
+import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
 
 
 public class JDBCReservationDao implements ReservationDAO {
@@ -18,22 +24,41 @@ public class JDBCReservationDao implements ReservationDAO {
         this.connection = connection;
     }
 
-    List<Reservation> findByUserId(int userId){
+    @Override
+    public List<Reservation> findByUserId(long userId){
         return null;
     }
 
-    List<Reservation> findByUserIdAndIsActive(int userId, boolean isActive){
+    @Override
+    public List<Reservation> findByUserIdAndIsActive(long userId, boolean isActive){
         return null;
     }
 
     //@Query("update Reservation reservation set reservation.isActive =:isActive where reservation.userId =:userId")
-    void updateActiveByUserId(int userId, boolean isActive){
+    @Override
+    public void updateActiveByUserId(long userId, boolean isActive){
 
     }
 
     @Override
-    public void create(Reservation entity) {
+    public void create(Reservation reservation) {
+        if (reservation.getId()!=null){
+            create(reservation.getId(),reservation);
+        }
+    }
 
+    @Override
+    public void create(long id, Reservation reservation){
+        try(PreparedStatement addApartment = connection.prepareStatement("")
+        ){
+            addApartment.setLong(1,id);
+
+            addApartment.execute();
+        } catch (SQLIntegrityConstraintViolationException ignored){
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public Optional<Reservation> findById(long reservationId){
@@ -60,20 +85,23 @@ public class JDBCReservationDao implements ReservationDAO {
 
     }
 
-    List<Reservation> findByReservationStatus(ReservationStatus reservationStatus){
+    @Override
+    public List<Reservation> findByReservationStatus(ReservationStatus reservationStatus){
         return null;
     }
 
     //@Query("update Reservation reservation set reservation.reservationStatus =:reservationStatus where reservation.id =:id")
-    void updateReservationStatusById(int id, ReservationStatus reservationStatus){
+    @Override
+    public void updateReservationStatusById(long id, ReservationStatus reservationStatus){
 
     }
 
 
     //@Query("update Reservation reservation set reservation.reservationStatus =:reservationStatus, " +
     //         "reservation.adminConfirmationDate =:confirmationDate where reservation.id =:id")
-    void updateReservationStatusAndConfirmationDateById(
-            int id, ReservationStatus reservationStatus, LocalDate confirmationDate){
+    @Override
+    public void updateReservationStatusAndConfirmationDateById(
+            long id, ReservationStatus reservationStatus, LocalDate confirmationDate){
 
     }
     /*
@@ -83,8 +111,9 @@ public class JDBCReservationDao implements ReservationDAO {
             "reservation.adminConfirmationDate =:confirmationDate  where reservation.id =:reservationId")
 
      */
-    void updateApartmentIdAndPriceAndReservationStatusAndConfirmationDateById(
-            int apartmentId,
+    @Override
+    public void updateApartmentIdAndPriceAndReservationStatusAndConfirmationDateById(
+            long apartmentId,
             int apartmentPrice,
             ReservationStatus reservationStatus,
             LocalDate confirmationDate,
@@ -94,7 +123,8 @@ public class JDBCReservationDao implements ReservationDAO {
 
 
     //@Query("update Reservation reservation set reservation.isPaid =:isPaid where reservation.id =:id")
-    void updateIsPaidById(int id, boolean isPaid){
+    @Override
+    public void updateIsPaidById(long id, boolean isPaid){
 
     }
 }
