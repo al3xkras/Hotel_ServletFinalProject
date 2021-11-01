@@ -5,12 +5,8 @@ import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ApartmentDao extends GenericDao<Apartment> {
-    boolean create(long id, Apartment apartment);
-
-    Optional<Apartment> findApartmentById(long id);
 
     void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus);
 

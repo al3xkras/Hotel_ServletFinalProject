@@ -264,6 +264,10 @@ public class ReservationService {
         return reservationDAO.findAllPendingReservations(start, total);
     }
 
+    public List<Reservation> getPendingReservationsByUserId(long userId,int start, int total){
+        return  reservationDAO.findPendingReservationsByUserId(userId,start,total);
+    }
+
     public boolean addReservation (Reservation reservation){
         return reservationDAO.create(reservation);
     }

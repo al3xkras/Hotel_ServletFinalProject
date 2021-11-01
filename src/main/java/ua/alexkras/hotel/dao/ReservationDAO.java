@@ -32,5 +32,5 @@ public interface ReservationDAO extends GenericDao<Reservation> {
     void updateIsPaidById(long id, boolean isPaid);
 
     List<Reservation> findAllPendingReservations(int start, int total);
-    List<Reservation> findPendingReservationsByUserId(int userId, int start, int total);
+    List<Reservation> findPendingReservationsByUserId(long userId, int start, int total);
 }

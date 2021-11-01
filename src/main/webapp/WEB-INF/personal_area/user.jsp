@@ -21,7 +21,7 @@
 </head>
 <body style="background: #f6f6f6;">
     <div class="custom-navbar">
-        <a class="active" href="${pageContext.request.contextPath}/"><fmt:message key="navbar.hotel"/> </a>
+        <a class="active" href="${pageContext.request.contextPath}/app/user"><fmt:message key="navbar.hotel"/> </a>
         <div class="custom-navbar-dropdown" style="float: left">
             <button class="dropdown-btn">
                 <fmt:message key="navbar.language"/>
@@ -64,32 +64,35 @@
                 <th><fmt:message key="reservation.status"/></th>
                 <th><fmt:message key="reservation.payment_status"/></th>
             </tr>
+            <c:forEach items="${requestScope.reservations}" var="reservation">
+                <tr class="align-middle"
+                    onclick="window.location='${pageContext.request.contextPath}/app/user/reservation/${reservation.id}';">
+                    <td>${reservation.submitDate.toString().split("T")[0]}</td>
+                    <td>${reservation.places}</td>
+                    <td>${reservation.fromDate.toString().replace("T"," ")}</td>
+                    <td>${reservation.toDate.toString().replace("T"," ")}</td>
+                    <td class="${reservation.apartmentClass.htmlClass}">
+                        <fmt:message key="${reservation.apartmentClass.resName}"/>
+                    </td>
+                    <td class="${reservation.apartmentId==null?'red':'green'}">${reservation.apartmentId==null?'-':reservation.apartmentId}</td>
+                    <td class="${reservation.apartmentPrice==null?'red':'green'}">${reservation.apartmentPrice==null?'-':reservation.apartmentPrice}</td>
+                    <td class="${reservation.reservationStatus.htmlClass}"><fmt:message key="${reservation.reservationStatus.resourceName}"/></td>
 
+                        <c:if test="${reservation.paid}">
+                            <td class="reservation-paid"><fmt:message key="reservation.paid"/></td>
+                        </c:if>
+                        <c:if test="${reservation.expired and !reservation.paid}">
+                            <td class="reservation-expired"><fmt:message key="reservation.status.expired"/></td>
+                        </c:if>
+                        <c:if test="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration!=null}">
+                            <td class="reservation-unpaid"><fmt:message key="reservation.unpaid1"/> ${reservation.daysUntilExpiration} <fmt:message key="reservation.unpaid2"/></td>
+                        </c:if>
+                        <c:if test="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration==null}">
+                            <td class="reservation-unpaid"><fmt:message key="reservation.unpaid"/></td>
+                        </c:if>
 
-            <tr class="align-middle"
-                th:each="reservation : ${allReservations}"
-                th:onclick="'window.location=\'/user/reservation/'+${reservation.id}+'\';'">
-                <td th:text='${reservation.submitDate.toString().split("T")[0]}'></td>
-                <td th:text="${reservation.places}"></td>
-                <td th:text='${reservation.fromDate.toString().replace("T"," ")}'></td>
-                <td th:text='${reservation.toDate.toString().replace("T"," ")}'></td>
-                <td th:class="${reservation.apartmentClass.htmlClass}"
-                    th:text="#{${reservation.apartmentClass.resName}}"></td>
-                <td th:class="${reservation.apartmentId==null?'red':'green'}"
-                    th:text="${reservation.apartmentId==null?'-':reservation.apartmentId}"></td>
-                <td th:class="${reservation.apartmentPrice==null?'red':'green'}"
-                    th:text="${reservation.apartmentPrice==null?'-':reservation.apartmentPrice}"></td>
-                <td th:class="${reservation.reservationStatus.htmlClass}"
-                    th:text="#{${reservation.reservationStatus.resourceName}}"></td>
-                <td>
-                    <label class="reservation-paid" th:if="${reservation.paid}" th:text="#{reservation.paid}"></label>
-                    <label class="reservation-expired" th:if="${reservation.expired and !reservation.paid}" th:text="#{reservation.status.expired}"></label>
-                    <label class="reservation-unpaid" th:if="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration!=null}"
-                           th:text="#{reservation.unpaid1}+${reservation.daysUntilExpiration}+' '+#{reservation.unpaid2}"></label>
-                    <label class="reservation-unpaid" th:if="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration==null}"
-                           th:text="#{reservation.unpaid}"></label>
-                </td>
-            </tr>
+                </tr>
+            </c:forEach>
         </table>
     </div>
 

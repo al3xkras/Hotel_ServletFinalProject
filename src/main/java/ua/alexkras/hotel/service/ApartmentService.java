@@ -5,7 +5,6 @@ import ua.alexkras.hotel.dao.impl.JDBCApartmentDao;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
-import ua.alexkras.hotel.model.ApartmentStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,49 +13,28 @@ import java.util.Optional;
 public class ApartmentService {
     private final JDBCApartmentDao apartmentDAO;
 
-    private Optional<Apartment> currentApartment=Optional.empty();
-    public void clearEverything(){
-        clearCurrentApartment();
-    }
-
-    private Optional<Long> currentReservationId;
-    private Optional<List<Apartment>> apartmentsMatchingCurrentReservation;
-
-
     public ApartmentService(){
         this.apartmentDAO = JDBCDaoFactory.getInstance().createApartmentDAO();
     }
-
 
     public List<Apartment> findApartments(int start, int total){
         return apartmentDAO.findApartments(start,total);
     }
 
     public Optional<Apartment> getApartmentById(Integer id){
-        return apartmentDAO.findApartmentById(id);
+        return apartmentDAO.findById(id);
     }
 
-    public void addApartment(Apartment apartment) {
-        /*apartmentDAO.save(apartment);
-        clearCurrentApartment();
-        clearApartmentsMatchingCurrentReservation();
-
-         */
+    public boolean addApartment(Apartment apartment) {
+        return apartmentDAO.create(apartment);
     }
 
     /**
-     * Update Apartment's status by apartment id
-     *
-     * @param id Apartment's id
-     * @param apartmentStatus New apartment status
-     * @throws ???
+     * Update Apartment
+     * @param apartment Apartment to be updated
      */
-    public void updateApartmentStatusById(int id,ApartmentStatus apartmentStatus) {
-        /*apartmentDAO.updateApartmentStatusById(id,apartmentStatus);
-        clearCurrentApartment();
-        clearApartmentsMatchingCurrentReservation();
-
-         */
+    public void updateApartment(Apartment apartment) {
+        apartmentDAO.update(apartment);
     }
 
     /**
@@ -96,10 +74,6 @@ public class ApartmentService {
         return null;
     }
 
-    public void clearCurrentApartment(){
-        currentApartment=Optional.empty();
-    }
-
     /**
      * Update List of Apartments, that match current Reservation, referenced from ReservationService
      * -If List of apartments is not initialized,
@@ -125,17 +99,5 @@ public class ApartmentService {
 
          */
         return null;
-    }
-
-    public void clearApartmentsMatchingCurrentReservation(){
-        apartmentsMatchingCurrentReservation=null;
-    }
-
-    public Apartment getCurrentApartment() {
-        return currentApartment.orElseThrow(IllegalStateException::new);
-    }
-
-    public List<Apartment> getApartmentsMatchingCurrentReservation() {
-        return apartmentsMatchingCurrentReservation.orElseThrow(IllegalStateException::new);
     }
 }
