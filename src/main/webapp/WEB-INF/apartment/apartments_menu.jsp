@@ -32,7 +32,8 @@
 </head>
 <body>
     <div class="custom-navbar">
-        <a class="active" href="${pageContext.request.contextPath}/"><fmt:message key="navbar.home"/></a>
+        <a class="active" href="${pageContext.request.contextPath}/app/${sessionScope.user.userType.name().toLowerCase()}"><fmt:message key="navbar.home"/></a>
+
 
         <div class="custom-navbar-dropdown" style="float: left">
             <button class="dropdown-btn">
@@ -79,13 +80,13 @@
 
             <c:forEach items="${requestScope.apartments}" var="apartment">
                 <tr class="align-middle"
-                    onclick="window.location='/apartment/'+${apartment.id};">
+                    onclick="window.location='${pageContext.request.contextPath}/app/apartments/apartment/'+${apartment.id};">
                     <td class="align-middle">${apartment.id}</td>
                     <td class="align-middle">${apartment.name}</td>
                     <td class="align-middle">${apartment.places}</td>
                     <td class="align-middle">${apartment.price}</td>
-                    <td class="${apartment.apartmentClass.htmlClass}">${apartment.apartmentClass.resName}</td>
-                    <td class="${apartment.status.htmlClass}">${apartment.status.resName}</td>
+                    <td class="${apartment.apartmentClass.htmlClass}"><fmt:message key="${apartment.apartmentClass.resName}"/></td>
+                    <td class="${apartment.status.htmlClass}"><fmt:message key="${apartment.status.resName}"/></td>
                 </tr>
             </c:forEach>
 
