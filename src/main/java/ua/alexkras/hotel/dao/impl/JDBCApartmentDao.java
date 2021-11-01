@@ -2,7 +2,6 @@ package ua.alexkras.hotel.dao.impl;
 
 import ua.alexkras.hotel.dao.ApartmentDao;
 import ua.alexkras.hotel.entity.Apartment;
-import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.*;
-import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.selectPendingReservationsWithLimit;
 
 public class JDBCApartmentDao implements ApartmentDao {
 
@@ -20,27 +18,6 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     public JDBCApartmentDao(Connection connection) {
         this.connection = connection;
-    }
-
-    @Override
-    public Optional<Apartment> findApartmentById(long id){
-        Apartment apartment;
-        try(PreparedStatement findApartmentById = connection.prepareStatement(ApartmentTableStrings.findById)){
-            findApartmentById.setLong(1,id);
-            ResultSet result = findApartmentById.executeQuery();
-
-            if (result.isBeforeFirst()){
-                return Optional.empty();
-            }
-            result.next();
-
-            apartment = getApartmentFromResultSet(result);
-        } catch (Exception e){
-            e.printStackTrace();
-            return Optional.empty();
-        }
-
-        return Optional.of(apartment);
     }
 
     @Override
@@ -55,23 +32,14 @@ public class JDBCApartmentDao implements ApartmentDao {
     }
 
     @Override
-    public boolean create(Apartment apartment) {
-        if (apartment.getId()!=null){
-            return create(apartment.getId(),apartment);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean create(long id, Apartment apartment){
+    public boolean create(Apartment apartment){
         try(PreparedStatement addApartment = connection.prepareStatement(ApartmentTableStrings.addApartment)
             ){
-            addApartment.setLong(1,id);
-            addApartment.setString(2,apartment.getName());
-            addApartment.setInt(3,apartment.getPlaces());
-            addApartment.setString(4,apartment.getApartmentClass().name());
-            addApartment.setString(5,apartment.getStatus().name());
-            addApartment.setInt(6,apartment.getPrice());
+            addApartment.setString(1,apartment.getName());
+            addApartment.setInt(2,apartment.getPlaces());
+            addApartment.setString(3,apartment.getApartmentClass().name());
+            addApartment.setString(4,apartment.getStatus().name());
+            addApartment.setInt(5,apartment.getPrice());
 
             addApartment.execute();
         } catch (SQLIntegrityConstraintViolationException ignored){
@@ -91,10 +59,10 @@ public class JDBCApartmentDao implements ApartmentDao {
             findApartmentById.setLong(1,id);
             ResultSet result = findApartmentById.executeQuery();
 
-            if (result.isBeforeFirst()){
+            if (!result.next()){
                 return Optional.empty();
             }
-            result.next();
+
             apartment = getApartmentFromResultSet(result);
 
         } catch (Exception e){
@@ -163,10 +131,11 @@ public class JDBCApartmentDao implements ApartmentDao {
             updateApartment.setInt(5,apartment.getPrice());
             updateApartment.setLong(6,apartment.getId());
 
-            updateApartment.execute();
+            updateApartment.executeUpdate();
 
         } catch (Exception e){
             e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 

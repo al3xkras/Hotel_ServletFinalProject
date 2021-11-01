@@ -51,10 +51,9 @@ public class JDBCReservationDao implements ReservationDAO {
             addApartment.setDate(7,Date.valueOf(reservation.getFromDate()));
             addApartment.setDate(8,Date.valueOf(reservation.getToDate()));
             addApartment.setTimestamp(9,Timestamp.valueOf(reservation.getSubmitDate()));
-            addApartment.setDate(10,Date.valueOf(reservation.getAdminConfirmationDate()));
-            addApartment.setBoolean(11,reservation.isPaid());
-            addApartment.setBoolean(12,reservation.isActive());
-            addApartment.setBoolean(13,reservation.isExpired());
+            addApartment.setBoolean(10,reservation.isPaid());
+            addApartment.setBoolean(11,reservation.isActive());
+            addApartment.setBoolean(12,reservation.isExpired());
 
             addApartment.execute();
         } catch (SQLIntegrityConstraintViolationException ignored){
@@ -162,7 +161,7 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public List<Reservation> findPendingReservationsByUserId(int userId, int start, int total){
+    public List<Reservation> findPendingReservationsByUserId(long userId, int start, int total){
         if (total > requestMaxReservations){
             throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
                     +", requested: "+total);
@@ -173,9 +172,11 @@ public class JDBCReservationDao implements ReservationDAO {
                     connection.prepareStatement(selectPendingReservationsByUserIdWithLimit)
             ){
 
-            findActiveByUserId.setInt(1,start-1);
-            findActiveByUserId.setInt(2,total);
-            findActiveByUserId.setInt(3,userId);
+
+            findActiveByUserId.setLong(1,userId);
+            findActiveByUserId.setInt(2,start-1);
+            findActiveByUserId.setInt(3,total);
+
 
             ResultSet result=findActiveByUserId.executeQuery();
 
@@ -194,7 +195,7 @@ public class JDBCReservationDao implements ReservationDAO {
         return Reservation.builder()
                 .id(resultSet.getInt(colReservationId))
                 .userId(resultSet.getInt(colUserId))
-                .apartmentId(resultSet.getInt(colApartmentId))
+                .apartmentId(resultSet.getLong(colApartmentId))
                 .apartmentClass(ApartmentClass.valueOf(resultSet.getString(colApartmentClass)))
                 .places(resultSet.getInt(colApartmentPlaces))
                 .apartmentPrice(resultSet.getInt(colApartmentPrice))
