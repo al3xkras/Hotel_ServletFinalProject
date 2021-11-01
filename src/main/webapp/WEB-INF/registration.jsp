@@ -50,6 +50,10 @@
         <fmt:message key="regexp.phone_number"/>
     </c:set>
 
+    <c:set var="data_invalid_format">
+        <fmt:message key="data.invalid_format"/>
+    </c:set>
+
     <div style="width: 70%; height: 70%; margin: 15%">
         <h1 class="form-signin-heading"><fmt:message key="registration.header"/></h1>
 
@@ -59,15 +63,19 @@
             <div class="form-group">
                 <label for="name"><fmt:message key="form.name"/></label>
                 <input id="name" minlength="2" name="name" type="text" pattern="${name_regex}"
+                       title="${data_invalid_format} ${name_regex}"
                        value="${requestScope.registrationRequest.name}" required>
                 <c:if test='${requestScope.errorField.equals("name")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
+
+
             <div class="form-group">
                 <label for="surname"><fmt:message key="form.surname"/></label>
                 <input id="surname" minlength="2" name="surname" type="text" pattern="${surname_regex}"
+                       title="${data_invalid_format} ${name_regex}"
                        value="${requestScope.registrationRequest.surname}" required>
 
                 <c:if test='${requestScope.errorField.equals("surname")}'>
@@ -78,6 +86,7 @@
             <div class="form-group">
                 <label for="username"><fmt:message key="form.username"/></label>
                 <input id="username" minlength="3" maxlength="15" name="username" type="text" pattern="${username_regex}"
+                       title="${data_invalid_format} ${username_regex}"
                        value="${requestScope.registrationRequest.username}" required>
                 <c:if test='${requestScope.errorField.equals("username")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
@@ -129,6 +138,7 @@
             <div class="form-group">
                 <label for="phone-number"><fmt:message key="form.phone_number"/></label>
                 <input id="phone-number" name="phoneNumber" type="text" pattern="${phone_regex}"
+                       title="${data_invalid_format} ${phone_regex}"
                        value="${requestScope.registrationRequest.phoneNumber}" required>
                 <c:if test='${requestScope.errorField.equals("phoneNumber")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>

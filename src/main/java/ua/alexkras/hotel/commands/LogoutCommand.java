@@ -10,12 +10,13 @@ public class LogoutCommand implements Command {
     public String executeGet(HttpServletRequest request) {
         AuthFilter.clearCurrentLoginUser();
         request.getSession().setAttribute("user",null);
-        return "";
+        return "redirect:/";
     }
 
     @Override
     public String executePost(HttpServletRequest request) {
         AuthFilter.clearCurrentLoginUser();
-        return "/";
+        request.getSession().setAttribute("user",null);
+        return "redirect:/";
     }
 }
