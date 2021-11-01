@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="custom-navbar" style="">
-        <a class="active" href="${pageContext.request.contextPath}/">
+        <a class="active" href="${pageContext.request.contextPath}/app/admin">
             <fmt:message key="navbar.hotel"/>
         </a>
 
@@ -40,7 +40,7 @@
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content" style="left: 85%; width: 14.5%">
-                <a href="${pageContext.request.contextPath}/app/add_apartment"><fmt:message key="new_apartment.header"/></a>
+                <a href="${pageContext.request.contextPath}/app/admin/add_apartment"><fmt:message key="new_apartment.header"/></a>
                 <a href="${pageContext.request.contextPath}/app/apartments"><fmt:message key="navbar.all_apartments"/></a>
                 <a href="${pageContext.request.contextPath}/app/personal_data"><fmt:message key="navbar.personal_data"/></a>
             </div>

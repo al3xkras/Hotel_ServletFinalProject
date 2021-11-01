@@ -43,6 +43,22 @@ public class Apartment {
         return price;
     }
 
+    public void setStatus(ApartmentStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Apartment{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", places=" + places +
+                ", apartmentClass=" + apartmentClass +
+                ", status=" + status +
+                ", price=" + price +
+                '}';
+    }
+
     public static ApartmentBuilder builder() {
         return new ApartmentBuilder();
     }

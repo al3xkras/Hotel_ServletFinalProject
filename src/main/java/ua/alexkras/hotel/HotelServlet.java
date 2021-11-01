@@ -37,13 +37,17 @@ public class HotelServlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
 
     public void init(){
-        commands.put("login", new LoginCommand(new UserService()));
-        commands.put("registration" , new RegistrationCommand(new UserService()));
+        ReservationService reservationService = new ReservationService();
+        UserService userService = new UserService();
+        ApartmentService apartmentService = new ApartmentService();
+
+        commands.put("login", new LoginCommand(userService));
+        commands.put("registration" , new RegistrationCommand(userService));
         commands.put("exception" , new ExceptionCommand());
-        commands.put(UserCommand.pathBasename, new UserCommand());
-        commands.put("admin", new AdminCommand(new ReservationService()));
+        commands.put(UserCommand.pathBasename, new UserCommand(reservationService));
+        commands.put("admin", new AdminCommand(reservationService));
         commands.put("logout", new LogoutCommand());
-        commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(new ApartmentService()));
+        commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(apartmentService, reservationService));
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -66,11 +70,9 @@ public class HotelServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        String path = request.getRequestURI();
-        path = path.replaceAll(".*/app/" , "");
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
-        Command postCommand =  commands.getOrDefault(path , defaultCommand);
-
+        Command postCommand =  commands.getOrDefault(command , defaultCommand);
         String page = postCommand.executePost(request);
 
         if (!page.isEmpty() && !page.startsWith("redirect:")) {

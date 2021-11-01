@@ -4,17 +4,26 @@ import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.UserType;
+import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class AdminCommand implements Command {
 
+    public static final String pathBasename = "admin";
     private final ReservationService reservationService;
+
+    private final Map<String, Command> commands = new HashMap<>();
 
     public AdminCommand(ReservationService reservationService){
         this.reservationService=reservationService;
+
+        commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(new ApartmentService()));
+
     }
     @Override
     public String executeGet(HttpServletRequest request) {
@@ -26,13 +35,24 @@ public class AdminCommand implements Command {
         }
 
         //request.setAttribute("pendingReservations",reservationService.getCurrentPendingReservations());
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
-        return "/WEB-INF/personal_area/admin.jsp";
+        return command.isEmpty() ?
+                "/WEB-INF/personal_area/admin.jsp" :
+                Optional.ofNullable(commands.get(command))
+                 .orElseThrow(IllegalStateException::new)
+                 .executeGet(request);
     }
 
     @Override
     public String executePost(HttpServletRequest request) {
-        return "redirect:/";
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+
+        return command.isEmpty() ?
+                "/WEB-INF/personal_area/admin.jsp" :
+                Optional.ofNullable(commands.get(command))
+                        .orElseThrow(IllegalStateException::new)
+                        .executePost(request);
     }
 
     /*
