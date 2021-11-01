@@ -4,6 +4,7 @@ import ua.alexkras.hotel.commands.user.SelectApartmentCommand;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -16,10 +17,10 @@ public class ApartmentCommand implements Command{
     private final ApartmentService apartmentService;
     private final Map<String, Command> commands = new HashMap<>();
 
-    public ApartmentCommand(ApartmentService apartmentService){
+    public ApartmentCommand(ApartmentService apartmentService, ReservationService reservationService){
         this.apartmentService=apartmentService;
 
-        commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(new ApartmentService()));
+        commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
     }
 
     @Override
@@ -40,7 +41,13 @@ public class ApartmentCommand implements Command{
 
     @Override
     public String executePost(HttpServletRequest request) {
-        return "redirect:/";
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+
+        return command.isEmpty() ?
+                "/WEB-INF/apartment/apartments_menu.jsp" :
+                Optional.ofNullable(commands.get(command))
+                        .orElseThrow(IllegalStateException::new)
+                        .executePost(request);
     }
 
 

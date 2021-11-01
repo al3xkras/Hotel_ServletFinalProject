@@ -29,12 +29,8 @@ public class AuthFilter implements Filter {
         final HttpServletResponse res = (HttpServletResponse) response;
 
         HttpSession session = req.getSession();
-        ServletContext context = request.getServletContext();
 
-        Optional<User> loggedUser = Optional.ofNullable((User)session.getAttribute("user"));
-        currentLoginUser = loggedUser;
-
-        loggedUser.ifPresent(user -> context.log(user.toString()));
+        currentLoginUser = Optional.ofNullable((User)session.getAttribute("user"));
 
         filterChain.doFilter(request,response);
     }

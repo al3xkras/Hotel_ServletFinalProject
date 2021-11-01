@@ -37,7 +37,7 @@ public interface ApartmentTableStrings {
             colApartmentClass+','+
             colApartmentStatus+','+
             colApartmentPrice+") VALUES "+
-            "(?, ?, ?, ?, ?, ?)";
+            "(null, ?, ?, ?, ?, ?)";
 
     String updateApartment = "UPDATE " +
             MySqlStrings.databaseName+'.'+tableApartment+

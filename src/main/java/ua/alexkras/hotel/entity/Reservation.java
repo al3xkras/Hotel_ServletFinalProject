@@ -6,19 +6,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Reservation {
-
     private Long id;
     private Long userId;
+    private Long apartmentId;
     private ApartmentClass apartmentClass;
+    private int places;
+    private Integer apartmentPrice;
+    private ReservationStatus reservationStatus;
     private LocalDate fromDate;
     private LocalDate toDate;
     private LocalDateTime submitDate;
     private LocalDate adminConfirmationDate;
-    private int places;
-    private Integer apartmentId;
-    private Integer apartmentPrice;
-    private boolean isPaid;
-    private ReservationStatus reservationStatus;
+    private boolean isPaid = false;
     private boolean isActive = true;
     private boolean expired = false;
 
@@ -61,7 +60,7 @@ public class Reservation {
         return places;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
@@ -96,7 +95,7 @@ public class Reservation {
     public static final class ReservationBuilder {
         private Long id;
         private Long userId;
-        private Integer apartmentId;
+        private Long apartmentId;
         private ApartmentClass apartmentClass;
         private int places;
         private Integer apartmentPrice;
@@ -156,7 +155,7 @@ public class Reservation {
             return this;
         }
 
-        public ReservationBuilder apartmentId(Integer apartmentId) {
+        public ReservationBuilder apartmentId(Long apartmentId) {
             this.apartmentId = apartmentId;
             return this;
         }

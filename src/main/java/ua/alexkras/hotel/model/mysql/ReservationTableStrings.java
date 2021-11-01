@@ -9,7 +9,7 @@ public interface ReservationTableStrings {
     String colApartmentClass = "apartment_class";
     String colApartmentPlaces = "places";
     String colApartmentPrice = "price";
-    String colReservationStatus="status";
+    String colReservationStatus="reservation_status";
     String colFromDate = "from_date";
     String colToDate = "to_date";
     String colSubmitDate = "submit_date";
@@ -30,7 +30,7 @@ public interface ReservationTableStrings {
             colFromDate+" DATE not null,"+
             colToDate+" DATE not null,"+
             colSubmitDate+" DATETIME not null,"+
-            colAdminConfirmationDate+" DATE not null,"+
+            colAdminConfirmationDate+" DATE,"+
             colIsPaid+" boolean default 0,"+
             colIsActive+" boolean default 1,"+
             colIsExpired+" boolean default 0);";
@@ -45,10 +45,9 @@ public interface ReservationTableStrings {
             colFromDate+','+
             colToDate+','+
             colSubmitDate+','+
-            colAdminConfirmationDate+','+
             colIsPaid+','+
             colIsActive+','+
-            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);";
+            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
 
     String selectPendingReservations="select "+
             colReservationId+','+

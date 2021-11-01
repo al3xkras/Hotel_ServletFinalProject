@@ -24,4 +24,12 @@ public enum ReservationStatus {
         this.resourceName=resourceName;
         this.htmlClass=htmlClass;
     }
+
+    public String getHtmlClass() {
+        return this.htmlClass;
+    }
+
+    public String getResourceName() {
+        return this.resourceName;
+    }
 }
