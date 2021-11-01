@@ -51,4 +51,6 @@ public interface ApartmentTableStrings {
 
     String deleteApartmentById = "DELETE FROM "+MySqlStrings.databaseName+"."+tableApartment+" WHERE "+colApartmentId+"=?";
 
+    String selectApartmentsWithLimit = findAllApartments+" limit ?,?";
+
 }

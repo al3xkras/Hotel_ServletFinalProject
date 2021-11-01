@@ -1,6 +1,5 @@
 package ua.alexkras.hotel.commands.user;
 
-import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
@@ -20,7 +19,6 @@ public class UserCommand implements Command {
 
     public UserCommand(){
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(new ReservationService()));
-        commands.put("select_apartment",new SelectApartmentCommand());
     }
 
     @Override
@@ -44,7 +42,7 @@ public class UserCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        return "/";
+        return "redirect:/";
     }
 
 }

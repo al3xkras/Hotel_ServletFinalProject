@@ -2,8 +2,10 @@ package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.commands.*;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
+import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.UserService;
 
@@ -41,6 +43,7 @@ public class HotelServlet extends HttpServlet {
         commands.put(UserCommand.pathBasename, new UserCommand());
         commands.put("admin", new AdminCommand(new ReservationService()));
         commands.put("logout", new LogoutCommand());
+        commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(new ApartmentService()));
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

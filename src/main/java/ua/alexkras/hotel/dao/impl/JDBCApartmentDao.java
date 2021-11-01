@@ -2,6 +2,7 @@ package ua.alexkras.hotel.dao.impl;
 
 import ua.alexkras.hotel.dao.ApartmentDao;
 import ua.alexkras.hotel.entity.Apartment;
+import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.*;
+import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.selectPendingReservationsWithLimit;
 
 public class JDBCApartmentDao implements ApartmentDao {
 
@@ -121,6 +123,29 @@ public class JDBCApartmentDao implements ApartmentDao {
         }
 
         return apartments;
+    }
+
+    public List<Apartment> findApartments(int start, int total){
+
+        List<Apartment> list = new ArrayList<>();
+        try(PreparedStatement findApartments=
+                    connection.prepareStatement(selectApartmentsWithLimit)
+            ){
+
+            findApartments.setInt(1,start-1);
+            findApartments.setInt(2,total);
+
+            ResultSet result=findApartments.executeQuery();
+
+            while(result.next()){
+                Apartment apartment = getApartmentFromResultSet(result);
+                list.add(apartment);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+        return list;
     }
 
     @Override

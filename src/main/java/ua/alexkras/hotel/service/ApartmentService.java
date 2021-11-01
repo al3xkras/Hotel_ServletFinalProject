@@ -2,6 +2,7 @@ package ua.alexkras.hotel.service;
 
 
 import ua.alexkras.hotel.dao.impl.JDBCApartmentDao;
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentStatus;
@@ -12,7 +13,6 @@ import java.util.Optional;
 
 public class ApartmentService {
     private final JDBCApartmentDao apartmentDAO;
-    private final ReservationService reservationService;
 
     private Optional<Apartment> currentApartment=Optional.empty();
     public void clearEverything(){
@@ -22,23 +22,18 @@ public class ApartmentService {
     private Optional<Long> currentReservationId;
     private Optional<List<Apartment>> apartmentsMatchingCurrentReservation;
 
-    //@Autowired
-    public ApartmentService(JDBCApartmentDao apartmentDAO,
-                            ReservationService reservationService){
-        this.apartmentDAO = apartmentDAO;
-        this.reservationService = reservationService;
+
+    public ApartmentService(){
+        this.apartmentDAO = JDBCDaoFactory.getInstance().createApartmentDAO();
     }
 
-    /*
-    public Page<Apartment> getAllApartments(Pageable pageable){
-        return apartmentDAO.findAll(pageable);
-    }
 
-     */
+    public List<Apartment> findApartments(int start, int total){
+        return apartmentDAO.findApartments(start,total);
+    }
 
     public Optional<Apartment> getApartmentById(Integer id){
-        //return apartmentDAO.findApartmentById(id);
-        return null;
+        return apartmentDAO.findApartmentById(id);
     }
 
     public void addApartment(Apartment apartment) {
