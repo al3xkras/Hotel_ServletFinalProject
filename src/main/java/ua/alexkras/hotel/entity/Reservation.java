@@ -7,55 +7,19 @@ import java.time.LocalDateTime;
 
 public class Reservation {
 
-    /*@Id
-    @GeneratedValue
-    @Column(name = "ID", nullable = false, length = 32)
-     */
     private Long id;
-
-    //@Column(name = "USER_ID", nullable = false)
     private Long userId;
-
-    //@Column(name = "APARTMENT_CLASS", nullable = false)
-    //@Enumerated(EnumType.STRING)
     private ApartmentClass apartmentClass;
-
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    //@Column(name = "FROM_DATE", nullable = false)
-    private LocalDateTime fromDate;
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    //@Column(name = "TO_DATE", nullable = false)
-    private LocalDateTime toDate;
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    //@Column(name = "SUBMIT_DATE", nullable = false)
+    private LocalDate fromDate;
+    private LocalDate toDate;
     private LocalDateTime submitDate;
-
-    //@Column(name = "ADMIN_CONFIRMATION_DATE")
     private LocalDate adminConfirmationDate;
-
-    //@Column(name = "PLACES",nullable = false)
     private int places;
-
-    //@Column(name = "APARTMENT_ID")
     private Integer apartmentId;
-
-    //@Column(name = "APARTMENT_PRICE")
     private Integer apartmentPrice;
-
-    //@Column(name = "IS_PAID", nullable = false)
     private boolean isPaid;
-
-    //@Column(name="STATUS", nullable = false)
-    //@Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
-
-    //@Column(name = "IS_ACTIVE", nullable = false, columnDefinition = "boolean default 1")
     private boolean isActive = true;
-
-    //@Column(name = "EXPIRED", nullable = false, columnDefinition = "boolean default 0")
     private boolean expired = false;
 
     //@Transient
@@ -77,11 +41,11 @@ public class Reservation {
         return apartmentClass;
     }
 
-    public LocalDateTime getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public LocalDateTime getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
@@ -125,53 +89,32 @@ public class Reservation {
         return daysUntilExpiration;
     }
 
+    public static ReservationBuilder builder() {
+        return new ReservationBuilder();
+    }
 
     public static final class ReservationBuilder {
-        /*@Id
-               @GeneratedValue
-               @Column(name = "ID", nullable = false, length = 32)
-                */
         private Long id;
-        //@Column(name = "USER_ID", nullable = false)
         private Long userId;
-        //@Column(name = "APARTMENT_CLASS", nullable = false)
-        //@Enumerated(EnumType.STRING)
-        private ApartmentClass apartmentClass;
-        //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-        //@Column(name = "FROM_DATE", nullable = false)
-        private LocalDateTime fromDate;
-        //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-        //@Column(name = "TO_DATE", nullable = false)
-        private LocalDateTime toDate;
-        //@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-        //@Column(name = "SUBMIT_DATE", nullable = false)
-        private LocalDateTime submitDate;
-        //@Column(name = "ADMIN_CONFIRMATION_DATE")
-        private LocalDate adminConfirmationDate;
-        //@Column(name = "PLACES",nullable = false)
-        private int places;
-        //@Column(name = "APARTMENT_ID")
         private Integer apartmentId;
-        //@Column(name = "APARTMENT_PRICE")
+        private ApartmentClass apartmentClass;
+        private int places;
         private Integer apartmentPrice;
-        //@Column(name = "IS_PAID", nullable = false)
-        private boolean isPaid = false;
-        //@Column(name="STATUS", nullable = false)
-        //@Enumerated(EnumType.STRING)
         private ReservationStatus reservationStatus;
-        //@Column(name = "IS_ACTIVE", nullable = false, columnDefinition = "boolean default 1")
+        private LocalDate fromDate;
+        private LocalDate toDate;
+        private LocalDateTime submitDate;
+        private LocalDate adminConfirmationDate;
+        private boolean isPaid = false;
         private boolean isActive = true;
-        //@Column(name = "EXPIRED", nullable = false, columnDefinition = "boolean default 0")
         private boolean expired = false;
-        //@Transient
+
         private Long daysUntilExpiration;
 
         private ReservationBuilder() {
         }
 
-        public static ReservationBuilder aReservation() {
-            return new ReservationBuilder();
-        }
+
 
         public ReservationBuilder id(long id) {
             this.id = id;
@@ -188,12 +131,12 @@ public class Reservation {
             return this;
         }
 
-        public ReservationBuilder fromDate(LocalDateTime fromDate) {
+        public ReservationBuilder fromDate(LocalDate fromDate) {
             this.fromDate = fromDate;
             return this;
         }
 
-        public ReservationBuilder toDate(LocalDateTime toDate) {
+        public ReservationBuilder toDate(LocalDate toDate) {
             this.toDate = toDate;
             return this;
         }

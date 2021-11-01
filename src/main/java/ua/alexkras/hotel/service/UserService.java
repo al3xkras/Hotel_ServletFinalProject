@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public class UserService {
 
-    //@Autowired
     private final JDBCUserDao userDao;
 
     public UserService(){

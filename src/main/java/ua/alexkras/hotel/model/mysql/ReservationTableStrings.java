@@ -29,11 +29,46 @@ public interface ReservationTableStrings {
             colReservationStatus+" varchar(20) not null,"+
             colFromDate+" DATE not null,"+
             colToDate+" DATE not null,"+
-            colSubmitDate+" DATE not null,"+
+            colSubmitDate+" DATETIME not null,"+
             colAdminConfirmationDate+" DATE not null,"+
             colIsPaid+" boolean default 0,"+
             colIsActive+" boolean default 1,"+
             colIsExpired+" boolean default 0);";
 
-    String addReservation = "";
+    String addReservation = "INSERT INTO "+MySqlStrings.databaseName+"."+tableReservation+
+            '('+colUserId+','+
+            colApartmentId+','+
+            colApartmentClass+','+
+            colApartmentPlaces+','+
+            colApartmentPrice+','+
+            colReservationStatus+','+
+            colFromDate+','+
+            colToDate+','+
+            colSubmitDate+','+
+            colAdminConfirmationDate+','+
+            colIsPaid+','+
+            colIsActive+','+
+            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);";
+
+    String selectPendingReservations="select "+
+            colReservationId+','+
+            colUserId+','+
+            colApartmentId+','+
+            colApartmentClass+','+
+            colApartmentPlaces+','+
+            colApartmentPrice+','+
+            colReservationStatus+','+
+            colFromDate+','+
+            colToDate+','+
+            colSubmitDate+','+
+            colAdminConfirmationDate+','+
+            colIsPaid+','+
+            colIsActive+','+
+            colIsExpired+
+            " from "+MySqlStrings.databaseName+"."+tableReservation+" WHERE "+colIsActive;
+
+    String selectPendingReservationsWithLimit = selectPendingReservations+" limit ?,?";
+
+    String selectPendingReservationsByUserIdWithLimit = selectPendingReservations+" AND "+colUserId+"=? limit ?,?";
+
 }

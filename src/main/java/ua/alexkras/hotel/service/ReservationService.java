@@ -1,5 +1,6 @@
 package ua.alexkras.hotel.service;
 
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCReservationDao;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
@@ -7,26 +8,15 @@ import ua.alexkras.hotel.model.ReservationStatus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public class ReservationService {
 
     private final JDBCReservationDao reservationDAO;
 
-    private Optional<Reservation> currentReservation=Optional.empty();
-    private Optional<List<Reservation>> currentUserActiveReservations=Optional.empty();
-    private Optional<List<Reservation>> currentPendingReservations=Optional.empty();
-    public void clearEverything(){
-        currentReservation=Optional.empty();
-        currentUserActiveReservations=Optional.empty();
-        currentPendingReservations=Optional.empty();
-    }
-
     private static final long daysToCancelPayment = 2L;
 
-    //@Autowired
-    public ReservationService(JDBCReservationDao reservationDAO){
-        this.reservationDAO =reservationDAO;
+    public ReservationService(){
+        this.reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
     }
 
     /*
@@ -63,12 +53,6 @@ public class ReservationService {
             return false;
         }
         return true;
-    }
-
-    public void addReservation (Reservation reservation){
-        reservationDAO.save(reservation);
-        clearCurrentReservation();
-        clearCurrentUserActiveReservations();
     }
 
     public List<Reservation> getReservationsByUserId(int userId){
@@ -276,25 +260,11 @@ public class ReservationService {
         return null;
     }
 
-    public void clearCurrentUserActiveReservations(){currentUserActiveReservations=Optional.empty();}
-
-    public void clearCurrentReservation(){
-        currentReservation=Optional.empty();
+    public List<Reservation> getPendingReservations(int start, int total){
+        return reservationDAO.findAllPendingReservations(start, total);
     }
 
-    public void clearCurrentPendingReservations(){
-        currentPendingReservations=Optional.empty();
-    }
-
-    public Reservation getCurrentReservation() {
-        return currentReservation.orElseThrow(IllegalStateException::new);
-    }
-
-    public List<Reservation> getCurrentUserActiveReservations() {
-        return currentUserActiveReservations.orElseThrow(IllegalStateException::new);
-    }
-
-    public List<Reservation> getCurrentPendingReservations() {
-        return currentPendingReservations.orElseThrow(IllegalStateException::new);
+    public boolean addReservation (Reservation reservation){
+        return reservationDAO.create(reservation);
     }
 }

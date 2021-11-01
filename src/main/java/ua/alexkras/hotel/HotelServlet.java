@@ -1,7 +1,10 @@
 package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.commands.*;
+import ua.alexkras.hotel.commands.admin.AdminCommand;
+import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.UserService;
 
 import javax.servlet.ServletException;
@@ -15,15 +18,17 @@ import java.util.Map;
 
 public class HotelServlet extends HttpServlet {
 
+    public static final String pathBasename = "app";
+
     private final Command defaultCommand = new Command() {
         @Override
         public String executeGet(HttpServletRequest request) {
-            return "index.jsp";
+            return "redirect:/exception";
         }
 
         @Override
         public String executePost(HttpServletRequest request) {
-            return "/";
+            return "redirect:/exception";
         }
     };
 
@@ -33,8 +38,8 @@ public class HotelServlet extends HttpServlet {
         commands.put("login", new LoginCommand(new UserService()));
         commands.put("registration" , new RegistrationCommand(new UserService()));
         commands.put("exception" , new ExceptionCommand());
-        commands.put("user", new UserCommand());
-        commands.put("admin", new AdminCommand());
+        commands.put(UserCommand.pathBasename, new UserCommand());
+        commands.put("admin", new AdminCommand(new ReservationService()));
         commands.put("logout", new LogoutCommand());
     }
 
@@ -42,10 +47,9 @@ public class HotelServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
-        String path = request.getRequestURI();
-        path = path.replaceAll(".*/app/" , "");
 
-        Command getCommand = commands.getOrDefault(path , defaultCommand);
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+        Command getCommand = commands.getOrDefault(command , defaultCommand);
 
         String page = getCommand.executeGet(request);
         if (!page.startsWith("redirect:")) {

@@ -117,7 +117,7 @@ public class ApartmentService {
      * @return List of apartments, that match current Reservation, referenced from ReservationService
      */
     public List<Apartment> updateApartmentsMatchingCurrentReservation(){
-        if (    !apartmentsMatchingCurrentReservation.isPresent() ||
+        /*if (    !apartmentsMatchingCurrentReservation.isPresent() ||
                 apartmentsMatchingCurrentReservation.get().isEmpty() ||
                 !currentReservationId.isPresent() ||
                 currentReservationId.get().longValue() == reservationService.getCurrentReservation().getId()) {
@@ -127,6 +127,9 @@ public class ApartmentService {
             currentReservationId=Optional.of(reservationService.getCurrentReservation().getId());
         }
         return getApartmentsMatchingCurrentReservation();
+
+         */
+        return null;
     }
 
     public void clearApartmentsMatchingCurrentReservation(){
