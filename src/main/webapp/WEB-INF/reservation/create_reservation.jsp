@@ -1,5 +1,13 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<%@ page import="ua.alexkras.hotel.model.ApartmentClass" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="messages"/>
+
+<html lang="${sessionScope.lang}">
 <head>
     <meta charset="UTF-8">
     <title>New reservation</title>
@@ -24,44 +32,48 @@
 </head>
 <body>
 
-    <h1 style="text-align: center; margin-top: 5%; margin-bottom: 30px" th:text="#{reservation.form.header}"></h1>
+    <h1 style="text-align: center; margin-top: 5%; margin-bottom: 30px"><fmt:message key="reservation.form.header"/></h1>
 
     <div class="d-flex justify-content-center">
 
-        <form class="form" action="#" th:action="@{/create_reservation}" th:object="${reservationRequest}" method="post" autocomplete="off">
+        <form class="form" action="${pageContext.request.contextPath}/app/user/create_reservation" method="post" autocomplete="off">
 
 
             <div class="form-group">
-                <label for="apartment-class" th:text="#{reservation.form.apartment_class}">Apartment class</label>
-                <select id="apartment-class" th:field="*{apartmentClass}" required>
-                    <option th:each="class : ${T(ua.alexkras.hotel.model.ApartmentClass).values()}"
-                            th:value="${class.name()}"
-                            th:text="#{${class.resName}}">
-                    </option>
+                <label for="apartment-class"><fmt:message key="reservation.form.apartment_class"/></label>
+                <select id="apartment-class" name="apartmentClass" required>
+                    <c:forEach items="<%=ApartmentClass.values()%>" var="apartmentClass">
+                        <option value="${apartmentClass.name()}">
+                            <fmt:message key="${apartmentClass.resName}"/>
+                        </option>
+                    </c:forEach>
+
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="places" th:text="#{reservation.form.places}"></label>
-                <input type="number" min="1" max="5" id="places" th:field="*{places}" required>
+                <label for="places"><fmt:message key="reservation.form.places"/></label>
+                <input type="number" min="1" max="5" id="places" name="places" required>
             </div>
 
             <div class="form-group">
-                <label for="from_date" th:text="#{reservation.form.from_date}"></label>
-                <input type="datetime-local" id="from_date" th:field="*{fromDate}" required>
+                <label for="from_date"><fmt:message key="reservation.form.from_date"/></label>
+                <input type="date" id="from_date" name="fromDate" required>
             </div>
 
             <div class="form-group">
-                <label for="to_date" th:text="#{reservation.form.to_date}"></label>
-                <input type="datetime-local" id="to_date" th:field="*{toDate}" required>
-                <div class="alert alert-warning" th:if="${fromDateIsGreaterThanToDate}"
-                     th:text="#{reservation.alert.date}"></div>
+                <label for="to_date"><fmt:message key="reservation.form.to_date"/></label>
+                <input type="date" id="to_date" name="toDate" required>
+                <c:if test="${requestScope.fromDateIsGreaterThanToDate}">
+                    <div class="alert alert-warning"><fmt:message key="reservation.alert.date"/></div>
+                </c:if>
+
             </div>
 
-            <button type="submit" class="btn btn-lg btn-primary btn-block" th:text="#{form.submit}"></button>
+            <button type="submit" class="btn btn-lg btn-primary btn-block"><fmt:message key="form.submit"/></button>
         </form>
     </div>
 
-    <script type="text/javascript" th:src="@{/js/reservation/create_reservation.js}"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/reservation/create_reservation.js"></script>
 </body>
 </html>

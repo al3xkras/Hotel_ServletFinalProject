@@ -71,9 +71,39 @@
                 <th><fmt:message key="reservation.payment_status"/></th>
             </tr>
 
-            <tr class="align-middle">
+            <c:forEach items="${requestScope.pendingReservations}" var="reservation">
+                <tr class="align-middle"
+                    onclick="window.location='${pageContext.request.contextPath}/app/admin/reservation/${reservation.id}';">
+                    <td>${reservation.id}</td>
+                    <td>${reservation.userId}</td>
+                    <td>${reservation.places}</td>
+                    <td>${reservation.fromDate.toString()}</td>
+                    <td>${reservation.toDate.toString()}</td>
+                    <td>${reservation.submitDate.toString().replace("T"," ")}</td>
 
-            </tr>
+                    <td class="${reservation.apartmentClass.htmlClass}">
+                        <fmt:message key="${reservation.apartmentClass.resName}"/>
+                    </td>
+
+                    <td class="${reservation.apartmentId==null?'red':'green'}">${reservation.apartmentId==null?'-':reservation.apartmentId}</td>
+                    <td class="${reservation.apartmentPrice==null?'red':'green'}">${reservation.apartmentPrice==null?'-':reservation.apartmentPrice}</td>
+                    <td class="${reservation.reservationStatus.htmlClass}"><fmt:message key="${reservation.reservationStatus.resourceName}"/></td>
+
+                    <c:if test="${reservation.paid}">
+                        <td class="reservation-paid"><fmt:message key="reservation.paid"/></td>
+                    </c:if>
+                    <c:if test="${reservation.expired and !reservation.paid}">
+                        <td class="reservation-expired"><fmt:message key="reservation.status.expired"/></td>
+                    </c:if>
+                    <c:if test="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration!=null}">
+                        <td class="reservation-unpaid"><fmt:message key="reservation.unpaid1"/> ${reservation.daysUntilExpiration} <fmt:message key="reservation.unpaid2"/></td>
+                    </c:if>
+                    <c:if test="${!reservation.expired and !reservation.paid and reservation.daysUntilExpiration==null}">
+                        <td class="reservation-unpaid"><fmt:message key="reservation.unpaid"/></td>
+                    </c:if>
+
+                </tr>
+            </c:forEach>
         </table>
     </div>
 </body>

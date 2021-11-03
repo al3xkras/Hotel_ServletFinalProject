@@ -39,9 +39,9 @@
                 <i class="fa fa-caret-down"></i>
             </button>
             <div class="custom-dropdown-content" style="left: 80%; width: 19.5%">
-                <a href="${pageContext.request.contextPath}/app/create_reservation"><fmt:message key="navbar.new_reservation"/></a>
+                <a href="${pageContext.request.contextPath}/app/user/create_reservation"><fmt:message key="navbar.new_reservation"/></a>
                 <a href="${pageContext.request.contextPath}/app/apartments"><fmt:message key="navbar.all_apartments"/></a>
-                <a href="${pageContext.request.contextPath}/app/personal_data"><fmt:message key="navbar.personal_data"/></a>
+                <a href="${pageContext.request.contextPath}/app/user/personal_data"><fmt:message key="navbar.personal_data"/></a>
             </div>
         </div>
 
