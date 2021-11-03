@@ -31,6 +31,6 @@ public class ConfirmReservationCommand implements Command {
 
         reservationService.updateReservationStatusById(reservationId, ReservationStatus.RESERVED);
 
-        return "redirect:/app/admin";
+        return "redirect:/"+HotelServlet.pathBasename+'/'+UserCommand.pathBasename;
     }
 }

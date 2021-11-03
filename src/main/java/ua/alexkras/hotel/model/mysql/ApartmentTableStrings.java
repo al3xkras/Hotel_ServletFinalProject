@@ -7,7 +7,7 @@ public interface ApartmentTableStrings {
     String colApartmentName="name";
     String colApartmentPlaces="places";
     String colApartmentClass="apartment_class";
-    String colApartmentStatus="apartment_status";
+    String colApartmentStatus="status";
     String colApartmentPrice="price";
 
     String sqlCreateApartmentTableIfNotExists = "CREATE TABLE IF NOT EXISTS "+

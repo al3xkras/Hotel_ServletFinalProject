@@ -23,19 +23,15 @@ public class UserCommand implements Command {
     private final Map<String, Command> commands = new HashMap<>();
 
     private final ReservationService reservationService;
-    private final ApartmentService apartmentService;
-
-
 
     public UserCommand(ReservationService reservationService, ApartmentService apartmentService){
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
-        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService));
-        commands.put(CancelReservationCommand.pathBasename,new CancelReservationCommand(reservationService));
+        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService,apartmentService));
+        commands.put(CancelReservationCommand.pathBasename,new CancelReservationCommand(reservationService,apartmentService));
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
         commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
 
         this.reservationService=reservationService;
-        this.apartmentService=apartmentService;
     }
 
     @Override

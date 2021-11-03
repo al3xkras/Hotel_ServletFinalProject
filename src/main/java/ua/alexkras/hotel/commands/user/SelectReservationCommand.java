@@ -7,6 +7,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +23,9 @@ public class SelectReservationCommand implements Command {
 
     private final Map<String,Command> commands = new HashMap<>();
 
-    public SelectReservationCommand(ReservationService reservationService){
+    public SelectReservationCommand(ReservationService reservationService, ApartmentService apartmentService){
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
-        commands.put(CancelReservationCommand.pathBasename, new CancelReservationCommand(reservationService));
+        commands.put(CancelReservationCommand.pathBasename, new CancelReservationCommand(reservationService,apartmentService));
 
         this.reservationService=reservationService;
     }
@@ -56,6 +57,12 @@ public class SelectReservationCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        return "redirect:/app/"+UserCommand.pathBasename;
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+
+        return command.isEmpty() ?
+                "redirect:/app/"+HotelServlet.pathBasename+'/'+UserCommand.pathBasename :
+                Optional.ofNullable(commands.get(command))
+                        .orElseThrow(IllegalStateException::new)
+                        .executePost(request);
     }
 }
