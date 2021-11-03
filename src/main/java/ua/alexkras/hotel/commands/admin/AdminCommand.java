@@ -19,11 +19,11 @@ public class AdminCommand implements Command {
 
     private final Map<String, Command> commands = new HashMap<>();
 
-    public AdminCommand(ReservationService reservationService){
+    public AdminCommand(ApartmentService apartmentService, ReservationService reservationService){
         this.reservationService=reservationService;
 
-        commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(new ApartmentService()));
-
+        commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(apartmentService));
+        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService,apartmentService));
     }
     @Override
     public String executeGet(HttpServletRequest request) {
@@ -34,12 +34,14 @@ public class AdminCommand implements Command {
             return "redirect:/";
         }
 
-        //request.setAttribute("pendingReservations",reservationService.getCurrentPendingReservations());
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
-        return command.isEmpty() ?
-                "/WEB-INF/personal_area/admin.jsp" :
-                Optional.ofNullable(commands.get(command))
+        if (command.isEmpty()){
+            request.setAttribute("pendingReservations",reservationService.getPendingReservations(1,5));
+            return "/WEB-INF/personal_area/admin.jsp";
+        }
+
+        return Optional.ofNullable(commands.get(command))
                  .orElseThrow(IllegalStateException::new)
                  .executeGet(request);
     }
@@ -54,98 +56,4 @@ public class AdminCommand implements Command {
                         .orElseThrow(IllegalStateException::new)
                         .executePost(request);
     }
-
-    /*
-    @GetMapping
-    public String adminMainPage(Model model){
-
-        reservationService.updateCurrentPendingReservations();
-
-        model.addAttribute("pendingReservations",
-                reservationService.getCurrentPendingReservations());
-
-        return "personal_area/admin";
-    }
-
-    @GetMapping("/reservation/{id}")
-    public String pendingReservationPage(@PathVariable Integer id, Model model){
-        reservationService.updateCurrentReservation(id);
-
-        model.addAttribute("reservation",reservationService.getCurrentReservation());
-
-        boolean isCompleted = reservationService.getCurrentReservation().isCompleted();
-        model.addAttribute("isCompleted", isCompleted);
-
-        if (!isCompleted) {
-            model.addAttribute("matchingApartments", apartmentService.updateApartmentsMatchingCurrentReservation());
-        }
-
-        return "/reservation/reservation";
-    }
-
-    @GetMapping("/reservation/{id}/select/{apartmentId}")
-    public String confirmReservationPage(@PathVariable("id") Integer reservationId,
-                                         @PathVariable("apartmentId") Integer apartmentId,
-                                         Model model){
-
-        reservationService.updateCurrentReservation(reservationId);
-        reservationService.getCurrentReservation().setApartmentId(apartmentId);
-
-        model.addAttribute("isCompleted",false);
-        model.addAttribute("reservation",reservationService.getCurrentReservation());
-        model.addAttribute("matchingApartments",
-                apartmentService.updateApartmentsMatchingCurrentReservation());
-        model.addAttribute("apartmentSelected",true);
-
-        return "/reservation/reservation";
-    }
-
-    @PostMapping("/reservation/{id}/confirm")
-    public String confirmCompletedReservation(@PathVariable("id") Integer reservationId){
-
-        reservationService.updateCurrentReservation(reservationId);
-        if (!reservationService.getCurrentReservation().isCompleted())
-            return "redirect:/error";
-        reservationService.updateReservationStatusAndConfirmationDateById(
-                reservationId,
-                ReservationStatus.CONFIRMED,
-                LocalDate.now());
-
-        return "redirect:/";
-    }
-
-    @PostMapping("/reservation/{id}/confirm/{apartmentId}")
-    public String confirmReservation(@PathVariable("id") Integer reservationId,
-                                     @PathVariable("apartmentId") Integer apartmentId){
-
-        apartmentService.updateCurrentApartment(apartmentId);
-        reservationService.updateCurrentReservation(reservationId);
-
-        if (!apartmentService.getCurrentApartment().matchesReservation(reservationService.getCurrentReservation())){
-            return "redirect:/error";
-        }
-
-        reservationService.updateReservationWithApartmentById(reservationId, apartmentService.getCurrentApartment(), LocalDate.now());
-        apartmentService.updateApartmentStatusById(apartmentId, ApartmentStatus.RESERVED);
-
-        return "redirect:/";
-    }
-
-    @PostMapping("/reservation/{id}/cancel")
-    public String dropReservation(@PathVariable("id") Integer reservationId){
-
-        reservationService.updateCurrentReservation(reservationId);
-
-        if (reservationService.getCurrentReservation().getApartmentId()!=null) {
-            apartmentService.updateApartmentStatusById(
-                    reservationService.getCurrentReservation().getApartmentId(),
-                    ApartmentStatus.AVAILABLE);
-        }
-
-        reservationService.updateReservationStatusById(reservationId, ReservationStatus.CANCELLED);
-
-        return "redirect:/";
-    }
-
-     */
 }

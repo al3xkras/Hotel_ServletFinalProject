@@ -7,7 +7,6 @@ import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 import static ua.alexkras.hotel.model.mysql.MySqlStrings.dateFormat;
 
@@ -44,12 +42,7 @@ public class SelectApartmentCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
-
-        if(!currentUser.orElseThrow(IllegalStateException::new)
-                .getUserType().equals(UserType.USER)){
-            return "redirect:/app/"+currentUser.get().getUserType().name();
-        }
+        User currentUser = AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new);
 
         Integer apartmentId = Integer.valueOf(Command.getCommand(request.getRequestURI(),pathBasename));
         Apartment apartment = apartmentService.getApartmentById(apartmentId).orElseThrow(IllegalStateException::new);
@@ -76,7 +69,7 @@ public class SelectApartmentCommand implements Command {
         apartment.setStatus(ApartmentStatus.RESERVED);
 
         Reservation reservation = Reservation.builder()
-                .userId(currentUser.get().getId())
+                .userId(currentUser.getId())
                 .apartmentId(apartment.getId())
                 .apartmentClass(apartment.getApartmentClass())
                 .places(apartment.getPlaces())

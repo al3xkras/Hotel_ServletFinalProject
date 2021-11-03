@@ -1,10 +1,13 @@
 package ua.alexkras.hotel.commands.user;
 
+import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
+import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.UserType;
+import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,27 +16,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.selectPendingReservationsByUserIdWithLimit;
-
 public class UserCommand implements Command {
 
     public static final String pathBasename = "user";
 
-    private final ReservationService reservationService;
-
     private final Map<String, Command> commands = new HashMap<>();
 
-    public UserCommand(ReservationService reservationService ){
-        commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(new ReservationService()));
+    private final ReservationService reservationService;
+    private final ApartmentService apartmentService;
+
+
+
+    public UserCommand(ReservationService reservationService, ApartmentService apartmentService){
+        commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
+        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService));
+        commands.put(CancelReservationCommand.pathBasename,new CancelReservationCommand(reservationService));
+        commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
+        commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
 
         this.reservationService=reservationService;
+        this.apartmentService=apartmentService;
     }
 
     @Override
     public String executeGet(HttpServletRequest request) {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
-
-        request.getServletContext().log(selectPendingReservationsByUserIdWithLimit);
 
         if(!currentUser.orElseThrow(IllegalStateException::new)
                 .getUserType().equals(UserType.USER)){
@@ -55,7 +62,13 @@ public class UserCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        return "redirect:/";
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+
+        return command.isEmpty() ?
+                "/WEB-INF/personal_area/user.jsp" :
+                Optional.ofNullable(commands.get(command))
+                        .orElseThrow(IllegalStateException::new)
+                        .executePost(request);
     }
 
 }
