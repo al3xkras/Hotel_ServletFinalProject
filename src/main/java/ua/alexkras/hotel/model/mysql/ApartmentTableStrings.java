@@ -7,7 +7,7 @@ public interface ApartmentTableStrings {
     String colApartmentName="name";
     String colApartmentPlaces="places";
     String colApartmentClass="apartment_class";
-    String colApartmentStatus="status";
+    String colApartmentStatus="apartment_status";
     String colApartmentPrice="price";
 
     String sqlCreateApartmentTableIfNotExists = "CREATE TABLE IF NOT EXISTS "+
@@ -52,5 +52,8 @@ public interface ApartmentTableStrings {
     String deleteApartmentById = "DELETE FROM "+MySqlStrings.databaseName+"."+tableApartment+" WHERE "+colApartmentId+"=?";
 
     String selectApartmentsWithLimit = findAllApartments+" limit ?,?";
+
+    String updateApartmentStatusById="UPDATE "+MySqlStrings.databaseName+'.'+tableApartment+" SET " +
+            colApartmentStatus+"=? WHERE "+colApartmentId+"=?";
 
 }

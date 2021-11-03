@@ -22,10 +22,10 @@ public interface ReservationTableStrings {
             MySqlStrings.databaseName+"."+tableReservation+" ("+
             colReservationId+" int unique primary key auto_increment, "+
             colUserId+" int not null,"+
-            colApartmentId+" int not null,"+
+            colApartmentId+" int,"+
             colApartmentClass+" varchar(20) not null,"+
             colApartmentPlaces+" int not null,"+
-            colApartmentPrice+" int not null,"+
+            colApartmentPrice+" int,"+
             colReservationStatus+" varchar(20) not null,"+
             colFromDate+" DATE not null,"+
             colToDate+" DATE not null,"+
@@ -49,7 +49,7 @@ public interface ReservationTableStrings {
             colIsActive+','+
             colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
 
-    String selectPendingReservations="select "+
+    String selectReservations ="select "+
             colReservationId+','+
             colUserId+','+
             colApartmentId+','+
@@ -64,10 +64,16 @@ public interface ReservationTableStrings {
             colIsPaid+','+
             colIsActive+','+
             colIsExpired+
-            " from "+MySqlStrings.databaseName+"."+tableReservation+" WHERE "+colIsActive;
+            " from "+MySqlStrings.databaseName+"."+tableReservation;
 
-    String selectPendingReservationsWithLimit = selectPendingReservations+" limit ?,?";
+    String selectActiveReservations = selectReservations+" WHERE "+colIsActive;
 
-    String selectPendingReservationsByUserIdWithLimit = selectPendingReservations+" AND "+colUserId+"=? limit ?,?";
+    String selectActiveReservationsWithLimit = selectActiveReservations +" limit ?,?";
+
+    String selectActiveReservationsByUserIdWithLimit = selectActiveReservations +" AND "+colUserId+"=? limit ?,?";
+
+    String selectReservationById = selectReservations+" WHERE "+colReservationId+"=?";
+
+    String updateStatusById = "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET "+colReservationStatus+"=? WHERE id=?";
 
 }

@@ -8,6 +8,7 @@ import ua.alexkras.hotel.model.ReservationStatus;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class ReservationService {
 
@@ -63,9 +64,7 @@ public class ReservationService {
         return reservationDAO.findByUserIdAndIsActive(userId,true);
     }
 
-    public Optional<Reservation> getReservationById(int reservationId){
-        return reservationDAO.findById(reservationId);
-    }
+
 
     public List<Reservation> getAllReservations(){
         return reservationDAO.findAll();
@@ -77,6 +76,10 @@ public class ReservationService {
 
      */
 
+    public Optional<Reservation> getReservationById(long reservationId){
+        return reservationDAO.findById(reservationId);
+    }
+
     /**
      * Update Reservation status by id
      *
@@ -84,12 +87,7 @@ public class ReservationService {
      * @param reservationStatus reservation status to assign to the Reservation
      */
     public void updateReservationStatusById(int id, ReservationStatus reservationStatus){
-        /*reservationDAO.updateReservationStatusById(id, reservationStatus);
-        clearCurrentReservation();
-        clearCurrentUserActiveReservations();
-        clearCurrentPendingReservations();
-
-         */
+        reservationDAO.updateReservationStatusById(id, reservationStatus);
     }
 
     /**
@@ -149,90 +147,6 @@ public class ReservationService {
          */
     }
 
-    /**
-     * Update current Reservation by reservation id
-     * -If current reservation is not initialized, or
-     *   current reservation's id is not equal to @reservationId:
-     *
-     *   -request new Reservation by @reservationId from data source
-     *   -updates current reservation's days until expiration (@Transient field)
-     * -Otherwise:
-     *
-     *   -Only updates current reservation's days until expiration (@Transient field)
-     *
-     * @param reservationId id of Reservation
-     * @return newly updated (or existing) Reservation
-     * @throws IllegalStateException if Reservation with @reservationId was not found in a data source
-     */
-    public Reservation updateCurrentReservation(int reservationId){
-        /*
-        if (!currentReservation.isPresent() || currentReservation.get().getId()!=reservationId){
-
-            currentReservation = getReservationById(reservationId);
-        }
-        updateReservationDaysUntilExpiration(getCurrentReservation());
-        return getCurrentReservation();
-
-         */
-        return null;
-    }
-
-    /**
-     * Update current User's active reservations by User id
-     * -If List of current User's active reservations are present, and
-     *   the list is not empty, and
-     *   the list contains reservations with userId equal to @userId
-     *   (only first item of the list is checked, assuming all the items have the same userId):
-     *
-     *   -Does not request new List of Reservations from a data source
-     * -Otherwise:
-     *
-     *   -Request new List of Reservations from a data source
-     *   -Updates every reservation's days until expiration (@Transient field) in the list
-     *
-     * @param userId id of User to find Reservations by
-     * @return newly created, or existing List of Reservations,
-     *   which are active and created by user with id @userId
-     */
-    public List<Reservation> updateCurrentUserActiveReservationsById(int userId){
-        /*
-        if (currentUserActiveReservations.isPresent() &&
-                !currentUserActiveReservations.get().isEmpty() &&
-                currentUserActiveReservations.get().get(0).getUserId()==userId){
-            return getCurrentUserActiveReservations();
-        }
-
-        currentUserActiveReservations = Optional.of(getActiveReservationsByUserId(userId));
-        currentUserActiveReservations.get().forEach(this::updateReservationDaysUntilExpiration);
-
-        return getCurrentUserActiveReservations();
-
-         */
-        return null;
-    }
-
-    /**
-     * Update list of all reservations, that are currently pending
-     * -If list of reservations, that are currently pending is not present, or
-     *   is empty,
-     *
-     *   -Request new List of Reservations from a data source
-     * -Otherwise
-     *
-     *   -Return list, that was saved in memory
-     *
-     * @return List of Reservations, that are currently pending
-     */
-    public List<Reservation> updateCurrentPendingReservations(){
-        /*
-        if (!currentPendingReservations.isPresent() || currentPendingReservations.get().isEmpty()) {
-            currentPendingReservations = Optional.of(getPendingReservations());
-        }
-        return getCurrentPendingReservations();
-
-         */
-        return null;
-    }
 
     /**
      * Update reservation's days until expiration

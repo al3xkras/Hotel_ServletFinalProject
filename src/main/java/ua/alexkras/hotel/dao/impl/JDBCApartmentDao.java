@@ -22,7 +22,16 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     @Override
     public void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus){
+        try (PreparedStatement updateStatusById = connection.prepareStatement(updateApartmentStatusById)
+            ){
+            updateStatusById.setString(1,apartmentStatus.name());
+            updateStatusById.setLong(2,id);
 
+            updateStatusById.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
