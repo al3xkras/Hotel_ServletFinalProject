@@ -12,17 +12,25 @@ public enum ReservationStatus {
     EXPIRED(false, false,"reservation.status.expired",
             "reservation-status-expired");
 
-    public boolean canConfirm;
-    public boolean canDiscard;
-    public String resourceName;
-    public String htmlClass;
+    private final boolean confirmable;
+    private final boolean cancellable;
+    private final String resourceName;
+    private final String htmlClass;
 
-    ReservationStatus(boolean canConfirm, boolean canDiscard,
+    ReservationStatus(boolean confirmable, boolean cancellable,
                       String resourceName, String htmlClass){
-        this.canConfirm=canConfirm;
-        this.canDiscard=canDiscard;
+        this.confirmable = confirmable;
+        this.cancellable = cancellable;
         this.resourceName=resourceName;
         this.htmlClass=htmlClass;
+    }
+
+    public boolean isConfirmable() {
+        return confirmable;
+    }
+
+    public boolean isCancellable() {
+        return cancellable;
     }
 
     public String getHtmlClass() {

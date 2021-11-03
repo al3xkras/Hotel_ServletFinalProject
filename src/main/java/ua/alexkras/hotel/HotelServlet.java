@@ -41,13 +41,17 @@ public class HotelServlet extends HttpServlet {
         UserService userService = new UserService();
         ApartmentService apartmentService = new ApartmentService();
 
-        commands.put("login", new LoginCommand(userService));
-        commands.put("registration" , new RegistrationCommand(userService));
-        commands.put("exception" , new ExceptionCommand());
-        commands.put(UserCommand.pathBasename, new UserCommand(reservationService));
-        commands.put("admin", new AdminCommand(reservationService));
-        commands.put("logout", new LogoutCommand());
+        commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService));
+        commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));
+
+        commands.put(RegistrationCommand.pathBasename, new RegistrationCommand(userService));
+
+        commands.put(LoginCommand.pathBasename,new LoginCommand(userService));
+        commands.put(LogoutCommand.pathBasename, new LogoutCommand());
+
         commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(apartmentService, reservationService));
+
+        commands.put(ExceptionCommand.pathBasename, new ExceptionCommand());
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
