@@ -6,6 +6,8 @@ import ua.alexkras.hotel.model.Command;
 import javax.servlet.http.HttpServletRequest;
 
 public class LogoutCommand implements Command {
+    public static final String pathBasename = "logout";
+
     @Override
     public String executeGet(HttpServletRequest request) {
         AuthFilter.clearCurrentLoginUser();

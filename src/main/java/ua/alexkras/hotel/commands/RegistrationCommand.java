@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegistrationCommand implements Command {
+    public static final String pathBasename = "registration";
 
     private final UserService userService;
     public final Map<String,String> validationErrorMap;

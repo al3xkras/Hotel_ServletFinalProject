@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public class LoginCommand implements Command {
+    public static final String pathBasename = "login";
 
     private final UserService userService;
     public LoginCommand(UserService userService){
