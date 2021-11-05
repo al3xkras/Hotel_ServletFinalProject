@@ -1,65 +1,41 @@
 package ua.alexkras.hotel.service;
 
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCPaymentDao;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
+import ua.alexkras.hotel.model.mysql.MySqlStrings;
 
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 public class PaymentService {
 
     private final JDBCPaymentDao paymentDAO;
-    private final ReservationService reservationService;
 
-    private Optional<Reservation> currentPaymentReservation = Optional.empty();
-    public void clearEverything(){
-        clearCurrentPaymentReservation();
-    }
-
-    //@Autowired
-    public PaymentService(JDBCPaymentDao paymentRepository,
-                          ReservationService reservationService){
-        this.paymentDAO =paymentRepository;
-        this.reservationService=reservationService;
+    public PaymentService(ReservationService reservationService){
+        this.paymentDAO = JDBCDaoFactory.getInstance().createPaymentDAO();
     }
 
     public void addPayment(Payment payment){
-        //paymentDAO.save(payment);
+        paymentDAO.create(payment);
     }
 
-    /**
-     * Updates Reservation, that is associated with current Payment by reservation id
-     * -If current Payment Reservation is initialized, and
-     *   Reservation's id is equal to @reservationId:
-     *   return previously saved in memory Reservation
-     * -Otherwise:
-     *   Request Reservation from data source
-     *
-     * @param reservationId id of Reservation
-     * @return newly updated (or existing) Reservation, that is associated with current payment
-     * @throws IllegalStateException if Reservation with @reservationId was not found
-     */
-    public Reservation updateCurrentPaymentReservationByReservationId(int reservationId) {
-        /*
-        if (currentPaymentReservation.isPresent() && currentPaymentReservation.get().getId()==reservationId){
-            return getCurrentPaymentReservation();
-        }
-        currentPaymentReservation = reservationService.getReservationById(reservationId);
-        return getCurrentPaymentReservation();
-
-         */
-        return null;
+    public Optional<Payment> findById(int reservationId){
+        return paymentDAO.findById(reservationId);
     }
 
-    public void clearCurrentPaymentReservation(){
-        currentPaymentReservation=Optional.empty();
-    }
+    public Payment.PaymentBuilder paymentOf(String cardNumber, String CVV, String expirationDate) throws ParseException {
+        if (!CVV.matches("^([0-9]{3})$"))
+            throw new NumberFormatException();
 
-    /**
-     * @return Reservation, that is associated with current Payment by reservation id
-     * @throws  IllegalStateException if current Payment Reservation is not present
-     */
-    public Reservation getCurrentPaymentReservation() {
-        return currentPaymentReservation.orElseThrow(IllegalStateException::new);
+        return Payment.builder()
+                .cardNumber(cardNumber)
+                .cardCvv(CVV)
+                .cardExpirationDate(MySqlStrings.dateFormat.parse(expirationDate)
+                        .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
 }

@@ -6,6 +6,7 @@ import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.PaymentService;
 import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.UserService;
 
@@ -40,8 +41,9 @@ public class HotelServlet extends HttpServlet {
         ReservationService reservationService = new ReservationService();
         UserService userService = new UserService();
         ApartmentService apartmentService = new ApartmentService();
+        PaymentService paymentService = new PaymentService(reservationService);
 
-        commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService));
+        commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService,paymentService));
         commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));
 
         commands.put(RegistrationCommand.pathBasename, new RegistrationCommand(userService));
@@ -54,33 +56,33 @@ public class HotelServlet extends HttpServlet {
         commands.put(ExceptionCommand.pathBasename, new ExceptionCommand());
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+        String command = Command.getCommand(request.getRequestURI() , pathBasename);
         Command getCommand = commands.getOrDefault(command , defaultCommand);
 
         String page = getCommand.executeGet(request);
         if (!page.startsWith("redirect:")) {
-            request.getRequestDispatcher(page).forward(request, response);
+            request.getRequestDispatcher(page).forward(request , response);
         } else {
             response.sendRedirect(request.getContextPath()+page.replace("redirect:",""));
         }
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+        String command = Command.getCommand(request.getRequestURI() , pathBasename);
 
         Command postCommand =  commands.getOrDefault(command , defaultCommand);
         String page = postCommand.executePost(request);
 
         if (!page.isEmpty() && !page.startsWith("redirect:")) {
-            request.getRequestDispatcher(page).forward(request, response);
+            request.getRequestDispatcher(page).forward(request , response);
         } else if (!page.isEmpty()){
             response.sendRedirect(request.getContextPath()+page.replace("redirect:",""));
         }

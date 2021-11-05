@@ -1,7 +1,6 @@
 package ua.alexkras.hotel.commands.user;
 
 import ua.alexkras.hotel.HotelServlet;
-import ua.alexkras.hotel.commands.LoginCommand;
 import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
 import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
@@ -10,29 +9,32 @@ import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.PaymentService;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class UserCommand implements Command {
 
     public static final String pathBasename = "user";
 
-    private final Map<String, Command> commands = new HashMap<>();
+    private final Map<String, Command> commands;
 
     private final ReservationService reservationService;
 
-    public UserCommand(ReservationService reservationService, ApartmentService apartmentService){
+    public UserCommand(ReservationService reservationService, ApartmentService apartmentService,
+                       PaymentService paymentService){
+        HashMap<String,Command> commands = new HashMap<>();
+
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
         commands.put(ReservationCommand.pathBasename,new ReservationCommand(reservationService,apartmentService));
         commands.put(CancelReservationCommand.pathBasename,new CancelReservationCommand(reservationService,apartmentService));
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
         commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
+        commands.put(MakePaymentCommand.pathBasename,new MakePaymentCommand(paymentService, reservationService));
 
+        this.commands= Collections.unmodifiableMap(commands);
         this.reservationService=reservationService;
     }
 
@@ -42,9 +44,9 @@ public class UserCommand implements Command {
         User user;
 
         if(!currentUser.isPresent()){
-            User testUser = User.builder().
-                    id(-100).
-                    userType(UserType.USER)
+            User testUser = User.builder()
+                    .id(-100)
+                    .userType(UserType.USER)
                     .build();
             request.getSession().setAttribute("user", testUser);
             currentUser=Optional.of(testUser);
@@ -54,12 +56,13 @@ public class UserCommand implements Command {
             return "redirect:/"+HotelServlet.pathBasename+'/';
         }
 
-        user=currentUser.orElseThrow(IllegalStateException::new);;
+        user=currentUser.orElseThrow(IllegalStateException::new);
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
             List<Reservation> reservations = reservationService.getPendingReservationsByUserId(user.getId(),1,50);
+
             request.setAttribute("reservations",reservations);
             return "/WEB-INF/personal_area/user.jsp";
         }

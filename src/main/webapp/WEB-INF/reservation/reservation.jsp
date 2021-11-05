@@ -109,8 +109,8 @@
                 <c:if test="${!reservation.expired}">
                     <div class="d-flex flex-row-reverse">
                         <c:if test="${!reservation.paid and reservation.reservationStatus.name().equalsIgnoreCase('reserved')}">
-                            <button type="submit" class="btn btn-outline-primary"
-                                    onclick="window.location = '/user/make_payment/${reservation.id}';"
+                            <button type="button" class="btn btn-outline-primary"
+                                    onclick="window.location = '/app/user/make_payment/${reservation.id}';"
                                     style="margin-top: 15px; margin-right: 5%; padding: 10px">
                                 <fmt:message key="reservation.make_payment"/>
                             </button>

@@ -3,10 +3,7 @@ package ua.alexkras.hotel;
 import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
-import ua.alexkras.hotel.model.mysql.MySqlStrings;
-import ua.alexkras.hotel.model.mysql.ReservationTableStrings;
-import ua.alexkras.hotel.model.mysql.UserTableStrings;
+import ua.alexkras.hotel.model.mysql.*;
 import ua.alexkras.hotel.model.UserType;
 import java.sql.*;
 import java.time.LocalDate;
@@ -19,12 +16,14 @@ public class FirstLaunch {
              PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
              PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
              PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
-             PreparedStatement createReservationTable = conn.prepareStatement(ReservationTableStrings.sqlCreateReservationTableIfNotExists)
+             PreparedStatement createReservationTable = conn.prepareStatement(ReservationTableStrings.sqlCreateReservationTableIfNotExists);
+             PreparedStatement createPaymentsTable = conn.prepareStatement(PaymentTableStrings.createPaymentsTableIfNotExists)
             ){
             createDB.execute();
             createUserTable.execute();
             createApartmentTable.execute();
             createReservationTable.execute();
+            createPaymentsTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to create database: "+ MySqlStrings.databaseName);
