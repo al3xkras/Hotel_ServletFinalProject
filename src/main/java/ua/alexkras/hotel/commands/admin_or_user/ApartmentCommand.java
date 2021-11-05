@@ -31,7 +31,7 @@ public class ApartmentCommand implements Command{
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()) {
-            request.setAttribute("apartments", apartmentService.findApartments(1, 5));
+            request.setAttribute("apartments", apartmentService.findApartments(1, 50));
             return "/WEB-INF/apartment/apartments_menu.jsp";
         }
         return Optional.ofNullable(commands.get(command))

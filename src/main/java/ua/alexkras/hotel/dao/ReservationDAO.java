@@ -22,12 +22,10 @@ public interface ReservationDAO extends GenericDao<Reservation> {
     void updateReservationStatusAndConfirmationDateById(
             long id, ReservationStatus reservationStatus, LocalDate confirmationDate);
 
-    void updateApartmentIdAndPriceAndReservationStatusAndConfirmationDateById(
+    void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+            long reservationId,
             long apartmentId,
-            int apartmentPrice,
-            ReservationStatus reservationStatus,
-            LocalDate confirmationDate,
-            int reservationId);
+            LocalDate confirmationDate);
 
     void updateIsPaidById(long id, boolean isPaid);
 

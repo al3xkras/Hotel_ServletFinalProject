@@ -1,5 +1,7 @@
 package ua.alexkras.hotel.model.mysql;
 
+import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.tableApartment;
+
 public interface ReservationTableStrings {
     String tableReservation = "reservations";
 
@@ -76,4 +78,13 @@ public interface ReservationTableStrings {
 
     String updateStatusById = "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET "+colReservationStatus+"=? WHERE id=?";
 
+    String updateReservationByIdAndUserIdWithApartment =
+            "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET " +
+                    colApartmentId+"=@"+ApartmentTableStrings.colApartmentId+',' +
+                    colApartmentClass+"=@"+ApartmentTableStrings.colApartmentClass+',' +
+                    colApartmentPlaces+"=@"+ApartmentTableStrings.colApartmentPlaces+',' +
+                    colApartmentPrice+"=@"+ApartmentTableStrings.colApartmentPrice+',' +
+                    colAdminConfirmationDate+"=?," +
+                    colReservationStatus+"=?" +
+                    " WHERE "+colReservationId+"=?;";
 }

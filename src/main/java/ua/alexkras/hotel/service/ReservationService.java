@@ -2,7 +2,6 @@ package ua.alexkras.hotel.service;
 
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCReservationDao;
-import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ReservationStatus;
 
@@ -113,23 +112,16 @@ public class ReservationService {
      * to @confirmationDate
      *
      * @param id id of Reservation
-     * @param apartment apartment to associate with Reservation
+     * @param apartmentId id of apartment to associate with Reservation
      * @param confirmationDate date of confirmation by Admin
      */
-    public void updateReservationWithApartmentById(int id, Apartment apartment, LocalDate confirmationDate){
-        /*
-        reservationDAO.updateApartmentIdAndPriceAndReservationStatusAndConfirmationDateById(
-                apartment.getId(),
-                apartment.getPrice(),
-                ReservationStatus.CONFIRMED,
-                confirmationDate,
-                id);
+    public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+            long id, long apartmentId, LocalDate confirmationDate){
 
-        clearCurrentReservation();
-        clearCurrentUserActiveReservations();
-        clearCurrentPendingReservations();
-
-         */
+        reservationDAO.updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+                id,
+                apartmentId,
+                confirmationDate);
     }
 
     /**

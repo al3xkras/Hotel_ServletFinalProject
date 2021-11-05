@@ -36,8 +36,30 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     @Override
     public List<Apartment> findApartmentsByApartmentClassAndPlacesAndStatus(
-            ApartmentClass apartmentClass, int places, ApartmentStatus apartmentStatus){
-        return null;
+            ApartmentClass apartmentClass, int places, ApartmentStatus apartmentStatus,
+            int start, int total){
+
+        ArrayList<Apartment> apartments = new ArrayList<>();
+        try(PreparedStatement statement = connection.prepareStatement(findByApartmentClassAndPlacesAndStatus)
+            ){
+            statement.setString(1,apartmentClass.name());
+            statement.setInt(2,places);
+            statement.setString(3,apartmentStatus.name());
+            statement.setInt(4,start-1);
+            statement.setInt(5,total);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                Apartment apartment = getApartmentFromResultSet(rs);
+                apartments.add(apartment);
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+        return apartments;
     }
 
     @Override

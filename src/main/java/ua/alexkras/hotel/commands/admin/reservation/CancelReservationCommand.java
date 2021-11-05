@@ -8,6 +8,8 @@ import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand.CancelReservation;
+
 public class CancelReservationCommand implements Command {
 
     public static final String pathBasename = "cancel";
@@ -28,7 +30,7 @@ public class CancelReservationCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand.CancelReservation(request, pathBasename, reservationService, apartmentService);
+        CancelReservation(request, pathBasename, reservationService, apartmentService);
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+ AdminCommand.pathBasename;
     }

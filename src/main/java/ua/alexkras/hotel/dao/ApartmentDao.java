@@ -13,6 +13,7 @@ public interface ApartmentDao extends GenericDao<Apartment> {
     List<Apartment> findApartmentsByApartmentClassAndPlacesAndStatus(
             ApartmentClass apartmentClass,
             int places,
-            ApartmentStatus apartmentStatus);
+            ApartmentStatus apartmentStatus,
+            int start, int total);
 
 }

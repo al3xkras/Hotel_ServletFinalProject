@@ -1,5 +1,7 @@
 package ua.alexkras.hotel.commands.admin;
 
+import ua.alexkras.hotel.HotelServlet;
+import ua.alexkras.hotel.commands.LoginCommand;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
@@ -23,21 +25,28 @@ public class AdminCommand implements Command {
         this.reservationService=reservationService;
 
         commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(apartmentService));
-        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService,apartmentService));
+        commands.put(ReservationCommand.pathBasename,new ReservationCommand(reservationService,apartmentService));
     }
     @Override
     public String executeGet(HttpServletRequest request) {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
 
-        if(!currentUser.orElseThrow(IllegalStateException::new)
-                .getUserType().equals(UserType.ADMIN)){
-            return "redirect:/";
+        if(!currentUser.isPresent()){
+            User testAdmin = User.builder()
+                    .id(-200)
+                    .userType(UserType.ADMIN)
+                    .build();
+            request.getSession().setAttribute("user", testAdmin);
+
+            //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
+        } else if (!currentUser.get().getUserType().equals(UserType.ADMIN)){
+            return "redirect:/"+HotelServlet.pathBasename+'/';
         }
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
-            request.setAttribute("pendingReservations",reservationService.getPendingReservations(1,5));
+            request.setAttribute("pendingReservations",reservationService.getPendingReservations(1,50));
             return "/WEB-INF/personal_area/admin.jsp";
         }
 

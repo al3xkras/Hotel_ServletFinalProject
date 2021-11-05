@@ -22,7 +22,7 @@ public class ApartmentService {
         return apartmentDAO.findApartments(start,total);
     }
 
-    public Optional<Apartment> getApartmentById(Integer id){
+    public Optional<Apartment> getApartmentById(long id){
         return apartmentDAO.findById(id);
     }
 
@@ -48,14 +48,12 @@ public class ApartmentService {
      * @param reservation reservation to match Apartments in list
      * @return List of apartments
      */
-    public List<Apartment> findApartmentsMatchingReservation(Reservation reservation){
-        /*
+    public List<Apartment> findApartmentsMatchingReservation(Reservation reservation, int start, int total){
         return apartmentDAO.findApartmentsByApartmentClassAndPlacesAndStatus(
                 reservation.getApartmentClass(),
                 reservation.getPlaces(),
-                ApartmentStatus.AVAILABLE);
-
-         */
-        return null;
+                ApartmentStatus.AVAILABLE,
+                start,
+                total);
     }
 }

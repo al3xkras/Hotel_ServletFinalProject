@@ -30,6 +30,17 @@ public interface ApartmentTableStrings {
 
     String findById=findAllApartments+" WHERE "+colApartmentId+"=?";
 
+    String selectApartmentByIdIntoVariable = "SELECT "+
+            colApartmentId+','+
+            colApartmentPlaces+','+
+            colApartmentClass+','+
+            colApartmentPrice+" INTO " +
+            '@'+colApartmentId+','+
+            '@'+colApartmentPlaces+','+
+            '@'+colApartmentClass+','+
+            '@'+colApartmentPrice+" FROM "+MySqlStrings.databaseName+'.'+tableApartment+
+            " WHERE "+colApartmentId+"=?; ";
+
     String addApartment = "INSERT INTO "+MySqlStrings.databaseName+"."+tableApartment+" ("+
             colApartmentId+','+
             colApartmentName+ ','+
@@ -55,5 +66,8 @@ public interface ApartmentTableStrings {
 
     String updateApartmentStatusById="UPDATE "+MySqlStrings.databaseName+'.'+tableApartment+" SET " +
             colApartmentStatus+"=? WHERE "+colApartmentId+"=?";
+
+    String findByApartmentClassAndPlacesAndStatus = "SELECT * FROM hotel_db_servlet.apartments " +
+            "WHERE apartment_class=? and places=? and status=? limit ?,?";
 
 }

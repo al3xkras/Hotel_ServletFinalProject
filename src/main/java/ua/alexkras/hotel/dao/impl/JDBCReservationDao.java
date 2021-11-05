@@ -4,12 +4,18 @@ import ua.alexkras.hotel.dao.ReservationDAO;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
+import ua.alexkras.hotel.model.mysql.MySqlStrings;
+import ua.alexkras.hotel.model.mysql.ReservationTableStrings;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.selectApartmentByIdIntoVariable;
+import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.tableApartment;
 import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
 
 public class JDBCReservationDao implements ReservationDAO {
@@ -140,21 +146,30 @@ public class JDBCReservationDao implements ReservationDAO {
             long id, ReservationStatus reservationStatus, LocalDate confirmationDate){
 
     }
-    /*
-    @Query("update Reservation reservation set " +
-            "reservation.apartmentId =:apartmentId, reservation.apartmentPrice =:apartmentPrice, " +
-            "reservation.reservationStatus =:reservationStatus, " +
-            "reservation.adminConfirmationDate =:confirmationDate  where reservation.id =:reservationId")
 
-     */
+
     @Override
-    public void updateApartmentIdAndPriceAndReservationStatusAndConfirmationDateById(
+    public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+            long reservationId,
             long apartmentId,
-            int apartmentPrice,
-            ReservationStatus reservationStatus,
-            LocalDate confirmationDate,
-            int reservationId){
+            LocalDate confirmationDate){
 
+        try (PreparedStatement getApartmentIntoVariable = connection.prepareStatement(selectApartmentByIdIntoVariable);
+             PreparedStatement updateReservation = connection.prepareStatement(updateReservationByIdAndUserIdWithApartment)
+
+            ){
+            getApartmentIntoVariable.setLong(1,apartmentId);
+
+            updateReservation.setDate(1,Date.valueOf(confirmationDate));
+            updateReservation.setString(2,ReservationStatus.CONFIRMED.name());
+            updateReservation.setLong(3,reservationId);
+
+            getApartmentIntoVariable.execute();
+            updateReservation.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
 

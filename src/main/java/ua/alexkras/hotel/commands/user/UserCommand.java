@@ -1,5 +1,7 @@
 package ua.alexkras.hotel.commands.user;
 
+import ua.alexkras.hotel.HotelServlet;
+import ua.alexkras.hotel.commands.LoginCommand;
 import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
 import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
@@ -26,7 +28,7 @@ public class UserCommand implements Command {
 
     public UserCommand(ReservationService reservationService, ApartmentService apartmentService){
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
-        commands.put(SelectReservationCommand.pathBasename,new SelectReservationCommand(reservationService,apartmentService));
+        commands.put(ReservationCommand.pathBasename,new ReservationCommand(reservationService,apartmentService));
         commands.put(CancelReservationCommand.pathBasename,new CancelReservationCommand(reservationService,apartmentService));
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
         commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
@@ -37,16 +39,27 @@ public class UserCommand implements Command {
     @Override
     public String executeGet(HttpServletRequest request) {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
+        User user;
 
-        if(!currentUser.orElseThrow(IllegalStateException::new)
-                .getUserType().equals(UserType.USER)){
-            return "redirect:/";
+        if(!currentUser.isPresent()){
+            User testUser = User.builder().
+                    id(-100).
+                    userType(UserType.USER)
+                    .build();
+            request.getSession().setAttribute("user", testUser);
+            currentUser=Optional.of(testUser);
+
+            //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
+        } else if (!currentUser.get().getUserType().equals(UserType.USER)){
+            return "redirect:/"+HotelServlet.pathBasename+'/';
         }
+
+        user=currentUser.orElseThrow(IllegalStateException::new);;
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
-            List<Reservation> reservations = reservationService.getPendingReservationsByUserId(currentUser.get().getId(),1,5);
+            List<Reservation> reservations = reservationService.getPendingReservationsByUserId(user.getId(),1,50);
             request.setAttribute("reservations",reservations);
             return "/WEB-INF/personal_area/user.jsp";
         }
