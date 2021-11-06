@@ -145,6 +145,10 @@ public class ReservationService implements Service{
                     reservation.getToDate().atStartOfDay()).toDays();
     }
 
+    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus status){
+        return reservationDAO.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(userId,isActive,status);
+    }
+
     @Override
     public void commitCurrentTransaction(){
         reservationDAO.commit();

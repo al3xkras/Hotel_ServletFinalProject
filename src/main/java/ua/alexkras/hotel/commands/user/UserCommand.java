@@ -7,6 +7,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
@@ -45,6 +46,9 @@ public class UserCommand implements Command {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
         User user;
 
+        String pageParam=request.getParameter("page");
+        int page = (pageParam==null)?1:Integer.parseInt(pageParam);
+
         if(!currentUser.isPresent()){
             //TODO remove in final build
             User testUser = User.builder()
@@ -53,32 +57,41 @@ public class UserCommand implements Command {
                     .build();
             request.getSession().setAttribute("user", testUser);
             currentUser=Optional.of(testUser);
-
             //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
         } else if (!currentUser.get().getUserType().equals(UserType.USER)){
             return "redirect:/"+HotelServlet.pathBasename+'/';
         }
 
-        user=currentUser.orElseThrow(IllegalStateException::new);
-
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
-
-        if (command.isEmpty()){
-            //TODO make pagination
-            List<Reservation> reservations = reservationService
-                    .findByUserIdAndActiveAndAnyStatusExcept(
-                            user.getId(),
-                            true,
-                            ReservationStatus.CANCELLED,
-                            1,50);
-
-            request.setAttribute("reservations",reservations);
-            return "/WEB-INF/personal_area/user.jsp";
+        if (!command.isEmpty()){
+            return Optional.ofNullable(commands.get(command))
+                    .orElseThrow(IllegalStateException::new)
+                    .executeGet(request);
         }
 
-         return Optional.ofNullable(commands.get(command))
-                  .orElseThrow(IllegalStateException::new)
-                  .executeGet(request);
+
+
+        user=currentUser.orElseThrow(IllegalStateException::new);
+
+        int pagesCount = reservationService.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(
+                user.getId(),true,ReservationStatus.CANCELLED);
+
+        Pageable pageable = new Pageable(3, pagesCount);
+        pageable.seekToPage(page);
+
+        List<Reservation> reservations = reservationService
+                .findByUserIdAndActiveAndAnyStatusExcept(
+                        user.getId(),
+                        true,
+                        ReservationStatus.CANCELLED,
+                        pageable.getEntriesStart(),
+                        pageable.getEntriesInPage());
+
+        request.getServletContext().log(pageable.toString());
+
+        request.setAttribute("pageable", pageable);
+        request.setAttribute("reservations",reservations);
+        return "/WEB-INF/personal_area/user.jsp";
     }
 
     @Override

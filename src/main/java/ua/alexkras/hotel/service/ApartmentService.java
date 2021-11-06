@@ -75,4 +75,8 @@ public class ApartmentService implements Service{
     public void rollbackConnection(){
         apartmentDAO.rollback();
     }
+
+    public int getApartmentsCount(){
+        return  apartmentDAO.getApartmentsCount();
+    }
 }

@@ -103,3 +103,16 @@ button {
 .custom-navbar-dropdown:hover .custom-dropdown-content {
     display: block;
 }
+
+span.border{
+    margin: 2px;
+}
+
+span{
+    padding: 5px;
+}
+
+div.d-flex{
+    margin-top: 3px;
+    margin-bottom: 16px;
+}

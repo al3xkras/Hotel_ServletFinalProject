@@ -231,4 +231,19 @@ public class JDBCApartmentDao implements ApartmentDao {
                 .price(resultSet.getInt(colApartmentPrice))
                 .build();
     }
+
+    public int getApartmentsCount(){
+        int apartmentsCount;
+        try (PreparedStatement count = connection.prepareStatement("SELECT COUNT(*) from hotel_db_servlet.apartments")){
+            ResultSet rs = count.executeQuery();
+
+            rs.next();
+            apartmentsCount = rs.getInt(1);
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return apartmentsCount;
+    }
 }

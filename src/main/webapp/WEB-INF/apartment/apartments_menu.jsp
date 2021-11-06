@@ -31,6 +31,11 @@
     </style>
 </head>
 <body>
+
+    <c:set var="page">
+        ${param.page==null?1:param.page}
+    </c:set>
+
     <div class="custom-navbar">
         <a class="active" href="${pageContext.request.contextPath}/app/${sessionScope.user.userType.name().toLowerCase()}"><fmt:message key="navbar.home"/></a>
 
@@ -93,23 +98,30 @@
         </table>
     </div>
 
-    <!--
-    <div class="d-flex flex-row justify-content-center" hidden>
-        <span class="border" th:if="$/{allApartments.hasPrevious()}">
-            <a th:href="@{/apartments(page=$/{allApartments.number-1})}">Previous</a>
-        </span>
-        <th://block th:each="i: $/{#numbers.sequence(0, allApartments.totalPages - 1)}">
-            <span class="border selected" th:if="$/{allApartments.number == i}">[[$/{i}+1]]</span>
-            <span class="border"  th:unless="$/{allApartments.number == i}">
-                <a class="page-number" th:href="@{/apartments(page=$/{i})}">[[$/{i}+1]]</a>
+    <div class="d-flex flex-row justify-content-center">
+        <c:if test="${requestScope.pageable.hasPrevious()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/apartments?page=${page-1}">Previous</a>
             </span>
-        </th://block>
+        </c:if>
 
-        <span class="border" th:if="$/{allApartments.hasNext()}">
-            <a th:href="@{/apartments(page=$//={allApartments.number+1})}">Next</a>
-        </span>
+        <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
+            <c:if test="${page==pageIndex}">
+                <span class="border selected">${pageIndex}</span>
+            </c:if>
+            <c:if test="${!(page==pageIndex)}">
+                <span class="border">
+                     <a class="page-number" href="${pageContext.request.contextPath}/app/apartments?page=${pageIndex}">${pageIndex}</a>
+                </span>
+            </c:if>
+        </c:forEach>
+
+        <c:if test="${requestScope.pageable.hasNext()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/apartments?page=${page+1}">Next</a>
+            </span>
+        </c:if>
     </div>
-    -->
 
 
     <script>
@@ -120,9 +132,30 @@
             document.getElementById('sort_by').value = sort;
         }
 
+        function insertParam(key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+
+            const kvp = document.location.search.substr(1).split('&');
+            let i=0;
+
+            for(; i<kvp.length; i++){
+                if (kvp[i].startsWith(key + '=')) {
+                    let pair = kvp[i].split('=');
+                    pair[1] = value;
+                    kvp[i] = pair.join('=');
+                    break;
+                }
+            }
+
+            if(i >= kvp.length){
+                kvp[kvp.length] = [key,value].join('=');
+            }
+            document.location.search = kvp.join('&');
+        }
+
         function onSortChange(event) {
-            const newLocation="/apartments?sort=";
-            window.location=newLocation+event.target.value;
+            insertParam("sort",event.target.value);
         }
     </script>
 </body>

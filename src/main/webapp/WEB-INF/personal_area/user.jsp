@@ -18,8 +18,27 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_personal_area.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_apartment.css" />
 
+    <style>
+        span.border{
+            margin: 2px;
+        }
+
+        span{
+            padding: 5px;
+        }
+
+        div.d-flex{
+            margin-top: 3px;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
 <body style="background: #f6f6f6;">
+
+    <c:set var="page">
+        ${param.page==null?1:param.page}
+    </c:set>
+
     <div class="custom-navbar">
         <a class="active" href="${pageContext.request.contextPath}/app/user"><fmt:message key="navbar.hotel"/> </a>
         <div class="custom-navbar-dropdown" style="float: left">
@@ -95,6 +114,32 @@
             </c:forEach>
         </table>
     </div>
+
+    <div class="d-flex flex-row justify-content-center">
+        <c:if test="${requestScope.pageable.hasPrevious()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/user?page=${page-1}">Previous</a>
+            </span>
+        </c:if>
+
+        <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
+            <c:if test="${page==pageIndex}">
+                <span class="border selected">${pageIndex}</span>
+            </c:if>
+            <c:if test="${!(page==pageIndex)}">
+                <span class="border">
+                     <a class="page-number" href="${pageContext.request.contextPath}/app/user?page=${pageIndex}">${pageIndex}</a>
+                </span>
+            </c:if>
+        </c:forEach>
+
+        <c:if test="${requestScope.pageable.hasNext()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/user?page=${page+1}">Next</a>
+            </span>
+        </c:if>
+    </div>
+
 
 </body>
 </html>

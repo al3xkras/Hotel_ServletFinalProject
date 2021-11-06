@@ -103,6 +103,26 @@ public class JDBCReservationDao implements ReservationDAO {
         return Optional.of(reservation);
     }
 
+
+    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus illegalStatus){
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM hotel_db_servlet.reservations " +
+                " WHERE user_id=? and is_active=? and reservation_status!=?")){
+
+            preparedStatement.setLong(1,userId);
+            preparedStatement.setBoolean(2,isActive);
+            preparedStatement.setString(3,illegalStatus.name());
+
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+
+            return  rs.getInt(1);
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
     @Override
     public List<Reservation> findAll(int start, int total) {
         return null;
