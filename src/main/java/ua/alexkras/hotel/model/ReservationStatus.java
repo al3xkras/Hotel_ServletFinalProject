@@ -5,6 +5,8 @@ public enum ReservationStatus {
             "reservation-status-pending"),
     CANCELLED(false, false,"reservation.status.cancelled",
             "reservation-status-cancelled"),
+    CANCELLED_BY_ADMIN(false, false,"reservation.status.cancelled_by_admin",
+            "reservation-status-cancelled"),
     CONFIRMED(true, true,"reservation.status.confirmed",
             "reservation-status-confirmed"),
     RESERVED(false, true,"reservation.status.reserved",

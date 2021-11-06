@@ -27,10 +27,41 @@ public class Payment {
                 '}';
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public long getReservationId() {
+        return reservationId;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public LocalDate getCardExpirationDate() {
+        return cardExpirationDate;
+    }
+
+    public String getCardCvv() {
+        return cardCvv;
+    }
+
     public static PaymentBuilder builder() {
         return new PaymentBuilder();
     }
-
 
     public static final class PaymentBuilder {
         private long id;

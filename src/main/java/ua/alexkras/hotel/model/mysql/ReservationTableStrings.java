@@ -68,11 +68,16 @@ public interface ReservationTableStrings {
             colIsExpired+
             " from "+MySqlStrings.databaseName+"."+tableReservation;
 
-    String selectActiveReservations = selectReservations+" WHERE "+colIsActive;
+    String selectActiveReservations = selectReservations+" WHERE "+colIsActive+"=?";
 
-    String selectActiveReservationsWithLimit = selectActiveReservations +" limit ?,?";
+    String selectActiveReservationsByStatusWithLimit = selectActiveReservations+
+            " AND "+colReservationStatus+"=?"+
+            " limit ?,?";
 
-    String selectActiveReservationsByUserIdWithLimit = selectActiveReservations +" AND "+colUserId+"=? limit ?,?";
+    String selectActiveReservationsByUserIdAndAnyStatusExceptWithLimit = selectActiveReservations +
+            " AND "+colUserId+"=?" +
+            " AND "+colReservationStatus+"!=?"+
+            " limit ?,?";
 
     String selectReservationById = selectReservations+" WHERE "+colReservationId+"=?";
 

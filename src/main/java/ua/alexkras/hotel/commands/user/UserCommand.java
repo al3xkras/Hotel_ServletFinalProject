@@ -7,6 +7,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.PaymentService;
@@ -61,7 +62,12 @@ public class UserCommand implements Command {
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
-            List<Reservation> reservations = reservationService.getPendingReservationsByUserId(user.getId(),1,50);
+            List<Reservation> reservations = reservationService
+                    .findByUserIdAndActiveAndAnyStatusExcept(
+                            user.getId(),
+                            true,
+                            ReservationStatus.CANCELLED,
+                            1,50);
 
             request.setAttribute("reservations",reservations);
             return "/WEB-INF/personal_area/user.jsp";
@@ -74,6 +80,10 @@ public class UserCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
+        if (!AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new).getUserType().equals(UserType.USER)){
+            throw new RuntimeException();
+        }
+
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         return command.isEmpty() ?

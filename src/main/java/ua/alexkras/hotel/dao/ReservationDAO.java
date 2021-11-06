@@ -15,7 +15,7 @@ public interface ReservationDAO extends GenericDao<Reservation> {
 
     void updateActiveByUserId(long userId, boolean isActive);
 
-    List<Reservation> findByReservationStatus(ReservationStatus reservationStatus);
+    List<Reservation> findByReservationStatus(ReservationStatus reservationStatus, int start, int total);
 
     void updateReservationStatusById(long id, ReservationStatus reservationStatus);
 
@@ -29,6 +29,11 @@ public interface ReservationDAO extends GenericDao<Reservation> {
 
     void updateIsPaidById(long id, boolean isPaid);
 
-    List<Reservation> findAllPendingReservations(int start, int total);
-    List<Reservation> findPendingReservationsByUserId(long userId, int start, int total);
+    List<Reservation> findAllByActiveAndStatus(boolean isActive,ReservationStatus reservationStatus, int start, int total);
+
+    List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
+            long userId,
+            boolean isActive,
+            ReservationStatus illegalStatus,
+            int start, int total);
 }

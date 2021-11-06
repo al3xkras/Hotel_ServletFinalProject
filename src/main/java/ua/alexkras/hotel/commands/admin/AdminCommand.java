@@ -1,16 +1,18 @@
 package ua.alexkras.hotel.commands.admin;
 
 import ua.alexkras.hotel.HotelServlet;
-import ua.alexkras.hotel.commands.LoginCommand;
+import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,7 +48,12 @@ public class AdminCommand implements Command {
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
-            request.setAttribute("pendingReservations",reservationService.getPendingReservations(1,50));
+            List<Reservation> reservations = reservationService.findByReservationStatus(
+                    true,
+                    ReservationStatus.PENDING,
+                    1,50);
+
+            request.setAttribute("pendingReservations",reservations);
             return "/WEB-INF/personal_area/admin.jsp";
         }
 
@@ -57,6 +64,10 @@ public class AdminCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
+        if (!AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new).getUserType().equals(UserType.ADMIN)){
+            throw new RuntimeException();
+        }
+
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         return command.isEmpty() ?

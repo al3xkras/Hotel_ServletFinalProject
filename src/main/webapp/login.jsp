@@ -44,7 +44,7 @@
             <p>
                 <label for="username"><fmt:message key="form.username"/></label>
                 <input type="text" id="username" name="username"
-                       class="form-control" pattern="${username_regex}" required/><fmt:message key="form.username"/>
+                       class="form-control" pattern="${username_regex}" required/>
 
                 <c:if test="${param.error != null}">
                     <div class="alert alert-warning" style="margin-left: 15px"><fmt:message key="login.alert.invalid_data"/></div>

@@ -1,5 +1,6 @@
 package ua.alexkras.hotel.commands.user;
 
+import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.Command;
@@ -32,6 +33,7 @@ public class MakePaymentCommand implements Command {
                 .orElseThrow(IllegalStateException::new);
 
         request.setAttribute("reservation",reservation);
+        request.setAttribute("totalValue",reservationService.getTotalReservationValue(reservation));
 
         return "/WEB-INF/personal_area/user/payment.jsp";
     }
@@ -49,11 +51,13 @@ public class MakePaymentCommand implements Command {
             payment = paymentService.paymentOf(card_number,cvv,expirationDate)
                     .paymentDate(LocalDateTime.now())
                     .userId(reservation.getUserId())
-                    .value(reservation.getApartmentPrice())
+                    .value(reservationService.getTotalReservationValue(reservation))
                     .reservationId(reservation.getId())
                     .build();
 
-            request.getServletContext().log(payment.toString());
+            paymentService.addPayment(payment);
+            //TODO rollback connection if failed to update
+            reservationService.updatePaymentStatusById(payment.getReservationId(),true);
 
         } catch (NumberFormatException e){
             request.setAttribute("invalidCvv",true);
@@ -63,6 +67,6 @@ public class MakePaymentCommand implements Command {
             throw new RuntimeException();
         }
 
-        return "redirect:/";
+        return "redirect:/"+ HotelServlet.pathBasename+'/'+UserCommand.pathBasename;
     }
 }

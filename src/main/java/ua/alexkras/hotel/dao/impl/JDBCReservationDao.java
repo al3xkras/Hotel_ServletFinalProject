@@ -4,9 +4,6 @@ import ua.alexkras.hotel.dao.ReservationDAO;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
-import ua.alexkras.hotel.model.mysql.MySqlStrings;
-import ua.alexkras.hotel.model.mysql.ReservationTableStrings;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -15,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.selectApartmentByIdIntoVariable;
-import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.tableApartment;
 import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
 
 public class JDBCReservationDao implements ReservationDAO {
@@ -38,7 +34,6 @@ public class JDBCReservationDao implements ReservationDAO {
         return null;
     }
 
-    //@Query("update Reservation reservation set reservation.isActive =:isActive where reservation.userId =:userId")
     @Override
     public void updateActiveByUserId(long userId, boolean isActive){
 
@@ -101,7 +96,7 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public List<Reservation> findAll() {
+    public List<Reservation> findAll(int start, int total) {
         return null;
     }
 
@@ -121,7 +116,7 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public List<Reservation> findByReservationStatus(ReservationStatus reservationStatus){
+    public List<Reservation> findByReservationStatus(ReservationStatus reservationStatus, int start, int total){
         return null;
     }
 
@@ -173,28 +168,37 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
 
-    //@Query("update Reservation reservation set reservation.isPaid =:isPaid where reservation.id =:id")
     @Override
     public void updateIsPaidById(long id, boolean isPaid){
+        try (PreparedStatement updateIsPaid = connection.prepareStatement("UPDATE hotel_db_servlet.reservations SET " +
+                "id_paid=? WHERE id=?")){
+            updateIsPaid.setBoolean(1,isPaid);
+            updateIsPaid.setLong(2,id);
 
+            updateIsPaid.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
-    public List<Reservation> findAllPendingReservations(int start, int total){
+    public List<Reservation> findAllByActiveAndStatus(boolean isActive,ReservationStatus reservationStatus, int start, int total){
         if (total > requestMaxReservations){
             throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
                 +", requested: "+total);
         }
 
         List<Reservation> list = new ArrayList<>();
-        try(PreparedStatement getPendingReservations=
-                    connection.prepareStatement(selectActiveReservationsWithLimit)
-            ){
+        try(PreparedStatement select = connection.prepareStatement(selectActiveReservationsByStatusWithLimit)
+                ){
 
-            getPendingReservations.setInt(1,start-1);
-            getPendingReservations.setInt(2,total);
+            select.setBoolean(1,isActive);
+            select.setString(2,reservationStatus.name());
+            select.setInt(3,start-1);
+            select.setInt(4,total);
 
-            ResultSet result=getPendingReservations.executeQuery();
+            ResultSet result=select.executeQuery();
 
             while(result.next()){
                 Reservation reservation = getReservationFromResultSet(result);
@@ -208,24 +212,29 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public List<Reservation> findPendingReservationsByUserId(long userId, int start, int total){
+    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
+            long userId,
+            boolean isActive,
+            ReservationStatus illegalStatus,
+            int start, int total){
+
         if (total > requestMaxReservations){
             throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
                     +", requested: "+total);
         }
 
         List<Reservation> list = new ArrayList<>();
-        try(PreparedStatement findActiveByUserId=
-                    connection.prepareStatement(selectActiveReservationsByUserIdWithLimit)
+        try(PreparedStatement select=
+                    connection.prepareStatement(selectActiveReservationsByUserIdAndAnyStatusExceptWithLimit)
             ){
 
+            select.setBoolean(1,isActive);
+            select.setLong(2,userId);
+            select.setString(3,illegalStatus.name());
+            select.setInt(4,start-1);
+            select.setInt(5,total);
 
-            findActiveByUserId.setLong(1,userId);
-            findActiveByUserId.setInt(2,start-1);
-            findActiveByUserId.setInt(3,total);
-
-
-            ResultSet result=findActiveByUserId.executeQuery();
+            ResultSet result=select.executeQuery();
 
             while(result.next()){
                 Reservation reservation = getReservationFromResultSet(result);

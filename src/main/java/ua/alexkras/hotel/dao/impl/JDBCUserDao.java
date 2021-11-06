@@ -20,7 +20,7 @@ public class JDBCUserDao implements UserDAO {
     @Override
     public Optional<User> findByUsername(String username){
         User user;
-        try(PreparedStatement getUserByName = connection.prepareStatement(UserTableStrings.findByUsername);
+        try(PreparedStatement getUserByName = connection.prepareStatement(UserTableStrings.findByUsername)
             ){
             getUserByName.setString(1,username);
             ResultSet result = getUserByName.executeQuery();
@@ -67,7 +67,7 @@ public class JDBCUserDao implements UserDAO {
     @Override
     public Optional<User> findById(long id) {
         User user;
-        try(PreparedStatement getUserById = connection.prepareStatement(UserTableStrings.findById);
+        try(PreparedStatement getUserById = connection.prepareStatement(UserTableStrings.findById)
             ){
             getUserById.setLong(1,id);
             ResultSet result = getUserById.executeQuery();
@@ -88,7 +88,7 @@ public class JDBCUserDao implements UserDAO {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll(int start, int total) {
         ArrayList<User> users = new ArrayList<>();
 
         try(PreparedStatement getAllUsers = connection.prepareStatement(UserTableStrings.findAllUsers)
@@ -128,7 +128,7 @@ public class JDBCUserDao implements UserDAO {
 
     @Override
     public void delete(long id) {
-        try(PreparedStatement deleteUser = connection.prepareStatement(UserTableStrings.deleteUserById);
+        try(PreparedStatement deleteUser = connection.prepareStatement(UserTableStrings.deleteUserById)
             ){
 
             deleteUser.setLong(1,id);

@@ -105,7 +105,7 @@ public class JDBCApartmentDao implements ApartmentDao {
     }
 
     @Override
-    public List<Apartment> findAll() {
+    public List<Apartment> findAll(int start, int total) {
         ArrayList<Apartment> apartments = new ArrayList<>();
 
         try(PreparedStatement findAllApartments = connection.prepareStatement(ApartmentTableStrings.findAllApartments)
@@ -172,7 +172,7 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     @Override
     public void delete(long id) {
-        try(PreparedStatement deleteApartment = connection.prepareStatement(deleteApartmentById);
+        try(PreparedStatement deleteApartment = connection.prepareStatement(deleteApartmentById)
             ){
             deleteApartment.setLong(1,id);
             deleteApartment.execute();

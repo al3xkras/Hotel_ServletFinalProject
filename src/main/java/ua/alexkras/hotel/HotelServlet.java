@@ -23,17 +23,7 @@ public class HotelServlet extends HttpServlet {
 
     public static final String pathBasename = "app";
 
-    private final Command defaultCommand = new Command() {
-        @Override
-        public String executeGet(HttpServletRequest request) {
-            return "redirect:/exception";
-        }
-
-        @Override
-        public String executePost(HttpServletRequest request) {
-            return "redirect:/exception";
-        }
-    };
+    private final Command defaultCommand = new ExceptionCommand();
 
     private final Map<String, Command> commands = new HashMap<>();
 

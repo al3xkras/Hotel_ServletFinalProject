@@ -5,6 +5,7 @@ import ua.alexkras.hotel.dao.impl.JDBCReservationDao;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ReservationStatus;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -129,14 +130,8 @@ public class ReservationService {
      * @param reservationId id of Reservation
      * @param isPaid new payment status
      */
-    public void updateReservationPaymentStatusById(int reservationId, boolean isPaid){
-        /*
+    public void updatePaymentStatusById(long reservationId, boolean isPaid){
         reservationDAO.updateIsPaidById(reservationId,isPaid);
-        clearCurrentReservation();
-        clearCurrentUserActiveReservations();
-        clearCurrentPendingReservations();
-
-         */
     }
 
 
@@ -166,15 +161,34 @@ public class ReservationService {
         return null;
     }
 
-    public List<Reservation> getPendingReservations(int start, int total){
-        return reservationDAO.findAllPendingReservations(start, total);
+    public List<Reservation> findByReservationStatus(
+            boolean isActive,
+            ReservationStatus reservationStatus,
+            int start, int total){
+
+        return reservationDAO.findAllByActiveAndStatus(isActive, reservationStatus,start, total);
     }
 
-    public List<Reservation> getPendingReservationsByUserId(long userId,int start, int total){
-        return  reservationDAO.findPendingReservationsByUserId(userId,start,total);
+    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
+            long userId,
+            boolean isActive,
+            ReservationStatus illegalStatus,
+            int start, int total){
+
+        return  reservationDAO.findByUserIdAndActiveAndAnyStatusExcept(
+                userId,
+                isActive,
+                illegalStatus,
+                start,total);
     }
 
     public boolean addReservation (Reservation reservation){
         return reservationDAO.create(reservation);
+    }
+
+    public int getTotalReservationValue(Reservation reservation){
+        return reservation.getApartmentPrice()
+                * (int) Duration.between(reservation.getFromDate().atStartOfDay(),
+                    reservation.getToDate().atStartOfDay()).toDays();
     }
 }

@@ -3,6 +3,7 @@ package ua.alexkras.hotel.commands.admin.reservation;
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
 
@@ -30,7 +31,7 @@ public class CancelReservationCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        CancelReservation(request, pathBasename, reservationService, apartmentService);
+        CancelReservation(request, pathBasename, reservationService, apartmentService, ReservationStatus.CANCELLED_BY_ADMIN);
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+ AdminCommand.pathBasename;
     }

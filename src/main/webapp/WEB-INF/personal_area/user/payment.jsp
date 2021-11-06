@@ -112,6 +112,12 @@
                                         </label>
                                     </div>
 
+                                    <div class="row">
+                                        <label>
+                                            <fmt:message key="payment.price"/>: ${requestScope.totalValue}
+                                        </label>
+                                    </div>
+
                                     <div class="card-footer">
                                         <button type="submit" class="subscribe btn btn-primary btn-block shadow-sm"
                                             onclick="savePageVariables()">
@@ -143,10 +149,9 @@
         }
 
         function savePageVariables(){
-            sessionStorage.cardNumber=cardNumber.value ;
-            sessionStorage.cardCvv=cardCvv.value ;
-            sessionStorage.expirationDate=expirationDate.value ;
-            console.log(cardNumber.value );
+            sessionStorage.cardNumber=cardNumber.value;
+            sessionStorage.cardCvv=cardCvv.value;
+            sessionStorage.expirationDate=expirationDate.value;
         }
     </script>
 
