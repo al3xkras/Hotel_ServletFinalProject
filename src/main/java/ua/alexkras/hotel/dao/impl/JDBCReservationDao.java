@@ -104,7 +104,9 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
 
-    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus illegalStatus){
+    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(
+            long userId, boolean isActive,
+            ReservationStatus illegalStatus){
 
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM hotel_db_servlet.reservations " +
                 " WHERE user_id=? and is_active=? and reservation_status!=?")){
@@ -112,6 +114,26 @@ public class JDBCReservationDao implements ReservationDAO {
             preparedStatement.setLong(1,userId);
             preparedStatement.setBoolean(2,isActive);
             preparedStatement.setString(3,illegalStatus.name());
+
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+
+            return  rs.getInt(1);
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    public int getReservationsCountByActiveAndStatus(
+            boolean isActive,
+            ReservationStatus status){
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM hotel_db_servlet.reservations " +
+                " WHERE is_active=? and reservation_status=?")){
+
+            preparedStatement.setBoolean(1,isActive);
+            preparedStatement.setString(2,status.name());
 
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();

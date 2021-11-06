@@ -46,9 +46,6 @@ public class UserCommand implements Command {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
         User user;
 
-        String pageParam=request.getParameter("page");
-        int page = (pageParam==null)?1:Integer.parseInt(pageParam);
-
         if(!currentUser.isPresent()){
             //TODO remove in final build
             User testUser = User.builder()
@@ -69,14 +66,14 @@ public class UserCommand implements Command {
                     .executeGet(request);
         }
 
+        user=currentUser.get();
 
-
-        user=currentUser.orElseThrow(IllegalStateException::new);
-
-        int pagesCount = reservationService.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(
+        String pageParam=request.getParameter("page");
+        int page = (pageParam==null)?1:Integer.parseInt(pageParam);
+        int reservationsCount = reservationService.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(
                 user.getId(),true,ReservationStatus.CANCELLED);
 
-        Pageable pageable = new Pageable(3, pagesCount);
+        Pageable pageable = new Pageable(10,reservationsCount);
         pageable.seekToPage(page);
 
         List<Reservation> reservations = reservationService
@@ -87,7 +84,6 @@ public class UserCommand implements Command {
                         pageable.getEntriesStart(),
                         pageable.getEntriesInPage());
 
-        request.getServletContext().log(pageable.toString());
 
         request.setAttribute("pageable", pageable);
         request.setAttribute("reservations",reservations);

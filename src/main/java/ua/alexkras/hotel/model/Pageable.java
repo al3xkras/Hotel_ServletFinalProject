@@ -2,6 +2,8 @@ package ua.alexkras.hotel.model;
 
 public class Pageable {
 
+    public static final int DEFAULT_ENTRIES_IN_PAGE = 10;
+
     private int pageNumber = 1;
     private int entriesStart;
     private final int entriesInPage;
@@ -9,6 +11,11 @@ public class Pageable {
 
     public Pageable( int entriesInPage, int totalItems) {
         this.entriesInPage = entriesInPage;
+        this.totalPages = (int)Math.ceil((double)totalItems/entriesInPage);
+    }
+
+    public Pageable(int totalItems){
+        this.entriesInPage = DEFAULT_ENTRIES_IN_PAGE;
         this.totalPages = (int)Math.ceil((double)totalItems/entriesInPage);
     }
 

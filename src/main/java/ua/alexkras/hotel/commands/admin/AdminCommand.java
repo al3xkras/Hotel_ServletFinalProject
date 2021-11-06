@@ -5,6 +5,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.ApartmentService;
@@ -41,7 +42,6 @@ public class AdminCommand implements Command {
                     .userType(UserType.ADMIN)
                     .build();
             request.getSession().setAttribute("user", testAdmin);
-
             //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
         } else if (!currentUser.get().getUserType().equals(UserType.ADMIN)){
             return "redirect:/"+HotelServlet.pathBasename+'/';
@@ -49,20 +49,33 @@ public class AdminCommand implements Command {
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
-        if (command.isEmpty()){
-            //TODO make pagination
-            List<Reservation> reservations = reservationService.findByReservationStatus(
-                    true,
-                    ReservationStatus.PENDING,
-                    1,50);
-
-            request.setAttribute("pendingReservations",reservations);
-            return "/WEB-INF/personal_area/admin.jsp";
+        if (!command.isEmpty()){
+            return Optional.ofNullable(commands.get(command))
+                    .orElseThrow(IllegalStateException::new)
+                    .executeGet(request);
         }
 
-        return Optional.ofNullable(commands.get(command))
-                 .orElseThrow(IllegalStateException::new)
-                 .executeGet(request);
+        String pageParam=request.getParameter("page");
+        int page = (pageParam==null)?1:Integer.parseInt(pageParam);
+        int reservationsCount = reservationService.getReservationsCountByActiveAndStatus(
+                true,ReservationStatus.PENDING);
+
+        request.getServletContext().log(""+reservationsCount);
+
+        Pageable pageable = new Pageable(5,reservationsCount);
+        pageable.seekToPage(page);
+
+        request.getServletContext().log(pageable.toString());
+
+        List<Reservation> reservations = reservationService.findByReservationStatus(
+                true,
+                ReservationStatus.PENDING,
+                pageable.getEntriesStart(),
+                pageable.getEntriesInPage());
+
+        request.setAttribute("pageable",pageable);
+        request.setAttribute("pendingReservations",reservations);
+        return "/WEB-INF/personal_area/admin.jsp";
     }
 
     @Override

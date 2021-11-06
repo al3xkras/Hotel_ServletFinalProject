@@ -16,8 +16,28 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_reservation_status.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_personal_area.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style_apartment.css" />
+
+    <style>
+        span.border{
+            margin: 2px;
+        }
+
+        span{
+            padding: 5px;
+        }
+
+        div.d-flex{
+            margin-top: 3px;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
 <body>
+
+    <c:set var="page">
+        ${param.page==null?1:param.page}
+    </c:set>
+
     <div class="custom-navbar" style="">
         <a class="active" href="${pageContext.request.contextPath}/app/admin">
             <fmt:message key="navbar.hotel"/>
@@ -106,5 +126,32 @@
             </c:forEach>
         </table>
     </div>
+
+    <c:if test="${requestScope.pageable.totalPages>1}">
+        <div class="d-flex flex-row justify-content-center">
+            <c:if test="${requestScope.pageable.hasPrevious()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/admin?page=${page-1}">Previous</a>
+            </span>
+            </c:if>
+
+            <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
+                <c:if test="${page==pageIndex}">
+                    <span class="border selected">${pageIndex}</span>
+                </c:if>
+                <c:if test="${!(page==pageIndex)}">
+                <span class="border">
+                     <a class="page-number" href="${pageContext.request.contextPath}/app/admin?page=${pageIndex}">${pageIndex}</a>
+                </span>
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${requestScope.pageable.hasNext()}">
+            <span class="border">
+                <a href="${pageContext.request.contextPath}/app/admin?page=${page+1}">Next</a>
+            </span>
+            </c:if>
+        </div>
+    </c:if>
 </body>
 </html>

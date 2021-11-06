@@ -145,8 +145,12 @@ public class ReservationService implements Service{
                     reservation.getToDate().atStartOfDay()).toDays();
     }
 
-    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus status){
-        return reservationDAO.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(userId,isActive,status);
+    public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus illegalStatus){
+        return reservationDAO.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(userId,isActive,illegalStatus);
+    }
+
+    public int getReservationsCountByActiveAndStatus(boolean isActive, ReservationStatus status){
+        return reservationDAO.getReservationsCountByActiveAndStatus(isActive,status);
     }
 
     @Override
