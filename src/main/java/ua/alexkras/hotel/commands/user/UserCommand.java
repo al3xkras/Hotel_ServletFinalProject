@@ -6,6 +6,7 @@ import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
+import ua.alexkras.hotel.exception.UserNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
@@ -93,7 +94,7 @@ public class UserCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        if (!AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new).getUserType().equals(UserType.USER)){
+        if (!AuthFilter.getCurrentLoginUser().orElseThrow(UserNotFoundException::new).getUserType().equals(UserType.USER)){
             throw new RuntimeException();
         }
 

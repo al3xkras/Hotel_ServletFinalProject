@@ -5,6 +5,8 @@ import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
 import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.exception.CommandNotFoundException;
+import ua.alexkras.hotel.exception.UserNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.ApartmentService;
@@ -34,12 +36,13 @@ public class ReservationCommand implements Command {
     public String executeGet(HttpServletRequest request) {
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
-        User user = AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new);
+        User user = AuthFilter.getCurrentLoginUser().orElseThrow(UserNotFoundException::new);
 
         if (!commands.containsKey(command)){
             int reservationId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
 
-            Reservation reservation = reservationService.getReservationById(reservationId).orElseThrow(IllegalStateException::new);
+            Reservation reservation = reservationService.getReservationById(reservationId)
+                    .orElseThrow(()->new RuntimeException("Reservation not found"));
 
             if (!reservation.getUserId().equals(user.getId()) ||
                     !reservation.isCompleted()){
@@ -51,7 +54,7 @@ public class ReservationCommand implements Command {
         }
 
         return Optional.ofNullable(commands.get(command))
-                .orElseThrow(IllegalStateException::new)
+                .orElseThrow(CommandNotFoundException::new)
                 .executeGet(request);
     }
 
@@ -62,7 +65,7 @@ public class ReservationCommand implements Command {
         return command.isEmpty() ?
                 "redirect:/app/"+HotelServlet.pathBasename+'/'+UserCommand.pathBasename :
                 Optional.ofNullable(commands.get(command))
-                        .orElseThrow(IllegalStateException::new)
+                        .orElseThrow(CommandNotFoundException::new)
                         .executePost(request);
     }
 }
