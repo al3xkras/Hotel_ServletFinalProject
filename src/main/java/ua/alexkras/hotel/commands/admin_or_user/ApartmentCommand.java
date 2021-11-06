@@ -42,7 +42,7 @@ public class ApartmentCommand implements Command{
         int page = (pageParam==null)?1:Integer.parseInt(pageParam);
         sort = (sort==null || !sortBy.containsKey(sort))?"status":sort;
 
-        Pageable pageable = new Pageable(3,apartmentService.getApartmentsCount());
+        Pageable pageable = new Pageable(apartmentService.getApartmentsCount());
         pageable.seekToPage(page);
 
         if (command.isEmpty()) {

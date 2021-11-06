@@ -98,31 +98,32 @@
         </table>
     </div>
 
-    <div class="d-flex flex-row justify-content-center">
-        <c:if test="${requestScope.pageable.hasPrevious()}">
+    <c:if test="${requestScope.pageable.totalPages>1}">
+        <div class="d-flex flex-row justify-content-center">
+            <c:if test="${requestScope.pageable.hasPrevious()}">
             <span class="border">
                 <a href="${pageContext.request.contextPath}/app/apartments?page=${page-1}">Previous</a>
             </span>
-        </c:if>
-
-        <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
-            <c:if test="${page==pageIndex}">
-                <span class="border selected">${pageIndex}</span>
             </c:if>
-            <c:if test="${!(page==pageIndex)}">
+
+            <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
+                <c:if test="${page==pageIndex}">
+                    <span class="border selected">${pageIndex}</span>
+                </c:if>
+                <c:if test="${!(page==pageIndex)}">
                 <span class="border">
                      <a class="page-number" href="${pageContext.request.contextPath}/app/apartments?page=${pageIndex}">${pageIndex}</a>
                 </span>
-            </c:if>
-        </c:forEach>
+                </c:if>
+            </c:forEach>
 
-        <c:if test="${requestScope.pageable.hasNext()}">
+            <c:if test="${requestScope.pageable.hasNext()}">
             <span class="border">
                 <a href="${pageContext.request.contextPath}/app/apartments?page=${page+1}">Next</a>
             </span>
-        </c:if>
-    </div>
-
+            </c:if>
+        </div>
+    </c:if>
 
     <script>
         const url = new URL(window.location);
