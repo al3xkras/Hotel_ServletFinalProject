@@ -16,6 +16,7 @@ import ua.alexkras.hotel.service.ReservationService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+//TODO replace RuntimeExceptions with custom exceptions
 public class UserCommand implements Command {
 
     public static final String pathBasename = "user";
@@ -45,6 +46,7 @@ public class UserCommand implements Command {
         User user;
 
         if(!currentUser.isPresent()){
+            //TODO remove in final build
             User testUser = User.builder()
                     .id(-100)
                     .userType(UserType.USER)
@@ -62,6 +64,7 @@ public class UserCommand implements Command {
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
+            //TODO make pagination
             List<Reservation> reservations = reservationService
                     .findByUserIdAndActiveAndAnyStatusExcept(
                             user.getId(),

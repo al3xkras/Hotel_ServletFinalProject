@@ -15,14 +15,17 @@ import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.*;
 public class JDBCApartmentDao implements ApartmentDao {
 
     private final Connection connection;
+    private final Connection transactional;
 
-    public JDBCApartmentDao(Connection connection) {
+    public JDBCApartmentDao(Connection connection, Connection transactional) {
         this.connection = connection;
+        this.transactional = transactional;
     }
 
+    //@Transactional
     @Override
     public void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus){
-        try (PreparedStatement updateStatusById = connection.prepareStatement(updateApartmentStatusById)
+        try (PreparedStatement updateStatusById = transactional.prepareStatement(updateApartmentStatusById)
             ){
             updateStatusById.setString(1,apartmentStatus.name());
             updateStatusById.setLong(2,id);
@@ -40,7 +43,7 @@ public class JDBCApartmentDao implements ApartmentDao {
             int start, int total){
 
         ArrayList<Apartment> apartments = new ArrayList<>();
-        try(PreparedStatement statement = connection.prepareStatement(findByApartmentClassAndPlacesAndStatus)
+        try(PreparedStatement statement = connection.prepareStatement(findByApartmentClassAndPlacesAndStatus);
             ){
             statement.setString(1,apartmentClass.name());
             statement.setInt(2,places);
@@ -63,7 +66,7 @@ public class JDBCApartmentDao implements ApartmentDao {
     }
 
     @Override
-    public boolean create(Apartment apartment){
+    public void create(Apartment apartment){
         try(PreparedStatement addApartment = connection.prepareStatement(ApartmentTableStrings.addApartment)
             ){
             addApartment.setString(1,apartment.getName());
@@ -77,9 +80,8 @@ public class JDBCApartmentDao implements ApartmentDao {
 
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            throw new RuntimeException();
         }
-        return true;
     }
 
     @Override
@@ -129,7 +131,7 @@ public class JDBCApartmentDao implements ApartmentDao {
         List<Apartment> list = new ArrayList<>();
         try(PreparedStatement findApartments=
                     connection.prepareStatement(selectApartmentsWithLimit)
-            ){
+                ){
 
             findApartments.setInt(1,start-1);
             findApartments.setInt(2,total);
@@ -149,12 +151,20 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     @Override
     public void update(Apartment apartment) {
+        updateInConnection(connection,apartment);
+    }
+
+    public void transactionalUpdateApartment(Apartment apartment){
+        updateInConnection(transactional,apartment);
+    }
+
+    private void updateInConnection(Connection connection, Apartment apartment){
         if (apartment.getId()==null){
             throw new IllegalStateException();
         }
 
         try(PreparedStatement updateApartment = connection.prepareStatement(ApartmentTableStrings.updateApartment)
-            ){
+        ){
             updateApartment.setString(1, apartment.getName());
             updateApartment.setInt(2, apartment.getPlaces());
             updateApartment.setString(3,apartment.getApartmentClass().name());
@@ -187,6 +197,27 @@ public class JDBCApartmentDao implements ApartmentDao {
             connection.close();
         } catch (Exception e){
             e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void commit(){
+        try {
+            transactional.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try {
+            transactional.rollback();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 

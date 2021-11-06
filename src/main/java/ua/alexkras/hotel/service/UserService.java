@@ -6,7 +6,7 @@ import ua.alexkras.hotel.entity.User;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class UserService {
+public class UserService implements Service{
 
     private final JDBCUserDao userDao;
 
@@ -36,8 +36,18 @@ public class UserService {
      * @param user User to add
      * @throws RuntimeException if User was not added to the data source
      */
-    public boolean addUser(User user){
-        return userDao.create(user);
+    public void addUser(User user){
+        userDao.create(user);
+    }
+
+    @Override
+    public void commitCurrentTransaction(){
+        userDao.commit();
+    }
+
+    @Override
+    public void rollbackConnection(){
+        userDao.rollback();
     }
 
 

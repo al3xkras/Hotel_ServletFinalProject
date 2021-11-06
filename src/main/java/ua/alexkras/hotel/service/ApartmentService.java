@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ApartmentService {
+public class ApartmentService implements Service{
     private final JDBCApartmentDao apartmentDAO;
 
     public ApartmentService(){
@@ -28,10 +28,15 @@ public class ApartmentService {
 
     public void updateApartmentStatusById(long id, ApartmentStatus status){
         apartmentDAO.updateApartmentStatusById(id,status);
+        apartmentDAO.commit();
     }
 
-    public boolean addApartment(Apartment apartment) {
-        return apartmentDAO.create(apartment);
+    public void transactionalUpdateApartmentStatusById(long id, ApartmentStatus status){
+        apartmentDAO.updateApartmentStatusById(id,status);
+    }
+
+    public void addApartment(Apartment apartment) {
+        apartmentDAO.create(apartment);
     }
 
     /**
@@ -40,6 +45,10 @@ public class ApartmentService {
      */
     public void updateApartment(Apartment apartment) {
         apartmentDAO.update(apartment);
+    }
+
+    public void transactionalUpdateApartment(Apartment apartment){
+        apartmentDAO.transactionalUpdateApartment(apartment);
     }
 
     /**
@@ -55,5 +64,15 @@ public class ApartmentService {
                 ApartmentStatus.AVAILABLE,
                 start,
                 total);
+    }
+
+    @Override
+    public void commitCurrentTransaction(){
+        apartmentDAO.commit();
+    }
+
+    @Override
+    public void rollbackConnection(){
+        apartmentDAO.rollback();
     }
 }

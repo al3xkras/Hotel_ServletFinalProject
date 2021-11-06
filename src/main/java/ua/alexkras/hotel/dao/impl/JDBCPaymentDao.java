@@ -11,14 +11,17 @@ import java.util.Optional;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.*;
 
 public class JDBCPaymentDao implements PaymentDAO {
-    private final Connection connection;
 
-    public JDBCPaymentDao(Connection connection) {
+    private final Connection connection;
+    private final Connection transactional;
+
+    public JDBCPaymentDao(Connection connection, Connection transactional) {
         this.connection = connection;
+        this.transactional = transactional;
     }
 
     @Override
-    public boolean create(Payment payment) {
+    public void create(Payment payment) {
         try(PreparedStatement create = connection.prepareStatement("INSERT INTO hotel_db_servlet.payments (" +
                 "id, " +
                 "user_id, " +
@@ -38,7 +41,6 @@ public class JDBCPaymentDao implements PaymentDAO {
             e.printStackTrace();
             throw new RuntimeException();
         }
-        return true;
     }
 
     @Override
@@ -154,6 +156,26 @@ public class JDBCPaymentDao implements PaymentDAO {
         try {
             connection.close();
         } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void commit(){
+        try {
+            transactional.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try {
+            transactional.rollback();
+        } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }

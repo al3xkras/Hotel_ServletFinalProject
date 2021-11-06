@@ -10,6 +10,21 @@ public class JDBCDaoFactory extends DaoFactory {
 
     private final DataSource dataSource = ConnectionPoolHolder.getDataSource();
 
+    private Connection  transactionalConnection,
+                        ApartmentDaoConnection,
+                        PaymentDaoConnection,
+                        ReservationDaoConnection,
+                        UserDaoConnection;
+
+    public JDBCDaoFactory(){
+        transactionalConnection = getConnection();
+        try {
+            transactionalConnection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Connection getConnection(){
         try {
             return dataSource.getConnection();
@@ -20,21 +35,25 @@ public class JDBCDaoFactory extends DaoFactory {
 
     @Override
     public JDBCApartmentDao createApartmentDAO() {
-        return new JDBCApartmentDao(getConnection());
+        ApartmentDaoConnection = getConnection();
+        return new JDBCApartmentDao(ApartmentDaoConnection,transactionalConnection);
     }
 
     @Override
     public JDBCPaymentDao createPaymentDAO() {
-        return new JDBCPaymentDao(getConnection());
+        PaymentDaoConnection = getConnection();
+        return new JDBCPaymentDao(PaymentDaoConnection,transactionalConnection);
     }
 
     @Override
     public JDBCReservationDao createReservationDAO() {
-        return new JDBCReservationDao(getConnection());
+        ReservationDaoConnection = getConnection();
+        return new JDBCReservationDao(ReservationDaoConnection,transactionalConnection);
     }
 
     @Override
     public JDBCUserDao createUserDAO() {
-        return new JDBCUserDao(getConnection());
+        UserDaoConnection = getConnection();
+        return new JDBCUserDao(UserDaoConnection,transactionalConnection);
     }
 }

@@ -12,9 +12,11 @@ import java.util.Optional;
 public class JDBCUserDao implements UserDAO {
 
     private final Connection connection;
+    private final Connection transactional;
 
-    public JDBCUserDao(Connection connection) {
+    public JDBCUserDao(Connection connection, Connection transactional) {
         this.connection = connection;
+        this.transactional = transactional;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class JDBCUserDao implements UserDAO {
     }
 
     @Override
-    public boolean create(User user) {
+    public void create(User user) {
         try(PreparedStatement addUserIfNotExists = connection.prepareStatement(UserTableStrings.addUser)
             ){
             prepareUserStatement(user, addUserIfNotExists);
@@ -48,9 +50,8 @@ public class JDBCUserDao implements UserDAO {
 
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            throw new RuntimeException();
         }
-        return true;
     }
 
     private void prepareUserStatement(User user, PreparedStatement addUserIfNotExists) throws SQLException {
@@ -144,6 +145,26 @@ public class JDBCUserDao implements UserDAO {
             connection.close();
         } catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void commit(){
+        try {
+            transactional.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try {
+            transactional.rollback();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 

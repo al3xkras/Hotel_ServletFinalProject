@@ -32,14 +32,23 @@ public class CancelReservationCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        CancelReservation(request, pathBasename, reservationService, apartmentService,ReservationStatus.CANCELLED);
+        String command = Command.getCommand(request.getRequestURI(), pathBasename);
+
+        parseCommandAndCancelReservationAndUpdateApartmentStatus(
+                command, pathBasename,
+                reservationService, apartmentService,
+                ReservationStatus.CANCELLED);
 
         return "redirect:/"+HotelServlet.pathBasename+"/"+ UserCommand.pathBasename;
     }
 
-    public static void CancelReservation(HttpServletRequest request, String pathBasename, ReservationService reservationService, ApartmentService apartmentService,
-                                         ReservationStatus cancelledStatus) {
-        String command = Command.getCommand(request.getRequestURI(), pathBasename);
+    public static void parseCommandAndCancelReservationAndUpdateApartmentStatus(
+            String command,
+            String pathBasename,
+            ReservationService reservationService,
+            ApartmentService apartmentService,
+            ReservationStatus cancelledStatus) {
+
 
         String delimiter = "&";
 
@@ -54,9 +63,15 @@ public class CancelReservationCommand implements Command {
             reservationId = Integer.parseInt(command);
         }
 
-        reservationService.updateReservationStatusById(reservationId, cancelledStatus);
-        //TODO rollback connection if failed to update apartments' status
-        apartmentId.ifPresent(id-> apartmentService.updateApartmentStatusById(id, ApartmentStatus.AVAILABLE));
+        try {
+            reservationService.transactionalUpdateReservationStatusById(reservationId, cancelledStatus);
+            apartmentId.ifPresent(id -> apartmentService.transactionalUpdateApartmentStatusById(id, ApartmentStatus.AVAILABLE));
+
+            reservationService.commitCurrentTransaction();
+        } catch (Exception e){
+            reservationService.rollbackConnection();
+        }
+
     }
 
 }

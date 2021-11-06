@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+//TODO replace RuntimeExceptions with custom exceptions
 public class AdminCommand implements Command {
 
     public static final String pathBasename = "admin";
@@ -34,6 +35,7 @@ public class AdminCommand implements Command {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
 
         if(!currentUser.isPresent()){
+            //TODO remove in final build
             User testAdmin = User.builder()
                     .id(-200)
                     .userType(UserType.ADMIN)
@@ -48,6 +50,7 @@ public class AdminCommand implements Command {
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
         if (command.isEmpty()){
+            //TODO make pagination
             List<Reservation> reservations = reservationService.findByReservationStatus(
                     true,
                     ReservationStatus.PENDING,

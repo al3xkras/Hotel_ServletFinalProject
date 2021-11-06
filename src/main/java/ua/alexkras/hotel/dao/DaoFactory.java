@@ -14,8 +14,7 @@ public abstract class DaoFactory {
         if( daoFactory == null ){
             synchronized (DaoFactory.class){
                 if(daoFactory==null){
-                    DaoFactory temp = new JDBCDaoFactory();
-                    daoFactory = temp;
+                    daoFactory = new JDBCDaoFactory();
                 }
             }
         }

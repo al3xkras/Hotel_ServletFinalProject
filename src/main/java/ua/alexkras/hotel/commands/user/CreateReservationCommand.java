@@ -61,9 +61,7 @@ public class CreateReservationCommand implements Command {
                 .submitDate(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
                 .build();
 
-        if (!reservationService.addReservation(reservation)){
-            throw new RuntimeException();
-        }
+        reservationService.addReservation(reservation);
 
         return "redirect:/"+ HotelServlet.pathBasename+'/'+UserCommand.pathBasename;
 

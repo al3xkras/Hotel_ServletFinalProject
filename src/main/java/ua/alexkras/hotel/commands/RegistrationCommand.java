@@ -61,7 +61,9 @@ public class RegistrationCommand implements Command {
 
         if (validationErrorMessage.isEmpty()){
             user = new User(registrationRequest, UserType.USER);
-            if (!userService.addUser(user)){
+            try{
+                userService.addUser(user);
+            } catch (Exception e){
                 validationErrorMessage="username.exists";
             }
         }

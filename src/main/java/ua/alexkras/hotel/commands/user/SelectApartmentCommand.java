@@ -80,12 +80,14 @@ public class SelectApartmentCommand implements Command {
                 .submitDate(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
 
-        if (!reservationService.addReservation(reservation)){
-            throw new RuntimeException();
-        }
+        try {
+            reservationService.transactionalAddReservation(reservation);
+            apartmentService.transactionalUpdateApartment(apartment);
 
-        //TODO rollback connection if failed to update apartment
-        apartmentService.updateApartment(apartment);
+            reservationService.commitCurrentTransaction();
+        } catch (Exception e){
+            reservationService.rollbackConnection();
+        }
 
         return "redirect:/app/"+UserCommand.pathBasename;
     }

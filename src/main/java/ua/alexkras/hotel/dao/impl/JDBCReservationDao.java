@@ -19,9 +19,11 @@ public class JDBCReservationDao implements ReservationDAO {
     public static final int requestMaxReservations = 50;
 
     private final Connection connection;
+    private final Connection transactional;
 
-    public JDBCReservationDao(Connection connection) {
+    public JDBCReservationDao(Connection connection, Connection transactional) {
         this.connection = connection;
+        this.transactional = transactional;
     }
 
     @Override
@@ -40,9 +42,16 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public boolean create(Reservation reservation){
-        try(PreparedStatement addApartment = connection.prepareStatement(addReservation)
-            ){
+    public void create(Reservation reservation){
+        createInConnection(connection,reservation);
+    }
+
+    public void createInTransaction(Reservation reservation){
+        createInConnection(transactional,reservation);
+    }
+
+    private void createInConnection(Connection connection, Reservation reservation){
+        try(PreparedStatement addApartment = connection.prepareStatement(addReservation)){
             addApartment.setLong(1,reservation.getUserId());
 
             Long apartmentId = reservation.getApartmentId();
@@ -70,9 +79,8 @@ public class JDBCReservationDao implements ReservationDAO {
             addApartment.execute();
         } catch (Exception e){
             e.printStackTrace();
-            return false;
+            throw new RuntimeException();
         }
-        return true;
     }
 
     public Optional<Reservation> findById(long reservationId){
@@ -112,7 +120,32 @@ public class JDBCReservationDao implements ReservationDAO {
 
     @Override
     public void close() {
+        try {
+            connection.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
 
+    @Override
+    public void commit(){
+        try {
+            transactional.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try {
+            transactional.rollback();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
@@ -120,9 +153,10 @@ public class JDBCReservationDao implements ReservationDAO {
         return null;
     }
 
+    //@Transactional
     @Override
     public void updateReservationStatusById(long id, ReservationStatus reservationStatus){
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateStatusById)){
+        try (PreparedStatement preparedStatement = transactional.prepareStatement(updateStatusById)){
 
             preparedStatement.setString(1,reservationStatus.name());
             preparedStatement.setLong(2,id);

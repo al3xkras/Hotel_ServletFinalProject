@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-public class PaymentService {
+public class PaymentService implements Service{
 
     private final JDBCPaymentDao paymentDAO;
 
@@ -37,5 +37,15 @@ public class PaymentService {
                 .cardCvv(CVV)
                 .cardExpirationDate(MySqlStrings.dateFormat.parse(expirationDate)
                         .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    @Override
+    public void commitCurrentTransaction(){
+        paymentDAO.commit();
+    }
+
+    @Override
+    public void rollbackConnection(){
+        paymentDAO.rollback();
     }
 }

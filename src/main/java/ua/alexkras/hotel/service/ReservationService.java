@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class ReservationService {
+public class ReservationService implements Service{
 
     private final JDBCReservationDao reservationDAO;
 
@@ -19,62 +19,6 @@ public class ReservationService {
     public ReservationService(){
         this.reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
     }
-
-    /*
-    public boolean updateAllExpiredReservations(){
-        try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
-             PreparedStatement updateExpired = conn.prepareStatement("UPDATE " +
-                     "hotel_db.reservations SET " +
-                     "status=?,"+
-                     "expired=true "+
-                     "WHERE not expired and not is_paid and " +
-                     "admin_confirmation_date is not null and " +
-                     "DATEDIFF(admin_confirmation_date,?)>=?");
-             PreparedStatement setExpiredReservationApartmentsAvailable = conn.prepareStatement("UPDATE " +
-                     "hotel_db.apartments SET "+
-                     "apartment_status=? "+
-                     "WHERE apartment_status='"+ApartmentStatus.RESERVED+"' and "+
-                     "id IN (SELECT apartment_id FROM hotel_db.reservations WHERE expired and is_active)");
-             PreparedStatement updateActive = conn.prepareStatement("UPDATE " +
-                     "hotel_db.reservations SET " +
-                     "is_active=false "+
-                     "WHERE is_active and expired ")
-             ){
-            updateExpired.setString(1,ReservationStatus.CANCELLED.name());
-            updateExpired.setDate(2, Date.valueOf(LocalDate.now()));
-            updateExpired.setLong(3,daysToCancelPayment);
-            updateExpired.executeUpdate();
-
-            setExpiredReservationApartmentsAvailable.setString(1,ApartmentStatus.AVAILABLE.name());
-            setExpiredReservationApartmentsAvailable.executeUpdate();
-
-            updateActive.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public List<Reservation> getReservationsByUserId(int userId){
-        return reservationDAO.findByUserId(userId);
-    }
-
-    public List<Reservation> getActiveReservationsByUserId(int userId){
-        return reservationDAO.findByUserIdAndIsActive(userId,true);
-    }
-
-
-
-    public List<Reservation> getAllReservations(){
-        return reservationDAO.findAll();
-    }
-
-    public List<Reservation> getPendingReservations(){
-        return reservationDAO.findByReservationStatus(ReservationStatus.PENDING);
-    }
-
-     */
 
     public Optional<Reservation> getReservationById(long reservationId){
         return reservationDAO.findById(reservationId);
@@ -87,6 +31,11 @@ public class ReservationService {
      * @param reservationStatus reservation status to assign to the Reservation
      */
     public void updateReservationStatusById(int id, ReservationStatus reservationStatus){
+        reservationDAO.updateReservationStatusById(id, reservationStatus);
+        reservationDAO.commit();
+    }
+
+    public void transactionalUpdateReservationStatusById(int id, ReservationStatus reservationStatus){
         reservationDAO.updateReservationStatusById(id, reservationStatus);
     }
 
@@ -182,13 +131,27 @@ public class ReservationService {
                 start,total);
     }
 
-    public boolean addReservation (Reservation reservation){
-        return reservationDAO.create(reservation);
+    public void addReservation (Reservation reservation){
+        reservationDAO.create(reservation);
+    }
+
+    public void transactionalAddReservation (Reservation reservation){
+        reservationDAO.createInTransaction(reservation);
     }
 
     public int getTotalReservationValue(Reservation reservation){
         return reservation.getApartmentPrice()
                 * (int) Duration.between(reservation.getFromDate().atStartOfDay(),
                     reservation.getToDate().atStartOfDay()).toDays();
+    }
+
+    @Override
+    public void commitCurrentTransaction(){
+        reservationDAO.commit();
+    }
+
+    @Override
+    public void rollbackConnection(){
+        reservationDAO.rollback();
     }
 }

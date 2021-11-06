@@ -9,7 +9,7 @@ import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand.CancelReservation;
+import static ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand.parseCommandAndCancelReservationAndUpdateApartmentStatus;
 
 public class CancelReservationCommand implements Command {
 
@@ -31,7 +31,12 @@ public class CancelReservationCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
-        CancelReservation(request, pathBasename, reservationService, apartmentService, ReservationStatus.CANCELLED_BY_ADMIN);
+        String command = Command.getCommand(request.getRequestURI(), pathBasename);
+
+        parseCommandAndCancelReservationAndUpdateApartmentStatus(
+                command, pathBasename,
+                reservationService, apartmentService,
+                ReservationStatus.CANCELLED_BY_ADMIN);
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+ AdminCommand.pathBasename;
     }
