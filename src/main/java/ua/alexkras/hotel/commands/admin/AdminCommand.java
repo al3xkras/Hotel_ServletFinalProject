@@ -39,7 +39,7 @@ public class AdminCommand implements Command {
         if(!currentUser.isPresent()){
             //TODO remove in final build
             User testAdmin = User.builder()
-                    .id(-200)
+                    .id(-2L)
                     .userType(UserType.ADMIN)
                     .build();
             request.getSession().setAttribute("user", testAdmin);

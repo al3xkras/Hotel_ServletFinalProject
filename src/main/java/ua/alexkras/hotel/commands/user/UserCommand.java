@@ -51,7 +51,7 @@ public class UserCommand implements Command {
         if(!currentUser.isPresent()){
             //TODO remove in final build
             User testUser = User.builder()
-                    .id(-100)
+                    .id(-1L)
                     .userType(UserType.USER)
                     .build();
             request.getSession().setAttribute("user", testUser);
