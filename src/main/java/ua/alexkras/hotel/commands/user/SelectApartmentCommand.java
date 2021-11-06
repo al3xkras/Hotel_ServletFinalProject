@@ -33,7 +33,7 @@ public class SelectApartmentCommand implements Command {
     @Override
     public String executeGet(HttpServletRequest request) {
         int apartmentId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
-        Apartment apartment = apartmentService.getApartmentById(apartmentId).orElseThrow(IllegalStateException::new);
+        Apartment apartment = apartmentService.findById(apartmentId).orElseThrow(IllegalStateException::new);
 
         request.setAttribute("apartment", apartment);
 
@@ -45,7 +45,7 @@ public class SelectApartmentCommand implements Command {
         User currentUser = AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new);
 
         int apartmentId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
-        Apartment apartment = apartmentService.getApartmentById(apartmentId).orElseThrow(IllegalStateException::new);
+        Apartment apartment = apartmentService.findById(apartmentId).orElseThrow(IllegalStateException::new);
 
         if (!apartment.getStatus().equals(ApartmentStatus.AVAILABLE))
             throw new RuntimeException("Apartment is not available");

@@ -63,7 +63,7 @@ public class CancelReservationCommand implements Command {
         }
 
         try {
-            reservationService.transactionalUpdateReservationStatusById(reservationId, cancelledStatus);
+            reservationService.transactionalUpdateStatusById(reservationId, cancelledStatus);
             apartmentId.ifPresent(id -> apartmentService.transactionalUpdateApartmentStatusById(id, ApartmentStatus.AVAILABLE));
 
             reservationService.commitCurrentTransaction();

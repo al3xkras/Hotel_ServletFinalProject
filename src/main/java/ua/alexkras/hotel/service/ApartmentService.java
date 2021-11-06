@@ -18,12 +18,44 @@ public class ApartmentService implements Service{
         this.apartmentDAO = JDBCDaoFactory.getInstance().createApartmentDAO();
     }
 
-    public List<Apartment> findApartments(int start, int total){
+    public void addApartment(Apartment apartment) {
+        apartmentDAO.create(apartment);
+    }
+
+    public Optional<Apartment> findById(long id){
+        return apartmentDAO.findById(id);
+    }
+
+    public List<Apartment> findAllApartments(int start, int total){
         return apartmentDAO.findApartments(start,total);
     }
 
-    public Optional<Apartment> getApartmentById(long id){
-        return apartmentDAO.findById(id);
+    /**
+     * Get List of Apartments that can be assigned to a specific Reservation
+     *
+     * @param reservation reservation to match Apartments in list
+     * @return List of apartments that match reservation
+     */
+    public List<Apartment> findApartmentsMatchingReservation(Reservation reservation, int start, int total){
+        return apartmentDAO.findApartmentsByApartmentClassAndPlacesAndStatus(
+                reservation.getApartmentClass(), reservation.getPlaces(),
+                ApartmentStatus.AVAILABLE, start, total);
+    }
+
+    public int getApartmentsCount(){
+        return  apartmentDAO.getApartmentsCount();
+    }
+
+    /**
+     * Update an Apartment entity
+     * @param apartment Apartment to be updated
+     */
+    public void updateApartment(Apartment apartment) {
+        apartmentDAO.update(apartment);
+    }
+
+    public void transactionalUpdateApartment(Apartment apartment){
+        apartmentDAO.transactionalUpdateApartment(apartment);
     }
 
     public void updateApartmentStatusById(long id, ApartmentStatus status){
@@ -35,37 +67,6 @@ public class ApartmentService implements Service{
         apartmentDAO.updateApartmentStatusById(id,status);
     }
 
-    public void addApartment(Apartment apartment) {
-        apartmentDAO.create(apartment);
-    }
-
-    /**
-     * Update Apartment
-     * @param apartment Apartment to be updated
-     */
-    public void updateApartment(Apartment apartment) {
-        apartmentDAO.update(apartment);
-    }
-
-    public void transactionalUpdateApartment(Apartment apartment){
-        apartmentDAO.transactionalUpdateApartment(apartment);
-    }
-
-    /**
-     * Get List of Apartments that can be assigned to a specific Reservation
-     *
-     * @param reservation reservation to match Apartments in list
-     * @return List of apartments
-     */
-    public List<Apartment> findApartmentsMatchingReservation(Reservation reservation, int start, int total){
-        return apartmentDAO.findApartmentsByApartmentClassAndPlacesAndStatus(
-                reservation.getApartmentClass(),
-                reservation.getPlaces(),
-                ApartmentStatus.AVAILABLE,
-                start,
-                total);
-    }
-
     @Override
     public void commitCurrentTransaction(){
         apartmentDAO.commit();
@@ -74,9 +75,5 @@ public class ApartmentService implements Service{
     @Override
     public void rollbackConnection(){
         apartmentDAO.rollback();
-    }
-
-    public int getApartmentsCount(){
-        return  apartmentDAO.getApartmentsCount();
     }
 }

@@ -41,7 +41,7 @@ public class ReservationCommand implements Command {
         if (!commands.containsKey(command)){
             int reservationId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
 
-            Reservation reservation = reservationService.getReservationById(reservationId)
+            Reservation reservation = reservationService.findById(reservationId)
                     .orElseThrow(()->new RuntimeException("Reservation not found"));
 
             if (!reservation.getUserId().equals(user.getId()) ||

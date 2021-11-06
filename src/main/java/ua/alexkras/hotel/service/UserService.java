@@ -3,7 +3,6 @@ package ua.alexkras.hotel.service;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCUserDao;
 import ua.alexkras.hotel.entity.User;
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class UserService implements Service{
@@ -14,7 +13,7 @@ public class UserService implements Service{
         userDao = JDBCDaoFactory.getInstance().createUserDAO();
     }
 
-    public Optional<User> getUserById(long id) throws SQLException {
+    public Optional<User> findById(long id){
         return userDao.findById(id);
     }
 
@@ -24,7 +23,7 @@ public class UserService implements Service{
      * @param username User's login (username)
      * @return Optional\<User>, if user was found, Optional.empty() otherwise.
      */
-    public Optional<User> getUserByUserName(String username) {
+    public Optional<User> findByUsername(String username) {
         return userDao.findByUsername(username);
     }
 

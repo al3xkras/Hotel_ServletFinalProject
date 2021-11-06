@@ -31,7 +31,7 @@ public class HotelServlet extends HttpServlet {
         ReservationService reservationService = new ReservationService();
         UserService userService = new UserService();
         ApartmentService apartmentService = new ApartmentService();
-        PaymentService paymentService = new PaymentService(reservationService);
+        PaymentService paymentService = new PaymentService();
 
         commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService,paymentService));
         commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));

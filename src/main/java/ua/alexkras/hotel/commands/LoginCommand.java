@@ -30,7 +30,7 @@ public class LoginCommand implements Command {
         String login = request.getParameter("username");
         String password = request.getParameter("password");
 
-        Optional<User> user = userService.getUserByUserName(login);
+        Optional<User> user = userService.findByUsername(login);
 
         if (!user.isPresent() || !password.equals(user.get().getPassword())){
             return "redirect:/app/login?error";

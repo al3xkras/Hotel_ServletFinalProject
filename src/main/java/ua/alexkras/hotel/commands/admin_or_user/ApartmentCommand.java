@@ -47,7 +47,7 @@ public class ApartmentCommand implements Command{
         pageable.seekToPage(page);
 
         if (command.isEmpty()) {
-            List<Apartment> apartments = apartmentService.findApartments(
+            List<Apartment> apartments = apartmentService.findAllApartments(
                     pageable.getEntriesStart(),
                     pageable.getEntriesInPage());
 

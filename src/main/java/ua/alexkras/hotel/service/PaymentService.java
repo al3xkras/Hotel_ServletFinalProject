@@ -16,7 +16,7 @@ public class PaymentService implements Service{
 
     private final JDBCPaymentDao paymentDAO;
 
-    public PaymentService(ReservationService reservationService){
+    public PaymentService(){
         this.paymentDAO = JDBCDaoFactory.getInstance().createPaymentDAO();
     }
 

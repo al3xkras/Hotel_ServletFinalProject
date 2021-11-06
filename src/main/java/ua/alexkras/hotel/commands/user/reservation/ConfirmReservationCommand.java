@@ -29,7 +29,7 @@ public class ConfirmReservationCommand implements Command {
     public String executePost(HttpServletRequest request) {
         int reservationId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
 
-        reservationService.updateReservationStatusById(reservationId, ReservationStatus.RESERVED);
+        reservationService.updateStatusById(reservationId, ReservationStatus.RESERVED);
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+UserCommand.pathBasename;
     }

@@ -29,11 +29,11 @@ public class MakePaymentCommand implements Command {
 
         int reservationId = Integer.parseInt(command);
 
-        reservation = reservationService.getReservationById(reservationId)
+        reservation = reservationService.findById(reservationId)
                 .orElseThrow(IllegalStateException::new);
 
         request.setAttribute("reservation",reservation);
-        request.setAttribute("totalValue",reservationService.getTotalReservationValue(reservation));
+        request.setAttribute("totalValue",reservationService.getReservationFullCost(reservation));
 
         return "/WEB-INF/personal_area/user/payment.jsp";
     }
@@ -51,7 +51,7 @@ public class MakePaymentCommand implements Command {
             payment = paymentService.paymentOf(card_number,cvv,expirationDate)
                     .paymentDate(LocalDateTime.now())
                     .userId(reservation.getUserId())
-                    .value(reservationService.getTotalReservationValue(reservation))
+                    .value(reservationService.getReservationFullCost(reservation))
                     .reservationId(reservation.getId())
                     .build();
 
@@ -65,7 +65,7 @@ public class MakePaymentCommand implements Command {
 
         try{
             paymentService.transactionalAddPayment(payment);
-            reservationService.transactionalUpdatePaymentStatusById(payment.getReservationId(),true);
+            reservationService.transactionalUpdateIsPaidById(payment.getReservationId(),true);
 
             reservationService.commitCurrentTransaction();
         } catch (Exception e){

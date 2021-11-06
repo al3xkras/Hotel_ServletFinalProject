@@ -46,7 +46,7 @@ public class ReservationCommand implements Command {
 
         int reservationId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
 
-        Reservation reservation = reservationService.getReservationById(reservationId).orElseThrow(IllegalStateException::new);
+        Reservation reservation = reservationService.findById(reservationId).orElseThrow(IllegalStateException::new);
         request.setAttribute("reservation", reservation);
 
         if (!reservation.isCompleted()){
