@@ -7,7 +7,6 @@ import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
 import ua.alexkras.hotel.service.ReservationService;
 
@@ -43,7 +42,7 @@ public class CreateReservationCommand implements Command {
             fromDate = MySqlStrings.dateFormat.parse(request.getParameter("fromDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             toDate = MySqlStrings.dateFormat.parse(request.getParameter("toDate")).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         } catch (Exception e){
-            throw new RuntimeException();
+            throw new IllegalStateException();
         }
 
         if (fromDate.compareTo(toDate)>=0) {

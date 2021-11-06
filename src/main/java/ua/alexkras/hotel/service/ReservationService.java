@@ -83,31 +83,8 @@ public class ReservationService implements Service{
         reservationDAO.updateIsPaidById(reservationId,isPaid);
     }
 
-
-    /**
-     * Update reservation's days until expiration
-     * -If reservation is not confirmed by admin:
-     *   -Do nothing
-     *
-     * -Otherwise:
-     *   -Calculate days between confirmation date and today
-     *   -Update Reservation's days until expiration
-     * @param reservation Reservation that will be updated
-     * @return Reservation with updated days until expiration,
-     *   if it was confirmed by admin. Otherwise, returns @reservation
-     */
-    private Reservation updateReservationDaysUntilExpiration(Reservation reservation){
-        /*
-        if (reservation.getAdminConfirmationDate()==null){
-            return reservation;
-        }
-        LocalDate submitDate=reservation.getAdminConfirmationDate();
-        long daysBetween = DAYS.between(LocalDate.now(),submitDate);
-        reservation.setDaysUntilExpiration(daysToCancelPayment-daysBetween);
-        return reservation;
-
-         */
-        return null;
+    public void transactionalUpdatePaymentStatusById(long reservationId, boolean isPaid){
+        reservationDAO.transactionalUpdateIsPaidById(reservationId,isPaid);
     }
 
     public List<Reservation> findByReservationStatus(

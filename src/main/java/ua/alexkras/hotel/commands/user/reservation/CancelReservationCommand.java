@@ -35,7 +35,7 @@ public class CancelReservationCommand implements Command {
         String command = Command.getCommand(request.getRequestURI(), pathBasename);
 
         parseCommandAndCancelReservationAndUpdateApartmentStatus(
-                command, pathBasename,
+                command,
                 reservationService, apartmentService,
                 ReservationStatus.CANCELLED);
 
@@ -44,7 +44,6 @@ public class CancelReservationCommand implements Command {
 
     public static void parseCommandAndCancelReservationAndUpdateApartmentStatus(
             String command,
-            String pathBasename,
             ReservationService reservationService,
             ApartmentService apartmentService,
             ReservationStatus cancelledStatus) {

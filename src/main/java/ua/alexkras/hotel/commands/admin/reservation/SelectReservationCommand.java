@@ -2,6 +2,7 @@ package ua.alexkras.hotel.commands.admin.reservation;
 
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
+import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.ApartmentService;
@@ -36,7 +37,7 @@ public class SelectReservationCommand implements Command {
         String delimiter = "&";
 
         if (!command.contains(delimiter)) {
-            throw new IllegalStateException();
+            throw new CommandNotFoundException();
         }
 
         String[] ints = command.split(delimiter,2);

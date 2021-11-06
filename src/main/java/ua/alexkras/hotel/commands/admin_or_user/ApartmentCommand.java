@@ -2,6 +2,7 @@ package ua.alexkras.hotel.commands.admin_or_user;
 
 import ua.alexkras.hotel.commands.user.SelectApartmentCommand;
 import ua.alexkras.hotel.entity.Apartment;
+import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
@@ -58,7 +59,7 @@ public class ApartmentCommand implements Command{
         }
 
         return Optional.ofNullable(commands.get(command))
-                        .orElseThrow(IllegalStateException::new)
+                        .orElseThrow(CommandNotFoundException::new)
                         .executeGet(request);
     }
 
@@ -69,7 +70,7 @@ public class ApartmentCommand implements Command{
         return command.isEmpty() ?
                 "/WEB-INF/apartment/apartments_menu.jsp" :
                 Optional.ofNullable(commands.get(command))
-                        .orElseThrow(IllegalStateException::new)
+                        .orElseThrow(CommandNotFoundException::new)
                         .executePost(request);
     }
 

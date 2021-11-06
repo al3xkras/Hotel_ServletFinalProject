@@ -246,6 +246,14 @@ public class JDBCReservationDao implements ReservationDAO {
 
     @Override
     public void updateIsPaidById(long id, boolean isPaid){
+        updateIsPaidByIdInConnection(connection,id,isPaid);
+    }
+
+    public void transactionalUpdateIsPaidById(long id, boolean isPaid){
+        updateIsPaidByIdInConnection(transactional,id,isPaid);
+    }
+
+    private void updateIsPaidByIdInConnection(Connection connection, long id, boolean isPaid){
         try (PreparedStatement updateIsPaid = connection.prepareStatement("UPDATE hotel_db_servlet.reservations SET " +
                 "id_paid=? WHERE id=?")){
             updateIsPaid.setBoolean(1,isPaid);

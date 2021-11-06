@@ -66,10 +66,10 @@
 
     <label for="sort_by" style="margin-left: 16px"><fmt:message key="apartments.sort_by"/></label>
     <select id="sort_by" onchange="onSortChange(event)">
-        <option id="price" value="price"><fmt:message key="apartments.sort_by.price"/></option>
-        <option id="places" value="places"><fmt:message key="apartments.sort_by.places"/></option>
-        <option id="class" value="apartmentClass"><fmt:message key="apartments.sort_by.class"/></option>
         <option id="status" value="status"><fmt:message key="apartments.sort_by.status"/></option>
+        <option id="class" value="apartmentClass"><fmt:message key="apartments.sort_by.class"/></option>
+        <option id="places" value="places"><fmt:message key="apartments.sort_by.places"/></option>
+        <option id="price" value="price"><fmt:message key="apartments.sort_by.price"/></option>
     </select>
 
     <div class="d-flex justify-content-center">

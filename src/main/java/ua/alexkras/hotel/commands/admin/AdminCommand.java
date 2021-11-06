@@ -3,6 +3,7 @@ package ua.alexkras.hotel.commands.admin;
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
@@ -51,7 +52,7 @@ public class AdminCommand implements Command {
 
         if (!command.isEmpty()){
             return Optional.ofNullable(commands.get(command))
-                    .orElseThrow(IllegalStateException::new)
+                    .orElseThrow(CommandNotFoundException::new)
                     .executeGet(request);
         }
 
@@ -89,7 +90,7 @@ public class AdminCommand implements Command {
         return command.isEmpty() ?
                 "/WEB-INF/personal_area/admin.jsp" :
                 Optional.ofNullable(commands.get(command))
-                        .orElseThrow(IllegalStateException::new)
+                        .orElseThrow(CommandNotFoundException::new)
                         .executePost(request);
     }
 }

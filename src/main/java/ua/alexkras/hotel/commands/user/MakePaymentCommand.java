@@ -55,16 +55,22 @@ public class MakePaymentCommand implements Command {
                     .reservationId(reservation.getId())
                     .build();
 
-            paymentService.addPayment(payment);
-            //TODO rollback connection if failed to update
-            reservationService.updatePaymentStatusById(payment.getReservationId(),true);
-
         } catch (NumberFormatException e){
             request.setAttribute("invalidCvv",true);
             return executeGet(request);
         } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
+        }
+
+        try{
+            paymentService.transactionalAddPayment(payment);
+            reservationService.transactionalUpdatePaymentStatusById(payment.getReservationId(),true);
+
+            reservationService.commitCurrentTransaction();
+        } catch (Exception e){
+            e.printStackTrace();
+            paymentService.rollbackConnection();
         }
 
         return "redirect:/"+ HotelServlet.pathBasename+'/'+UserCommand.pathBasename;

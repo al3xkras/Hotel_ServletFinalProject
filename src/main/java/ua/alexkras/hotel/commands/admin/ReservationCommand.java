@@ -6,6 +6,7 @@ import ua.alexkras.hotel.commands.admin.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.commands.admin.reservation.SelectReservationCommand;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
+import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.ReservationService;
@@ -65,7 +66,7 @@ public class ReservationCommand implements Command {
         return command.isEmpty() ?
                 "redirect:/"+ HotelServlet.pathBasename+"/"+ AdminCommand.pathBasename :
                 Optional.ofNullable(commands.get(command))
-                        .orElseThrow(IllegalStateException::new)
+                        .orElseThrow(CommandNotFoundException::new)
                         .executePost(request);
     }
 }

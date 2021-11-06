@@ -24,6 +24,10 @@ public class PaymentService implements Service{
         paymentDAO.create(payment);
     }
 
+    public void transactionalAddPayment(Payment payment){
+        paymentDAO.createInTransaction(payment);
+    }
+
     public Optional<Payment> findById(int reservationId){
         return paymentDAO.findById(reservationId);
     }

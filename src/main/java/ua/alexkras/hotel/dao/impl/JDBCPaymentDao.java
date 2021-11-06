@@ -22,6 +22,14 @@ public class JDBCPaymentDao implements PaymentDAO {
 
     @Override
     public void create(Payment payment) {
+        createInConnection(connection,payment);
+    }
+
+    public void createInTransaction(Payment payment){
+        createInConnection(transactional,payment);
+    }
+
+    private void createInConnection(Connection connection, Payment payment){
         try(PreparedStatement create = connection.prepareStatement("INSERT INTO hotel_db_servlet.payments (" +
                 "id, " +
                 "user_id, " +
@@ -32,9 +40,8 @@ public class JDBCPaymentDao implements PaymentDAO {
                 "card_expiration_date, " +
                 "card_cvv"+
                 ") VALUES (null,?,?,?,?,?,?,?);")
-                ){
-
-            __(payment, create);
+            ){
+            setStatementValues(payment, create);
 
             create.execute();
         } catch (SQLException e){
@@ -117,7 +124,7 @@ public class JDBCPaymentDao implements PaymentDAO {
                 " WHERE id=?")
                 ){
 
-            __(payment, update);
+            setStatementValues(payment, update);
             update.setLong(8,payment.getId());
 
             update.executeUpdate();
@@ -127,7 +134,7 @@ public class JDBCPaymentDao implements PaymentDAO {
         }
     }
 
-    private void __(Payment payment, PreparedStatement statement) throws SQLException {
+    private void setStatementValues(Payment payment, PreparedStatement statement) throws SQLException {
         statement.setLong(1,payment.getUserId());
         statement.setLong(2,payment.getReservationId());
         statement.setInt(3,payment.getValue());
