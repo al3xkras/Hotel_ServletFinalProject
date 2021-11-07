@@ -68,4 +68,6 @@ public interface UserTableStrings {
             " WHERE "+colUserId+"=?";
 
     String deleteUserById="DELETE FROM "+MySqlStrings.databaseName+"."+tableUser+" WHERE "+colUserId+"=?";
+
+    String truncateUserTable = "TRUNCATE "+MySqlStrings.databaseName+'.'+tableUser;
 }

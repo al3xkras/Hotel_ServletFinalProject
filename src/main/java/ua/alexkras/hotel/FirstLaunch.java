@@ -1,11 +1,9 @@
 package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.dao.ApartmentDao;
-import ua.alexkras.hotel.dao.ReservationDAO;
 import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
-import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
@@ -13,18 +11,13 @@ import ua.alexkras.hotel.model.mysql.*;
 import ua.alexkras.hotel.model.UserType;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.Locale;
 
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.*;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.colReservationId;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.colUserId;
 import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
 
-
-/*
-ALTER TABLE comments ADD CONSTRAINT
-        FOREIGN KEY (articleId)
-        REFERENCES articles(articleId);
-*/
 public class FirstLaunch {
     public static void main(String[] args) {
         //Create database if not exists before starting application
@@ -32,7 +25,6 @@ public class FirstLaunch {
              PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
              PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
              PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
-            // PreparedStatement createReservationTable = conn.prepareStatement(ReservationTableStrings.sqlCreateReservationTableIfNotExists);
              PreparedStatement createReservationTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
                      MySqlStrings.databaseName+"."+tableReservation+" ("+
                      ReservationTableStrings.colReservationId+" int unique primary key auto_increment, "+
@@ -111,6 +103,28 @@ public class FirstLaunch {
                 .gender("Male").userType(UserType.USER).build());
 
 
+
+    }
+
+    public static void truncateAllTablesOfTestDatabase(){
+        if (!MySqlStrings.databaseName.toLowerCase().endsWith("test")){
+            throw new IllegalStateException("Attempting to Truncate tables of NON-TEST DATABASE");
+        }
+
+        try(Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
+            PreparedStatement truncateUserTable = conn.prepareStatement(UserTableStrings.truncateUserTable);
+            PreparedStatement truncatePaymentsTable = conn.prepareStatement(PaymentTableStrings.truncatePaymentsTable);
+            PreparedStatement truncateApartmentsTable = conn.prepareStatement(ApartmentTableStrings.truncateApartmentsTable);
+            PreparedStatement truncateReservationsTable = conn.prepareStatement(truncateReservationTable)
+            ){
+            truncateUserTable.execute();
+            truncatePaymentsTable.execute();
+            truncateApartmentsTable.execute();
+            truncateReservationsTable.execute();
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 

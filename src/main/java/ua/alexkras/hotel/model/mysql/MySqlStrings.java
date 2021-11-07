@@ -6,7 +6,7 @@ public interface MySqlStrings {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     String root = "jdbc:mysql://localhost:3306/";
-    String databaseName="hotel_db_servlet";
+    String databaseName="hotel_db_servlet_test";
     String connectionUrl = root+databaseName+"?serverTimezone=UTC";
     String testConnectionUrl = root+databaseName+"_test"+"?serverTimezone=UTC";
 

@@ -5,6 +5,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import java.sql.*;
@@ -166,8 +167,8 @@ public class JDBCReservationDao implements ReservationDAO {
             long userId, boolean isActive,
             ReservationStatus illegalStatus){
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM hotel_db_servlet.reservations " +
-                " WHERE user_id=? and is_active=? and reservation_status!=?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                getReservationsCountByUserIdAndActiveAndAnyStatusExcept)){
 
             preparedStatement.setLong(1,userId);
             preparedStatement.setBoolean(2,isActive);
@@ -183,12 +184,9 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-    public int getReservationsCountByActiveAndStatus(
-            boolean isActive,
-            ReservationStatus status){
+    public int getReservationsCountByActiveAndStatus(boolean isActive, ReservationStatus status){
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM hotel_db_servlet.reservations " +
-                " WHERE is_active=? and reservation_status=?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getReservationsCountByActiveAndStatus)){
 
             preparedStatement.setBoolean(1,isActive);
             preparedStatement.setString(2,status.name());
@@ -290,8 +288,7 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     private void updateIsPaidByIdInConnection(Connection connection, long id, boolean isPaid){
-        try (PreparedStatement updateIsPaid = connection.prepareStatement("UPDATE hotel_db_servlet.reservations SET " +
-                "id_paid=? WHERE id=?")){
+        try (PreparedStatement updateIsPaid = connection.prepareStatement(updateIsPaidById)){
             updateIsPaid.setBoolean(1,isPaid);
             updateIsPaid.setLong(2,id);
 
@@ -303,27 +300,13 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     public void updateAllExpiredReservations(){
-        try (PreparedStatement updateExpired = transactional.prepareStatement("UPDATE " +
-                     "hotel_db_servlet.reservations SET " +
-                     "reservation_status=?,"+
-                     "is_expired=true "+
-                     "WHERE not is_expired and not id_paid and " +
-                     "confirmation_date is not null and " +
-                     "DATEDIFF(confirmation_date,?)>=?");
-             PreparedStatement setExpiredReservationApartmentsAvailable = transactional.prepareStatement("UPDATE " +
-                     "hotel_db_servlet.apartments SET "+
-                     "status=? "+
-                     "WHERE status='"+ ApartmentStatus.RESERVED+"' and "+
-                     "id IN (SELECT apartment_id FROM hotel_db_servlet.reservations WHERE is_expired and is_active)");
-             PreparedStatement updateActive = transactional.prepareStatement("UPDATE " +
-                     "hotel_db_servlet.reservations SET " +
-                     "is_active=false "+
-                     "WHERE is_active and is_expired ")
+        try (PreparedStatement updateExpired = transactional.prepareStatement(updateAllExpiredReservations);
+             PreparedStatement setExpiredReservationApartmentsAvailable = transactional.prepareStatement(ApartmentTableStrings.setExpiredReservationApartmentsAvailable);
+             PreparedStatement updateActive = transactional.prepareStatement(updateActiveReservations)
         ){
             updateExpired.setString(1,ReservationStatus.CANCELLED.name());
             updateExpired.setDate(2, Date.valueOf(LocalDate.now()));
             updateExpired.setLong(3, ReservationServiceImpl.daysToCancelPayment);
-
 
             setExpiredReservationApartmentsAvailable.setString(1,ApartmentStatus.AVAILABLE.name());
 

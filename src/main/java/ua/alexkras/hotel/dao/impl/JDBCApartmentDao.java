@@ -26,8 +26,7 @@ public class JDBCApartmentDao implements ApartmentDao {
             ApartmentClass apartmentClass, int places, ApartmentStatus status){
 
         try(PreparedStatement statement = connection.prepareStatement(
-                "SELECT COUNT(*) FROM hotel_db_servlet.apartments " +
-                        "WHERE apartment_class=? and places=? and status=?")
+                getApartmentsByApartmentClassAndPlacesAndStatusCount)
                 ){
 
             statement.setString(1,apartmentClass.name());
@@ -258,7 +257,7 @@ public class JDBCApartmentDao implements ApartmentDao {
 
     public int getApartmentsCount(){
         int apartmentsCount;
-        try (PreparedStatement count = connection.prepareStatement("SELECT COUNT(*) from hotel_db_servlet.apartments")){
+        try (PreparedStatement count = connection.prepareStatement(getApartmentsCount)){
             ResultSet rs = count.executeQuery();
 
             rs.next();

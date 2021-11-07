@@ -1,6 +1,7 @@
 package ua.alexkras.hotel.service;
 
 import junit.framework.TestCase;
+import ua.alexkras.hotel.FirstLaunch;
 import ua.alexkras.hotel.dao.ReservationDAO;
 
 public class ReservationServiceTest extends TestCase {
@@ -10,6 +11,7 @@ public class ReservationServiceTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
 
+        FirstLaunch.truncateAllTablesOfTestDatabase();
         ReservationDAO reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
 
     }

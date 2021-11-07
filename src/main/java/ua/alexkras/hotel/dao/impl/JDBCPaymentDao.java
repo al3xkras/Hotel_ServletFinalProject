@@ -30,16 +30,7 @@ public class JDBCPaymentDao implements PaymentDAO {
     }
 
     private void createInConnection(Connection connection, Payment payment){
-        try(PreparedStatement create = connection.prepareStatement("INSERT INTO hotel_db_servlet.payments (" +
-                "id, " +
-                "user_id, " +
-                "reservation_id, " +
-                "value, " +
-                "payment_date, " +
-                "card_number, " +
-                "card_expiration_date, " +
-                "card_cvv"+
-                ") VALUES (null,?,?,?,?,?,?,?);")
+        try(PreparedStatement create = connection.prepareStatement(createPayment)
             ){
             setStatementValues(payment, create);
 
@@ -53,15 +44,7 @@ public class JDBCPaymentDao implements PaymentDAO {
     @Override
     public Optional<Payment> findById(long id) {
         Payment payment;
-        try(PreparedStatement findById = connection.prepareStatement("SELECT " +
-                "user_id," +
-                "reservation_id," +
-                "value," +
-                "payment_date," +
-                "card_number," +
-                "card_expiration_date," +
-                "card_cvv FROM hotel_db_servlet.payments " +
-                " WHERE id=?")
+        try(PreparedStatement findById = connection.prepareStatement(findPaymentById)
                 ){
 
             findById.setLong(1,id);
@@ -85,16 +68,7 @@ public class JDBCPaymentDao implements PaymentDAO {
     @Override
     public List<Payment> findAll(int start, int total) {
         List<Payment> payments = new ArrayList<>();
-        try(PreparedStatement findAll = connection.prepareStatement("SELECT " +
-                "id," +
-                "user_id," +
-                "reservation_id," +
-                "value," +
-                "payment_date," +
-                "card_number," +
-                "card_expiration_date," +
-                "card_cvv " +
-                " FROM hotel_db_servlet.payments limit ?,?")){
+        try(PreparedStatement findAll = connection.prepareStatement(findAllPayments)){
             findAll.setLong(1,start-1);
             findAll.setLong(2,total);
 
@@ -113,15 +87,7 @@ public class JDBCPaymentDao implements PaymentDAO {
 
     @Override
     public void update(Payment payment) {
-        try (PreparedStatement update = connection.prepareStatement("UPDATE hotel_db_servlet.payments SET " +
-                "user_id=?," +
-                "reservation_id=?," +
-                "value=?," +
-                "payment_date=?," +
-                "card_number=?," +
-                "card_expiration_date=?," +
-                "card_cvv=? " +
-                " WHERE id=?")
+        try (PreparedStatement update = connection.prepareStatement(updatePayment)
                 ){
 
             setStatementValues(payment, update);
@@ -146,8 +112,7 @@ public class JDBCPaymentDao implements PaymentDAO {
 
     @Override
     public void delete(long id) {
-        try(PreparedStatement delete = connection.prepareStatement("DELETE FROM hotel_db_servlet.payments " +
-                " WHERE id=?")
+        try(PreparedStatement delete = connection.prepareStatement(deletePayment)
                 ){
 
             delete.setLong(1,id);

@@ -1,5 +1,9 @@
 package ua.alexkras.hotel.model.mysql;
 
+import ua.alexkras.hotel.model.ApartmentStatus;
+
+import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
+
 public interface ApartmentTableStrings {
     String tableApartment="apartments";
 
@@ -38,10 +42,10 @@ public interface ApartmentTableStrings {
             '@'+colApartmentId+','+
             '@'+colApartmentPlaces+','+
             '@'+colApartmentClass+','+
-            '@'+colApartmentPrice+" FROM "+MySqlStrings.databaseName+'.'+tableApartment+
+            '@'+colApartmentPrice+" FROM "+databaseName+'.'+tableApartment+
             " WHERE "+colApartmentId+"=?; ";
 
-    String addApartment = "INSERT INTO "+MySqlStrings.databaseName+"."+tableApartment+" ("+
+    String addApartment = "INSERT INTO "+databaseName+"."+tableApartment+" ("+
             colApartmentId+','+
             colApartmentName+ ','+
             colApartmentPlaces+','+
@@ -51,7 +55,7 @@ public interface ApartmentTableStrings {
             "(null, ?, ?, ?, ?, ?)";
 
     String updateApartment = "UPDATE " +
-            MySqlStrings.databaseName+'.'+tableApartment+
+            databaseName+'.'+tableApartment+
             " SET "+
             colApartmentName+"=?,"+
             colApartmentPlaces+"=?,"+
@@ -60,14 +64,32 @@ public interface ApartmentTableStrings {
             colApartmentPrice+"=?"+
             " WHERE "+colApartmentId+"=?";
 
-    String deleteApartmentById = "DELETE FROM "+MySqlStrings.databaseName+"."+tableApartment+" WHERE "+colApartmentId+"=?";
+    String deleteApartmentById = "DELETE FROM "+databaseName+"."+tableApartment+" WHERE "+colApartmentId+"=?";
 
     String selectApartmentsWithLimit = findAllApartments+" limit ?,?";
 
-    String updateApartmentStatusById="UPDATE "+MySqlStrings.databaseName+'.'+tableApartment+" SET " +
+    String updateApartmentStatusById="UPDATE "+databaseName+'.'+tableApartment+" SET " +
             colApartmentStatus+"=? WHERE "+colApartmentId+"=?";
 
-    String findByApartmentClassAndPlacesAndStatus = "SELECT * FROM hotel_db_servlet.apartments " +
-            "WHERE apartment_class=? and places=? and status=? limit ?,?";
+    String findByApartmentClassAndPlacesAndStatus = "SELECT * FROM "+databaseName+'.'+tableApartment+
+            " WHERE "+colApartmentClass+"=? and "+
+            colApartmentPlaces+"=? and "+
+            colApartmentStatus+"=? limit ?,?";
+
+    String truncateApartmentsTable = "TRUNCATE "+databaseName+'.'+tableApartment;
+
+    String getApartmentsByApartmentClassAndPlacesAndStatusCount = "SELECT COUNT(*) FROM "+databaseName+'.'+tableApartment+
+            " WHERE "+colApartmentClass+"=? and "+colApartmentPlaces+"=? and "+colApartmentStatus+"=?";
+
+    String getApartmentsCount = "SELECT COUNT(*) from "+databaseName+'.'+tableApartment;
+
+    String setExpiredReservationApartmentsAvailable = "UPDATE "+databaseName+'.'+tableApartment+" SET "+
+            colApartmentStatus+"=? "+
+            "WHERE "+colApartmentStatus+"='"+ ApartmentStatus.RESERVED+"' and "+
+            colApartmentId+" IN " +
+            "(SELECT "+ReservationTableStrings.colApartmentId+" FROM " +
+            databaseName+"."+ReservationTableStrings.tableReservation+" WHERE " +
+            ReservationTableStrings.colIsExpired+" and "+ReservationTableStrings.colIsActive+")";
+
 
 }

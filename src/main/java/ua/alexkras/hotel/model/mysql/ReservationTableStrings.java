@@ -1,6 +1,6 @@
 package ua.alexkras.hotel.model.mysql;
 
-import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.tableApartment;
+import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
 
 public interface ReservationTableStrings {
     String tableReservation = "reservations";
@@ -21,7 +21,7 @@ public interface ReservationTableStrings {
     String colIsExpired = "is_expired";
 
     String sqlCreateReservationTableIfNotExists = "CREATE TABLE IF NOT EXISTS "+
-            MySqlStrings.databaseName+"."+tableReservation+" ("+
+            databaseName+"."+tableReservation+" ("+
             colReservationId+" int unique primary key auto_increment, "+
             colUserId+" int not null,"+
             colApartmentId+" int,"+
@@ -37,7 +37,7 @@ public interface ReservationTableStrings {
             colIsActive+" boolean default 1,"+
             colIsExpired+" boolean default 0);";
 
-    String addReservation = "INSERT INTO "+MySqlStrings.databaseName+"."+tableReservation+
+    String addReservation = "INSERT INTO "+ databaseName+"."+tableReservation+
             '('+colUserId+','+
             colApartmentId+','+
             colApartmentClass+','+
@@ -66,7 +66,7 @@ public interface ReservationTableStrings {
             colIsPaid+','+
             colIsActive+','+
             colIsExpired+
-            " from "+MySqlStrings.databaseName+"."+tableReservation;
+            " from "+ databaseName+"."+tableReservation;
 
     String selectActiveReservations = selectReservations+" WHERE "+colIsActive+"=?";
 
@@ -81,10 +81,10 @@ public interface ReservationTableStrings {
 
     String selectReservationById = selectReservations+" WHERE "+colReservationId+"=?";
 
-    String updateStatusById = "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET "+colReservationStatus+"=? WHERE id=?";
+    String updateStatusById = "UPDATE "+ databaseName+'.'+tableReservation+" SET "+colReservationStatus+"=? WHERE id=?";
 
     String updateReservationByIdAndUserIdWithApartment =
-            "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET " +
+            "UPDATE "+ databaseName+'.'+tableReservation+" SET " +
                     colApartmentId+"=@"+ApartmentTableStrings.colApartmentId+',' +
                     colApartmentClass+"=@"+ApartmentTableStrings.colApartmentClass+',' +
                     colApartmentPlaces+"=@"+ApartmentTableStrings.colApartmentPlaces+',' +
@@ -93,7 +93,32 @@ public interface ReservationTableStrings {
                     colReservationStatus+"=?" +
                     " WHERE "+colReservationId+"=?;";
 
-    String updateStatusAndConfirmationDateById = "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET "+
+    String updateStatusAndConfirmationDateById = "UPDATE "+ databaseName+'.'+tableReservation+" SET "+
             colReservationStatus+"=?," +
             colAdminConfirmationDate+"=? WHERE id=?";
+
+    String truncateReservationTable = "TRUNCATE "+ databaseName+'.'+tableReservation;
+
+    String getReservationsCountByUserIdAndActiveAndAnyStatusExcept = "SELECT COUNT(*) FROM "+databaseName+'.'+tableReservation+
+            " WHERE "+colUserId+"=? and "+colIsActive+"=? and "+colReservationStatus+"!=?";
+
+    String getReservationsCountByActiveAndStatus = "SELECT COUNT(*) FROM "+databaseName+'.'+tableReservation+
+            " WHERE "+colIsActive+"=? and "+colReservationStatus+"=?";
+
+    String updateIsPaidById = "UPDATE "+databaseName+'.'+tableReservation+" SET " +
+            colIsPaid+"=? WHERE "+colReservationId+"=?";
+
+    String updateAllExpiredReservations = "UPDATE " +
+            databaseName+'.'+tableReservation+" SET " +
+            colReservationStatus+"=?,"+
+            colIsExpired+"=true "+
+            "WHERE not "+colIsExpired+" and not "+colIsPaid+" and " +
+            colAdminConfirmationDate+" is not null and " +
+            "DATEDIFF("+colAdminConfirmationDate+",?)>=?";
+
+    String updateActiveReservations = "UPDATE " +
+            databaseName+'.'+tableReservation+" SET " +
+            colIsActive+"=false "+
+            "WHERE "+colIsActive+" and "+colIsExpired;
+
 }
