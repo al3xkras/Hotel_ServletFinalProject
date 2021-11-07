@@ -102,7 +102,7 @@
         <div class="d-flex flex-row justify-content-center">
             <c:if test="${requestScope.pageable.hasPrevious()}">
             <span class="border">
-                <a href="${pageContext.request.contextPath}/app/apartments?page=${page-1}">Previous</a>
+                <a href="#" onclick="insertParam('page',${page-1})">Previous</a>
             </span>
             </c:if>
 
@@ -112,14 +112,14 @@
                 </c:if>
                 <c:if test="${!(page==pageIndex)}">
                 <span class="border">
-                     <a class="page-number" href="${pageContext.request.contextPath}/app/apartments?page=${pageIndex}">${pageIndex}</a>
+                     <a href="#" class="page-number" onclick="insertParam('page',${pageIndex})">${pageIndex}</a>
                 </span>
                 </c:if>
             </c:forEach>
 
             <c:if test="${requestScope.pageable.hasNext()}">
             <span class="border">
-                <a href="${pageContext.request.contextPath}/app/apartments?page=${page+1}">Next</a>
+                <a href="#" onclick="insertParam('page',${page+1})">Next</a>
             </span>
             </c:if>
         </div>

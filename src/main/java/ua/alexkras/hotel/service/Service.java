@@ -1,6 +1,12 @@
 package ua.alexkras.hotel.service;
 
-public interface Service {
+import java.util.Optional;
+
+public interface Service <Pageable,Entity> {
+    void create(Entity entity);
+
+    Optional<Entity> findById(long id);
+
     void commitCurrentTransaction();
     void rollbackConnection();
 }

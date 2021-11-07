@@ -22,6 +22,30 @@ public class JDBCApartmentDao implements ApartmentDao {
         this.transactional = transactional;
     }
 
+    public int getApartmentsByApartmentClassAndPlacesAndStatusCount(
+            ApartmentClass apartmentClass, int places, ApartmentStatus status){
+
+        try(PreparedStatement statement = connection.prepareStatement(
+                "SELECT COUNT(*) FROM hotel_db_servlet.apartments " +
+                        "WHERE apartment_class=? and places=? and status=?")
+                ){
+
+            statement.setString(1,apartmentClass.name());
+            statement.setInt(2,places);
+            statement.setString(3,status.name());
+
+            ResultSet rs = statement.executeQuery();
+
+            rs.next();
+
+            return rs.getInt(1);
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+
     //@Transactional
     @Override
     public void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus){

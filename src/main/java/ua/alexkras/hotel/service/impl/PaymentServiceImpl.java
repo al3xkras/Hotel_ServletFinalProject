@@ -1,10 +1,13 @@
-package ua.alexkras.hotel.service;
+package ua.alexkras.hotel.service.impl;
 
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCPaymentDao;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
+import ua.alexkras.hotel.service.PaymentService;
+import ua.alexkras.hotel.service.Service;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -12,15 +15,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-public class PaymentService implements Service{
+public class PaymentServiceImpl implements PaymentService<Pageable,Payment> {
 
     private final JDBCPaymentDao paymentDAO;
 
-    public PaymentService(){
+    public PaymentServiceImpl(){
         this.paymentDAO = JDBCDaoFactory.getInstance().createPaymentDAO();
     }
 
-    public void addPayment(Payment payment){
+    @Override
+    public void create(Payment payment){
         paymentDAO.create(payment);
     }
 
@@ -28,7 +32,8 @@ public class PaymentService implements Service{
         paymentDAO.createInTransaction(payment);
     }
 
-    public Optional<Payment> findById(int reservationId){
+    @Override
+    public Optional<Payment> findById(long reservationId){
         return paymentDAO.findById(reservationId);
     }
 
@@ -42,6 +47,7 @@ public class PaymentService implements Service{
                 .cardExpirationDate(MySqlStrings.dateFormat.parse(expirationDate)
                         .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
+
 
     @Override
     public void commitCurrentTransaction(){

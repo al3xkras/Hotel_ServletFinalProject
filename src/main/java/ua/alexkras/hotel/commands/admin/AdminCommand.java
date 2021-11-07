@@ -9,8 +9,8 @@ import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,11 +21,11 @@ import java.util.Optional;
 public class AdminCommand implements Command {
 
     public static final String pathBasename = "admin";
-    private final ReservationService reservationService;
+    private final ReservationServiceImpl reservationService;
 
     private final Map<String, Command> commands = new HashMap<>();
 
-    public AdminCommand(ApartmentService apartmentService, ReservationService reservationService){
+    public AdminCommand(ApartmentServiceImpl apartmentService, ReservationServiceImpl reservationService){
         this.reservationService=reservationService;
 
         commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(apartmentService));
@@ -70,8 +70,7 @@ public class AdminCommand implements Command {
         List<Reservation> reservations = reservationService.findByReservationStatus(
                 true,
                 ReservationStatus.PENDING,
-                pageable.getEntriesStart(),
-                pageable.getEntriesInPage());
+                pageable);
 
         request.setAttribute("pageable",pageable);
         request.setAttribute("pendingReservations",reservations);

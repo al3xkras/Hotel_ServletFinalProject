@@ -1,6 +1,6 @@
 package ua.alexkras.hotel;
 
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -15,7 +15,7 @@ public class ScheduledTasks implements ServletContextListener {
 
     private ScheduledExecutorService scheduler;
     private ServletContext servletContext;
-    private final ReservationService reservationService = new ReservationService();
+    private final ReservationServiceImpl reservationService = new ReservationServiceImpl();
 
     public void scheduleUpdateExpiredReservations() {
         reservationService.updateAllExpiredReservations();

@@ -8,8 +8,9 @@ import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +21,12 @@ public class ReservationCommand implements Command {
 
     public static final String pathBasename = "reservation";
 
-    private final ReservationService reservationService;
-    private final ApartmentService apartmentService;
+    private final ReservationServiceImpl reservationService;
+    private final ApartmentServiceImpl apartmentService;
 
     private final Map<String,Command> commands = new HashMap<>();
 
-    public ReservationCommand(ReservationService reservationService, ApartmentService apartmentService){
+    public ReservationCommand(ReservationServiceImpl reservationService, ApartmentServiceImpl apartmentService){
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
         commands.put(CancelReservationCommand.pathBasename, new CancelReservationCommand(reservationService,apartmentService));
         commands.put(SelectReservationCommand.pathBasename, new SelectReservationCommand(reservationService,apartmentService));
@@ -50,8 +51,17 @@ public class ReservationCommand implements Command {
         request.setAttribute("reservation", reservation);
 
         if (!reservation.isCompleted()){
-            List<Apartment> matchingApartments = apartmentService.findApartmentsMatchingReservation(reservation,1,50);
+            String pageParam=request.getParameter("page");
+            int page = (pageParam==null)?1:Integer.parseInt(pageParam);
+
+            Pageable pageable = new Pageable(2,
+                    apartmentService.getApartmentsMatchingReservationCount(reservation));
+            pageable.seekToPage(page);
+
+            List<Apartment> matchingApartments = apartmentService.findApartmentsMatchingReservation(reservation,pageable);
             request.getServletContext().log("Retrieved matching apartments from database...");
+
+            request.setAttribute("pageable", pageable);
             request.setAttribute("matchingApartments",matchingApartments);
         }
 

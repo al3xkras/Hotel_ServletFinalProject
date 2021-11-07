@@ -4,8 +4,8 @@ import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.PaymentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 public class MakePaymentCommand implements Command {
     public static final String pathBasename="make_payment";
 
-    private final PaymentService paymentService;
-    private final ReservationService reservationService;
+    private final PaymentServiceImpl paymentService;
+    private final ReservationServiceImpl reservationService;
 
     private Reservation reservation;
 
-    public MakePaymentCommand(PaymentService paymentService, ReservationService reservationService) {
+    public MakePaymentCommand(PaymentServiceImpl paymentService, ReservationServiceImpl reservationService) {
         this.paymentService = paymentService;
         this.reservationService = reservationService;
     }

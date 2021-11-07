@@ -7,8 +7,8 @@ import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -21,11 +21,11 @@ import static ua.alexkras.hotel.model.mysql.MySqlStrings.dateFormat;
 public class SelectApartmentCommand implements Command {
     public static final String pathBasename = "apartment";
 
-    private final ApartmentService apartmentService;
-    private final ReservationService reservationService;
+    private final ApartmentServiceImpl apartmentService;
+    private final ReservationServiceImpl reservationService;
 
-    public SelectApartmentCommand(ApartmentService apartmentService,
-                                  ReservationService reservationService){
+    public SelectApartmentCommand(ApartmentServiceImpl apartmentService,
+                                  ReservationServiceImpl reservationService){
         this.apartmentService=apartmentService;
         this.reservationService=reservationService;
     }
@@ -81,7 +81,7 @@ public class SelectApartmentCommand implements Command {
                 .build();
 
         try {
-            reservationService.transactionalAddReservation(reservation);
+            reservationService.createInTransaction(reservation);
             apartmentService.transactionalUpdateApartment(apartment);
 
             reservationService.commitCurrentTransaction();

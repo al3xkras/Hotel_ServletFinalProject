@@ -6,8 +6,8 @@ import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -15,11 +15,11 @@ import java.util.*;
 public class ApartmentCommand implements Command{
     public static final String pathBasename = "apartments";
 
-    private final ApartmentService apartmentService;
+    private final ApartmentServiceImpl apartmentService;
     private final Map<String, Command> commands = new HashMap<>();
     private final Map<String, Comparator<Apartment>> sortBy = new HashMap<>();
 
-    public ApartmentCommand(ApartmentService apartmentService, ReservationService reservationService){
+    public ApartmentCommand(ApartmentServiceImpl apartmentService, ReservationServiceImpl reservationService){
         this.apartmentService=apartmentService;
 
         commands.put(SelectApartmentCommand.pathBasename,new SelectApartmentCommand(apartmentService,reservationService));
@@ -48,8 +48,7 @@ public class ApartmentCommand implements Command{
 
         if (command.isEmpty()) {
             List<Apartment> apartments = apartmentService.findAllApartments(
-                    pageable.getEntriesStart(),
-                    pageable.getEntriesInPage());
+                    pageable);
 
             apartments.sort(sortBy.get(sort));
 

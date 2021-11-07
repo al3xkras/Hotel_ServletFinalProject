@@ -1,6 +1,5 @@
 package ua.alexkras.hotel.commands.user;
 
-import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
 import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
@@ -13,9 +12,9 @@ import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.PaymentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -26,10 +25,10 @@ public class UserCommand implements Command {
 
     private final Map<String, Command> commands;
 
-    private final ReservationService reservationService;
+    private final ReservationServiceImpl reservationService;
 
-    public UserCommand(ReservationService reservationService, ApartmentService apartmentService,
-                       PaymentService paymentService){
+    public UserCommand(ReservationServiceImpl reservationService, ApartmentServiceImpl apartmentService,
+                       PaymentServiceImpl paymentService){
         HashMap<String,Command> commands = new HashMap<>();
 
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
@@ -83,8 +82,7 @@ public class UserCommand implements Command {
                         user.getId(),
                         true,
                         ReservationStatus.CANCELLED,
-                        pageable.getEntriesStart(),
-                        pageable.getEntriesInPage());
+                        pageable);
 
         reservations.stream()
                 .map(Object::toString)

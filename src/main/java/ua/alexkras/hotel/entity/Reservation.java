@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static ua.alexkras.hotel.service.ReservationService.daysToCancelPayment;
+import static ua.alexkras.hotel.service.impl.ReservationServiceImpl.daysToCancelPayment;
 
 public class Reservation {
     private Long id;

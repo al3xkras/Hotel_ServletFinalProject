@@ -8,7 +8,7 @@ import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -20,9 +20,9 @@ public class CreateReservationCommand implements Command {
 
     public static final String pathBasename = "create_reservation";
 
-    private final ReservationService reservationService;
+    private final ReservationServiceImpl reservationService;
 
-    public CreateReservationCommand(ReservationService reservationService){
+    public CreateReservationCommand(ReservationServiceImpl reservationService){
         this.reservationService = reservationService;
     }
 
@@ -60,7 +60,7 @@ public class CreateReservationCommand implements Command {
                 .submitDate(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
                 .build();
 
-        reservationService.addReservation(reservation);
+        reservationService.create(reservation);
 
         return "redirect:/"+ HotelServlet.pathBasename+'/'+UserCommand.pathBasename;
 

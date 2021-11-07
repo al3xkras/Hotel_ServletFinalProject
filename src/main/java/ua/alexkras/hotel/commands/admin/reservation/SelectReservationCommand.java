@@ -5,8 +5,8 @@ import ua.alexkras.hotel.commands.admin.AdminCommand;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,11 +16,11 @@ public class SelectReservationCommand implements Command {
 
     public static final String pathBasename = "select";
 
-    private final ReservationService reservationService;
-    private final ApartmentService apartmentService;
+    private final ReservationServiceImpl reservationService;
+    private final ApartmentServiceImpl apartmentService;
 
-    public SelectReservationCommand(ReservationService reservationService,
-                                    ApartmentService apartmentService){
+    public SelectReservationCommand(ReservationServiceImpl reservationService,
+                                    ApartmentServiceImpl apartmentService){
         this.reservationService=reservationService;
         this.apartmentService=apartmentService;
     }

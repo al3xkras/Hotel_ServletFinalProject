@@ -1,51 +1,60 @@
-package ua.alexkras.hotel.service;
+package ua.alexkras.hotel.service.impl;
 
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCReservationDao;
 import ua.alexkras.hotel.entity.Reservation;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.service.ReservationService;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class ReservationService implements Service{
+public class ReservationServiceImpl implements ReservationService<Pageable,Reservation> {
 
     private final JDBCReservationDao reservationDAO;
 
     public static final long daysToCancelPayment = 2L;
 
-    public ReservationService(){
+    public ReservationServiceImpl(){
         this.reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
     }
 
-    public void addReservation (Reservation reservation){
+    @Override
+    public void create(Reservation reservation){
         reservationDAO.create(reservation);
     }
 
-    public void transactionalAddReservation (Reservation reservation){
+    @Override
+    public void createInTransaction(Reservation reservation){
         reservationDAO.createInTransaction(reservation);
     }
 
+    @Override
     public Optional<Reservation> findById(long reservationId){
         return reservationDAO.findById(reservationId);
     }
 
+    @Override
     public List<Reservation> findByReservationStatus(
             boolean isActive,
             ReservationStatus reservationStatus,
-            int start, int total){
+            Pageable pageable){
 
-        return reservationDAO.findAllByActiveAndStatus(isActive, reservationStatus,start, total);
+        return reservationDAO.findAllByActiveAndStatus(isActive,
+                reservationStatus,pageable.getEntriesStart(), pageable.getEntriesInPage());
     }
 
+    @Override
     public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
-            long userId, boolean isActive, ReservationStatus illegalStatus, int start, int total){
+            long userId, boolean isActive, ReservationStatus illegalStatus, Pageable pageable){
         return  reservationDAO.findByUserIdAndActiveAndAnyStatusExcept(
-                userId, isActive, illegalStatus, start,total);
+                userId, isActive, illegalStatus, pageable.getEntriesStart(),pageable.getEntriesInPage());
     }
 
+    @Override
     public int getReservationFullCost(Reservation reservation){
         return reservation.getApartmentPrice() *
                 (int) Duration.between(reservation.getFromDate().atStartOfDay(),
@@ -66,15 +75,18 @@ public class ReservationService implements Service{
      * @param id id of Reservation to be updated
      * @param reservationStatus reservation status to assign to the Reservation
      */
+    @Override
     public void updateStatusById(int id, ReservationStatus reservationStatus){
         reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
         reservationDAO.commit();
     }
 
+    @Override
     public void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate){
         reservationDAO.updateStatusAndConfirmationDateById(id,status,confirmationDate);
     }
 
+    @Override
     public void transactionalUpdateStatusById(int id, ReservationStatus reservationStatus){
         reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
     }
@@ -84,10 +96,12 @@ public class ReservationService implements Service{
      * @param reservationId id of Reservation
      * @param isPaid new payment status
      */
+    @Override
     public void updateIsPaidById(long reservationId, boolean isPaid){
         reservationDAO.updateIsPaidById(reservationId,isPaid);
     }
 
+    @Override
     public void transactionalUpdateIsPaidById(long reservationId, boolean isPaid){
         reservationDAO.transactionalUpdateIsPaidById(reservationId,isPaid);
     }
@@ -101,6 +115,7 @@ public class ReservationService implements Service{
      * @param apartmentId id of apartment to associate with Reservation
      * @param confirmationDate date of confirmation by Admin
      */
+    @Override
     public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long id, long apartmentId, LocalDate confirmationDate){
 
@@ -117,12 +132,14 @@ public class ReservationService implements Service{
      * @param apartmentId id of apartment to associate with Reservation
      * @param confirmationDate date of confirmation by Admin
      */
+    @Override
     public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long id, long apartmentId, LocalDate confirmationDate){
         reservationDAO.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
                 id,apartmentId,confirmationDate);
     }
 
+    @Override
     public void updateAllExpiredReservations(){
         reservationDAO.updateAllExpiredReservations();
     }

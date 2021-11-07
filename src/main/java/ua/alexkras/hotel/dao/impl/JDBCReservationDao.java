@@ -5,7 +5,7 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -322,7 +322,7 @@ public class JDBCReservationDao implements ReservationDAO {
         ){
             updateExpired.setString(1,ReservationStatus.CANCELLED.name());
             updateExpired.setDate(2, Date.valueOf(LocalDate.now()));
-            updateExpired.setLong(3, ReservationService.daysToCancelPayment);
+            updateExpired.setLong(3, ReservationServiceImpl.daysToCancelPayment);
 
 
             setExpiredReservationApartmentsAvailable.setString(1,ApartmentStatus.AVAILABLE.name());

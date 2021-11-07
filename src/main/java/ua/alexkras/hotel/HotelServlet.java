@@ -5,10 +5,10 @@ import ua.alexkras.hotel.commands.admin.AdminCommand;
 import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.ApartmentService;
-import ua.alexkras.hotel.service.PaymentService;
-import ua.alexkras.hotel.service.ReservationService;
-import ua.alexkras.hotel.service.UserService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+import ua.alexkras.hotel.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,10 +28,10 @@ public class HotelServlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
 
     public void init(){
-        ReservationService reservationService = new ReservationService();
-        UserService userService = new UserService();
-        ApartmentService apartmentService = new ApartmentService();
-        PaymentService paymentService = new PaymentService();
+        ReservationServiceImpl reservationService = new ReservationServiceImpl();
+        UserServiceImpl userService = new UserServiceImpl();
+        ApartmentServiceImpl apartmentService = new ApartmentServiceImpl();
+        PaymentServiceImpl paymentService = new PaymentServiceImpl();
 
         commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService,paymentService));
         commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));

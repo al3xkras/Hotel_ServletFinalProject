@@ -5,16 +5,16 @@ import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class AddApartmentCommand implements Command {
     public static final String pathBasename = "add_apartment";
 
-    private final ApartmentService apartmentService;
+    private final ApartmentServiceImpl apartmentService;
 
-    public AddApartmentCommand(ApartmentService apartmentService){
+    public AddApartmentCommand(ApartmentServiceImpl apartmentService){
         this.apartmentService=apartmentService;
     }
 
@@ -34,7 +34,7 @@ public class AddApartmentCommand implements Command {
                 .price(Integer.parseInt(request.getParameter("price")))
                 .build();
 
-        apartmentService.addApartment(apartment);
+        apartmentService.create(apartment);
 
         request.getServletContext().log("Added apartment: "+apartment);
 

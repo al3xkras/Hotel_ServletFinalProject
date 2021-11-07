@@ -2,7 +2,7 @@ package ua.alexkras.hotel.commands.user.reservation;
 
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.model.ReservationStatus;
 
@@ -14,9 +14,9 @@ public class ConfirmReservationCommand implements Command {
 
     public static final String pathBasename = "confirm";
 
-    private final ReservationService reservationService;
+    private final ReservationServiceImpl reservationService;
 
-    public ConfirmReservationCommand(ReservationService reservationService){
+    public ConfirmReservationCommand(ReservationServiceImpl reservationService){
         this.reservationService=reservationService;
     }
 

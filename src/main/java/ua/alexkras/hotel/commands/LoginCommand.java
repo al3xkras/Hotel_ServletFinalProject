@@ -3,7 +3,7 @@ package ua.alexkras.hotel.commands;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.UserType;
-import ua.alexkras.hotel.service.UserService;
+import ua.alexkras.hotel.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +12,8 @@ import java.util.Optional;
 public class LoginCommand implements Command {
     public static final String pathBasename = "login";
 
-    private final UserService userService;
-    public LoginCommand(UserService userService){
+    private final UserServiceImpl userService;
+    public LoginCommand(UserServiceImpl userService){
         this.userService=userService;
     }
     @Override

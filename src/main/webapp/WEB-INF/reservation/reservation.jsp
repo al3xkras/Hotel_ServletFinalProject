@@ -27,6 +27,9 @@
     <c:set var="isCompleted">
         ${requestScope.reservation.completed}
     </c:set>
+    <c:set var="page">
+        ${param.page==null?1:param.page}
+    </c:set>
 
     <div class="custom-navbar">
         <a class="active" href="${pageContext.request.contextPath}/app/${userAccount?"user":"admin"}"><fmt:message key="navbar.home"/></a>
@@ -278,8 +281,32 @@
         </form>
     </dialog>
 
-    <!--<script type="text/javascript" src="$ {pageContext.request.contextPath}/js/reservation/reservation.js"></script>
-    -->
+    <c:if test="${requestScope.pageable.totalPages>1}">
+        <div class="d-flex flex-row justify-content-center">
+            <c:if test="${requestScope.pageable.hasPrevious()}">
+            <span class="border">
+                <a href="#" onclick="insertParam('page',${page-1})">Previous</a>
+            </span>
+            </c:if>
+
+            <c:forEach begin="1" end="${requestScope.pageable.totalPages}" var="pageIndex">
+                <c:if test="${page==pageIndex}">
+                    <span class="border selected">${pageIndex}</span>
+                </c:if>
+                <c:if test="${!(page==pageIndex)}">
+                <span class="border">
+                     <a href="#" class="page-number" onclick="insertParam('page',${pageIndex})">${pageIndex}</a>
+                </span>
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${requestScope.pageable.hasNext()}">
+            <span class="border">
+                <a href="#" onclick="insertParam('page',${page+1})">Next</a>
+            </span>
+            </c:if>
+        </div>
+    </c:if>
 
     <script>
         let apartmentId=-1;
@@ -340,6 +367,28 @@
             apartment_select_dialog_form.setAttribute("action",select_apartment_form_action+apartmentId);
 
             dialog_select_apartment.showModal();
+        }
+
+        function insertParam(key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+
+            const kvp = document.location.search.substr(1).split('&');
+            let i=0;
+
+            for(; i<kvp.length; i++){
+                if (kvp[i].startsWith(key + '=')) {
+                    let pair = kvp[i].split('=');
+                    pair[1] = value;
+                    kvp[i] = pair.join('=');
+                    break;
+                }
+            }
+
+            if(i >= kvp.length){
+                kvp[kvp.length] = [key,value].join('=');
+            }
+            document.location.search = kvp.join('&');
         }
     </script>
 
