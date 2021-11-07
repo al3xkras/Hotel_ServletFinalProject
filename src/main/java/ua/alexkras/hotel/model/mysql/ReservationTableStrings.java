@@ -92,4 +92,8 @@ public interface ReservationTableStrings {
                     colAdminConfirmationDate+"=?," +
                     colReservationStatus+"=?" +
                     " WHERE "+colReservationId+"=?;";
+
+    String updateStatusAndConfirmationDateById = "UPDATE "+MySqlStrings.databaseName+'.'+tableReservation+" SET "+
+            colReservationStatus+"=?," +
+            colAdminConfirmationDate+"=? WHERE id=?";
 }

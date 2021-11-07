@@ -3,7 +3,9 @@ package ua.alexkras.hotel.dao.impl;
 import ua.alexkras.hotel.dao.ReservationDAO;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
+import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.service.ReservationService;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -24,21 +26,6 @@ public class JDBCReservationDao implements ReservationDAO {
     public JDBCReservationDao(Connection connection, Connection transactional) {
         this.connection = connection;
         this.transactional = transactional;
-    }
-
-    @Override
-    public List<Reservation> findByUserId(long userId){
-        return null;
-    }
-
-    @Override
-    public List<Reservation> findByUserIdAndIsActive(long userId, boolean isActive){
-        return null;
-    }
-
-    @Override
-    public void updateActiveByUserId(long userId, boolean isActive){
-
     }
 
     @Override
@@ -93,7 +80,8 @@ public class JDBCReservationDao implements ReservationDAO {
                 return Optional.empty();
             }
 
-            reservation = getReservationFromResultSet(resultSet);
+            reservation = getReservationFromResultSet(resultSet)
+                    .withCalculatedDaysUntilExpiration();
 
         } catch (SQLException e){
             e.printStackTrace();
@@ -101,6 +89,76 @@ public class JDBCReservationDao implements ReservationDAO {
         }
 
         return Optional.of(reservation);
+    }
+
+    @Override
+    public List<Reservation> findAllByActiveAndStatus(boolean isActive,ReservationStatus reservationStatus, int start, int total){
+        if (total > requestMaxReservations){
+            throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
+                    +", requested: "+total);
+        }
+
+        List<Reservation> list = new ArrayList<>();
+        try(PreparedStatement select = connection.prepareStatement(selectActiveReservationsByStatusWithLimit)
+        ){
+
+            select.setBoolean(1,isActive);
+            select.setString(2,reservationStatus.name());
+            select.setInt(3,start-1);
+            select.setInt(4,total);
+
+            ResultSet result=select.executeQuery();
+
+            while(result.next()){
+                Reservation reservation = getReservationFromResultSet(result);
+                list.add(reservation.withCalculatedDaysUntilExpiration());
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
+            long userId,
+            boolean isActive,
+            ReservationStatus illegalStatus,
+            int start, int total){
+
+        if (total > requestMaxReservations){
+            throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
+                    +", requested: "+total);
+        }
+
+        List<Reservation> list = new ArrayList<>();
+        try(PreparedStatement select=
+                    connection.prepareStatement(selectActiveReservationsByUserIdAndAnyStatusExceptWithLimit)
+        ){
+
+            select.setBoolean(1,isActive);
+            select.setLong(2,userId);
+            select.setString(3,illegalStatus.name());
+            select.setInt(4,start-1);
+            select.setInt(5,total);
+
+            ResultSet result=select.executeQuery();
+
+            while(result.next()){
+                Reservation reservation = getReservationFromResultSet(result);
+                list.add(reservation.withCalculatedDaysUntilExpiration());
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Reservation> findAll(int start, int total) {
+        return null;
     }
 
 
@@ -145,9 +203,27 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-    @Override
-    public List<Reservation> findAll(int start, int total) {
-        return null;
+    private Reservation getReservationFromResultSet(ResultSet resultSet) throws SQLException {
+        Integer apartmentId = (Integer)resultSet.getObject(colApartmentId);
+        Date adminConfirmationDate = resultSet.getDate(colAdminConfirmationDate);
+
+        return Reservation.builder()
+                .id(resultSet.getInt(colReservationId))
+                .userId(resultSet.getInt(colUserId))
+                .apartmentId(apartmentId==null?null:Long.valueOf(apartmentId))
+                .apartmentClass(ApartmentClass.valueOf(resultSet.getString(colApartmentClass)))
+                .places(resultSet.getInt(colApartmentPlaces))
+                .apartmentPrice((Integer)resultSet.getObject(colApartmentPrice))
+                .reservationStatus(ReservationStatus.valueOf(resultSet.getString(colReservationStatus)))
+                .fromDate(resultSet.getDate(colFromDate).toLocalDate())
+                .toDate(resultSet.getDate(colToDate).toLocalDate())
+                .submitDate(resultSet.getTimestamp(colSubmitDate).toLocalDateTime())
+                .adminConfirmationDate(adminConfirmationDate==null?null:adminConfirmationDate.toLocalDate())
+                .isPaid(resultSet.getBoolean(colIsPaid))
+                .isActive(resultSet.getBoolean(colIsActive))
+                .expired(resultSet.getBoolean(colIsExpired))
+                .build();
+
     }
 
     @Override
@@ -156,48 +232,7 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public void delete(long id) {
-
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void commit(){
-        try {
-            transactional.commit();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void rollback(){
-        try {
-            transactional.rollback();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public List<Reservation> findByReservationStatus(ReservationStatus reservationStatus, int start, int total){
-        return null;
-    }
-
-    //@Transactional
-    @Override
-    public void updateReservationStatusById(long id, ReservationStatus reservationStatus){
+    public void transactionalUpdateReservationStatusById(long id, ReservationStatus reservationStatus){
         try (PreparedStatement preparedStatement = transactional.prepareStatement(updateStatusById)){
 
             preparedStatement.setString(1,reservationStatus.name());
@@ -209,15 +244,6 @@ public class JDBCReservationDao implements ReservationDAO {
             throw new RuntimeException();
         }
     }
-
-
-
-    @Override
-    public void updateReservationStatusAndConfirmationDateById(
-            long id, ReservationStatus reservationStatus, LocalDate confirmationDate){
-
-    }
-
 
     @Override
     public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
@@ -254,7 +280,6 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-
     @Override
     public void updateIsPaidById(long id, boolean isPaid){
         updateIsPaidByIdInConnection(connection,id,isPaid);
@@ -277,89 +302,89 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-    @Override
-    public List<Reservation> findAllByActiveAndStatus(boolean isActive,ReservationStatus reservationStatus, int start, int total){
-        if (total > requestMaxReservations){
-            throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
-                +", requested: "+total);
-        }
+    public void updateAllExpiredReservations(){
+        try (PreparedStatement updateExpired = transactional.prepareStatement("UPDATE " +
+                     "hotel_db_servlet.reservations SET " +
+                     "reservation_status=?,"+
+                     "is_expired=true "+
+                     "WHERE not is_expired and not id_paid and " +
+                     "confirmation_date is not null and " +
+                     "DATEDIFF(confirmation_date,?)>=?");
+             PreparedStatement setExpiredReservationApartmentsAvailable = transactional.prepareStatement("UPDATE " +
+                     "hotel_db_servlet.apartments SET "+
+                     "status=? "+
+                     "WHERE status='"+ ApartmentStatus.RESERVED+"' and "+
+                     "id IN (SELECT apartment_id FROM hotel_db_servlet.reservations WHERE is_expired and is_active)");
+             PreparedStatement updateActive = transactional.prepareStatement("UPDATE " +
+                     "hotel_db_servlet.reservations SET " +
+                     "is_active=false "+
+                     "WHERE is_active and is_expired ")
+        ){
+            updateExpired.setString(1,ReservationStatus.CANCELLED.name());
+            updateExpired.setDate(2, Date.valueOf(LocalDate.now()));
+            updateExpired.setLong(3, ReservationService.daysToCancelPayment);
 
-        List<Reservation> list = new ArrayList<>();
-        try(PreparedStatement select = connection.prepareStatement(selectActiveReservationsByStatusWithLimit)
-                ){
 
-            select.setBoolean(1,isActive);
-            select.setString(2,reservationStatus.name());
-            select.setInt(3,start-1);
-            select.setInt(4,total);
+            setExpiredReservationApartmentsAvailable.setString(1,ApartmentStatus.AVAILABLE.name());
 
-            ResultSet result=select.executeQuery();
+            updateExpired.executeUpdate();
+            setExpiredReservationApartmentsAvailable.executeUpdate();
+            updateActive.executeUpdate();
 
-            while(result.next()){
-                Reservation reservation = getReservationFromResultSet(result);
-                list.add(reservation);
-            }
-        } catch(Exception e){
+            commit();
+        } catch (SQLException e){
+            rollback();
             e.printStackTrace();
             throw new RuntimeException();
         }
-        return list;
     }
 
-    @Override
-    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
-            long userId,
-            boolean isActive,
-            ReservationStatus illegalStatus,
-            int start, int total){
+    public void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateStatusAndConfirmationDateById)){
 
-        if (total > requestMaxReservations){
-            throw new IllegalArgumentException("Maximum reservations in request: "+requestMaxReservations
-                    +", requested: "+total);
-        }
+            preparedStatement.setString(1,status.name());
+            preparedStatement.setDate(2,Date.valueOf(confirmationDate));
+            preparedStatement.setLong(3,id);
 
-        List<Reservation> list = new ArrayList<>();
-        try(PreparedStatement select=
-                    connection.prepareStatement(selectActiveReservationsByUserIdAndAnyStatusExceptWithLimit)
-            ){
-
-            select.setBoolean(1,isActive);
-            select.setLong(2,userId);
-            select.setString(3,illegalStatus.name());
-            select.setInt(4,start-1);
-            select.setInt(5,total);
-
-            ResultSet result=select.executeQuery();
-
-            while(result.next()){
-                Reservation reservation = getReservationFromResultSet(result);
-                list.add(reservation);
-            }
-        } catch(Exception e){
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }
-        return list;
     }
 
-    private Reservation getReservationFromResultSet(ResultSet resultSet) throws SQLException {
-        Integer apartmentId = (Integer)resultSet.getObject(colApartmentId);
-        return Reservation.builder()
-                .id(resultSet.getInt(colReservationId))
-                .userId(resultSet.getInt(colUserId))
-                .apartmentId(apartmentId==null?null:Long.valueOf(apartmentId))
-                .apartmentClass(ApartmentClass.valueOf(resultSet.getString(colApartmentClass)))
-                .places(resultSet.getInt(colApartmentPlaces))
-                .apartmentPrice((Integer)resultSet.getObject(colApartmentPrice))
-                .reservationStatus(ReservationStatus.valueOf(resultSet.getString(colReservationStatus)))
-                .fromDate(resultSet.getDate(colFromDate).toLocalDate())
-                .toDate(resultSet.getDate(colToDate).toLocalDate())
-                .submitDate(resultSet.getTimestamp(colSubmitDate).toLocalDateTime())
-                .adminConfirmationDate(resultSet.getDate(colFromDate).toLocalDate())
-                .isPaid(resultSet.getBoolean(colIsPaid))
-                .isActive(resultSet.getBoolean(colIsActive))
-                .expired(resultSet.getBoolean(colIsExpired))
-                .build();
+    @Override
+    public void delete(long id) {
 
+    }
+
+    @Override
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void commit(){
+        try {
+            transactional.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try {
+            transactional.rollback();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 }

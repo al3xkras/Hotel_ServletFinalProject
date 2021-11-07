@@ -14,7 +14,7 @@ public class ReservationService implements Service{
 
     private final JDBCReservationDao reservationDAO;
 
-    private static final long daysToCancelPayment = 2L;
+    public static final long daysToCancelPayment = 2L;
 
     public ReservationService(){
         this.reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
@@ -40,6 +40,18 @@ public class ReservationService implements Service{
         return reservationDAO.findAllByActiveAndStatus(isActive, reservationStatus,start, total);
     }
 
+    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
+            long userId, boolean isActive, ReservationStatus illegalStatus, int start, int total){
+        return  reservationDAO.findByUserIdAndActiveAndAnyStatusExcept(
+                userId, isActive, illegalStatus, start,total);
+    }
+
+    public int getReservationFullCost(Reservation reservation){
+        return reservation.getApartmentPrice() *
+                (int) Duration.between(reservation.getFromDate().atStartOfDay(),
+                        reservation.getToDate().atStartOfDay()).toDays();
+    }
+
     public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus illegalStatus){
         return reservationDAO.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(userId,isActive,illegalStatus);
     }
@@ -55,12 +67,16 @@ public class ReservationService implements Service{
      * @param reservationStatus reservation status to assign to the Reservation
      */
     public void updateStatusById(int id, ReservationStatus reservationStatus){
-        reservationDAO.updateReservationStatusById(id, reservationStatus);
+        reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
         reservationDAO.commit();
     }
 
+    public void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate){
+        reservationDAO.updateStatusAndConfirmationDateById(id,status,confirmationDate);
+    }
+
     public void transactionalUpdateStatusById(int id, ReservationStatus reservationStatus){
-        reservationDAO.updateReservationStatusById(id, reservationStatus);
+        reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
     }
 
     /**
@@ -107,16 +123,8 @@ public class ReservationService implements Service{
                 id,apartmentId,confirmationDate);
     }
 
-    public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
-            long userId, boolean isActive, ReservationStatus illegalStatus, int start, int total){
-        return  reservationDAO.findByUserIdAndActiveAndAnyStatusExcept(
-                userId, isActive, illegalStatus, start,total);
-    }
-
-    public int getReservationFullCost(Reservation reservation){
-        return reservation.getApartmentPrice() *
-                (int) Duration.between(reservation.getFromDate().atStartOfDay(),
-                    reservation.getToDate().atStartOfDay()).toDays();
+    public void updateAllExpiredReservations(){
+        reservationDAO.updateAllExpiredReservations();
     }
 
     @Override

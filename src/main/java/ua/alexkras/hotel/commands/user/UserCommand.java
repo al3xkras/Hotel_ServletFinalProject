@@ -86,6 +86,9 @@ public class UserCommand implements Command {
                         pageable.getEntriesStart(),
                         pageable.getEntriesInPage());
 
+        reservations.stream()
+                .map(Object::toString)
+                .forEach(request.getServletContext()::log);
 
         request.setAttribute("pageable", pageable);
         request.setAttribute("reservations",reservations);

@@ -7,6 +7,7 @@ import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 
 public class ConfirmReservationCommand implements Command {
 
@@ -27,7 +28,8 @@ public class ConfirmReservationCommand implements Command {
     public String executePost(HttpServletRequest request) {
         int reservationId = Integer.parseInt(Command.getCommand(request.getRequestURI(), pathBasename));
 
-        reservationService.updateStatusById(reservationId, ReservationStatus.CONFIRMED);
+        reservationService.updateStatusAndConfirmationDateById(
+                reservationId, ReservationStatus.CONFIRMED, LocalDate.now());
 
         return "redirect:/app/admin";
     }

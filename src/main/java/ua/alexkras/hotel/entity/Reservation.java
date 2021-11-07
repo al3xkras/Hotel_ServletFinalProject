@@ -5,6 +5,9 @@ import ua.alexkras.hotel.model.ReservationStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static ua.alexkras.hotel.service.ReservationService.daysToCancelPayment;
+
 public class Reservation {
     private Long id;
     private Long userId;
@@ -86,6 +89,36 @@ public class Reservation {
 
     public Long getDaysUntilExpiration() {
         return daysUntilExpiration;
+    }
+
+    public Reservation withCalculatedDaysUntilExpiration(){
+        if (adminConfirmationDate==null){
+            return this;
+        }
+        long daysBetween = DAYS.between(LocalDate.now(),adminConfirmationDate);
+        this.daysUntilExpiration = daysToCancelPayment-daysBetween;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", apartmentId=" + apartmentId +
+                ", apartmentClass=" + apartmentClass +
+                ", places=" + places +
+                ", apartmentPrice=" + apartmentPrice +
+                ", reservationStatus=" + reservationStatus +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", submitDate=" + submitDate +
+                ", adminConfirmationDate=" + adminConfirmationDate +
+                ", isPaid=" + isPaid +
+                ", isActive=" + isActive +
+                ", expired=" + expired +
+                ", daysUntilExpiration=" + daysUntilExpiration +
+                '}';
     }
 
     public static ReservationBuilder builder() {

@@ -18,7 +18,7 @@ public class ScheduledTasks implements ServletContextListener {
     private final ReservationService reservationService = new ReservationService();
 
     public void scheduleUpdateExpiredReservations() {
-        //reservationService.updateAllExpiredReservations(false);
+        reservationService.updateAllExpiredReservations();
 
         servletContext.log("scheduled task executed");
     }
