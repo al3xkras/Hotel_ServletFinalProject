@@ -8,6 +8,7 @@ public interface MySqlStrings {
     String root = "jdbc:mysql://localhost:3306/";
     String databaseName="hotel_db_servlet";
     String connectionUrl = root+databaseName+"?serverTimezone=UTC";
+    String testConnectionUrl = root+databaseName+"_test"+"?serverTimezone=UTC";
 
     String user = "root";
     String password = "root";
