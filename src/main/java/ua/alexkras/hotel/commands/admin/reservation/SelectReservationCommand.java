@@ -46,10 +46,16 @@ public class SelectReservationCommand implements Command {
 
         request.getServletContext().log("id: "+reservationId+' '+apartmentId);
 
-        reservationService.updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(reservationId,apartmentId,LocalDate.now());
-        //TODO rollback connection if failed to update apartment's status
-        apartmentService.updateApartmentStatusById(apartmentId, ApartmentStatus.RESERVED);
+        try {
+            reservationService.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+                    reservationId, apartmentId, LocalDate.now());
 
+            apartmentService.transactionalUpdateApartmentStatusById(apartmentId, ApartmentStatus.RESERVED);
+
+            reservationService.commitCurrentTransaction();
+        } catch (Exception e){
+            apartmentService.rollbackConnection();
+        }
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+ AdminCommand.pathBasename;
     }

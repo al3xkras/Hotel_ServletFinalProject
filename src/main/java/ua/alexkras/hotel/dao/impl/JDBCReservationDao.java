@@ -221,14 +221,25 @@ public class JDBCReservationDao implements ReservationDAO {
 
     @Override
     public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-            long reservationId,
-            long apartmentId,
-            LocalDate confirmationDate){
+            long reservationId, long apartmentId, LocalDate confirmationDate){
 
+        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
+                connection,reservationId,apartmentId,confirmationDate);
+    }
+
+    public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+            long reservationId, long apartmentId, LocalDate confirmationDate){
+
+        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
+                transactional,reservationId,apartmentId,confirmationDate);
+    }
+
+    private void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
+            Connection connection,long reservationId, long apartmentId, LocalDate confirmationDate){
         try (PreparedStatement getApartmentIntoVariable = connection.prepareStatement(selectApartmentByIdIntoVariable);
              PreparedStatement updateReservation = connection.prepareStatement(updateReservationByIdAndUserIdWithApartment)
 
-            ){
+        ){
             getApartmentIntoVariable.setLong(1,apartmentId);
 
             updateReservation.setDate(1,Date.valueOf(confirmationDate));

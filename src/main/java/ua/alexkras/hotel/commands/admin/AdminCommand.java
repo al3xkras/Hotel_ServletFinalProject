@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-//TODO replace RuntimeExceptions with custom exceptions
 public class AdminCommand implements Command {
 
     public static final String pathBasename = "admin";

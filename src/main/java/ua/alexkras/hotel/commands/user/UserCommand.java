@@ -5,6 +5,7 @@ import ua.alexkras.hotel.commands.user.reservation.CancelReservationCommand;
 import ua.alexkras.hotel.commands.user.reservation.ConfirmReservationCommand;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.exception.AccessDeniedException;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.exception.UserNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
@@ -19,7 +20,6 @@ import ua.alexkras.hotel.service.ReservationService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-//TODO replace RuntimeExceptions with custom exceptions
 public class UserCommand implements Command {
 
     public static final String pathBasename = "user";
@@ -58,7 +58,7 @@ public class UserCommand implements Command {
             currentUser=Optional.of(testUser);
             //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
         } else if (!currentUser.get().getUserType().equals(UserType.USER)){
-            return "redirect:/"+HotelServlet.pathBasename+'/';
+            throw new AccessDeniedException();
         }
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
@@ -95,7 +95,7 @@ public class UserCommand implements Command {
     @Override
     public String executePost(HttpServletRequest request) {
         if (!AuthFilter.getCurrentLoginUser().orElseThrow(UserNotFoundException::new).getUserType().equals(UserType.USER)){
-            throw new RuntimeException();
+            throw new AccessDeniedException();
         }
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);

@@ -92,6 +92,21 @@ public class ReservationService implements Service{
                 id, apartmentId, confirmationDate);
     }
 
+    /**
+     * Update Reservation's associated apartment (apartment id, price), and
+     * set status of reservation to 'Confirmed', and set confirmation date
+     * to @confirmationDate
+     *
+     * @param id id of Reservation
+     * @param apartmentId id of apartment to associate with Reservation
+     * @param confirmationDate date of confirmation by Admin
+     */
+    public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+            long id, long apartmentId, LocalDate confirmationDate){
+        reservationDAO.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+                id,apartmentId,confirmationDate);
+    }
+
     public List<Reservation> findByUserIdAndActiveAndAnyStatusExcept(
             long userId, boolean isActive, ReservationStatus illegalStatus, int start, int total){
         return  reservationDAO.findByUserIdAndActiveAndAnyStatusExcept(
