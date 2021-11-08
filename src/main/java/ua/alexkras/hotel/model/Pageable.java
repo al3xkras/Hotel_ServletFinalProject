@@ -12,11 +12,13 @@ public class Pageable {
     public Pageable( int entriesInPage, int totalItems) {
         this.entriesInPage = entriesInPage;
         this.totalPages = (int)Math.ceil((double)totalItems/entriesInPage);
+        seekToPage(1);
     }
 
     public Pageable(int totalItems){
         this.entriesInPage = DEFAULT_ENTRIES_IN_PAGE;
         this.totalPages = (int)Math.ceil((double)totalItems/entriesInPage);
+        seekToPage(1);
     }
 
     public boolean hasNext(){

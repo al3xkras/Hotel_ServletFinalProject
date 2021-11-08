@@ -92,11 +92,17 @@ public class JDBCApartmentDao implements ApartmentDao {
     public void create(Apartment apartment){
         try(PreparedStatement addApartment = connection.prepareStatement(ApartmentTableStrings.addApartment)
             ){
-            addApartment.setString(1,apartment.getName());
-            addApartment.setInt(2,apartment.getPlaces());
-            addApartment.setString(3,apartment.getApartmentClass().name());
-            addApartment.setString(4,apartment.getStatus().name());
-            addApartment.setInt(5,apartment.getPrice());
+
+            if (apartment.getId()==null){
+                addApartment.setNull(1,Types.INTEGER);
+            } else {
+                addApartment.setLong(1,apartment.getId());
+            }
+            addApartment.setString(2,apartment.getName());
+            addApartment.setInt(3,apartment.getPlaces());
+            addApartment.setString(4,apartment.getApartmentClass().name());
+            addApartment.setString(5,apartment.getStatus().name());
+            addApartment.setInt(6,apartment.getPrice());
 
             addApartment.execute();
         } catch (SQLIntegrityConstraintViolationException ignored){

@@ -4,6 +4,7 @@ package ua.alexkras.hotel.entity;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class Apartment {
     private Long id;
@@ -57,6 +58,19 @@ public class Apartment {
                 ", status=" + status +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Apartment apartment = (Apartment) o;
+        return places == apartment.places && Objects.equals(id, apartment.id) && name.equals(apartment.name) && apartmentClass == apartment.apartmentClass && status == apartment.status && price.equals(apartment.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, places, apartmentClass, status, price);
     }
 
     public static ApartmentBuilder builder() {

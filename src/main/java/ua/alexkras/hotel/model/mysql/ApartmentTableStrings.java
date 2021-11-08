@@ -30,7 +30,7 @@ public interface ApartmentTableStrings {
             colApartmentClass+','+
             colApartmentStatus+','+
             colApartmentPrice+
-            " FROM "+MySqlStrings.databaseName+'.'+tableApartment;
+            " FROM "+databaseName+'.'+tableApartment;
 
     String findById=findAllApartments+" WHERE "+colApartmentId+"=?";
 
@@ -52,7 +52,7 @@ public interface ApartmentTableStrings {
             colApartmentClass+','+
             colApartmentStatus+','+
             colApartmentPrice+") VALUES "+
-            "(null, ?, ?, ?, ?, ?)";
+            "(?, ?, ?, ?, ?, ?)";
 
     String updateApartment = "UPDATE " +
             databaseName+'.'+tableApartment+
@@ -71,7 +71,7 @@ public interface ApartmentTableStrings {
     String updateApartmentStatusById="UPDATE "+databaseName+'.'+tableApartment+" SET " +
             colApartmentStatus+"=? WHERE "+colApartmentId+"=?";
 
-    String findByApartmentClassAndPlacesAndStatus = "SELECT * FROM "+databaseName+'.'+tableApartment+
+    String findByApartmentClassAndPlacesAndStatus = findAllApartments+
             " WHERE "+colApartmentClass+"=? and "+
             colApartmentPlaces+"=? and "+
             colApartmentStatus+"=? limit ?,?";
