@@ -2,6 +2,7 @@ package ua.alexkras.hotel.commands.admin_or_user;
 
 import ua.alexkras.hotel.commands.user.SelectApartmentCommand;
 import ua.alexkras.hotel.entity.Apartment;
+import ua.alexkras.hotel.exception.AccessDeniedException;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
@@ -33,7 +34,7 @@ public class ApartmentCommand implements Command{
     @Override
     public String executeGet(HttpServletRequest request) {
 
-        AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new);
+        AuthFilter.getCurrentLoginUser().orElseThrow(AccessDeniedException::new);
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
@@ -46,7 +47,7 @@ public class ApartmentCommand implements Command{
         Pageable pageable = new Pageable(apartmentService.getApartmentsCount());
         pageable.seekToPage(page);
 
-        if (command.isEmpty()) {
+        if (command.isEmpty()){
             List<Apartment> apartments = apartmentService.findAllApartments(
                     pageable);
 

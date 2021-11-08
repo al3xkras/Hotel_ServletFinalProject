@@ -3,6 +3,7 @@ package ua.alexkras.hotel.commands.admin;
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
+import ua.alexkras.hotel.exception.AccessDeniedException;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
@@ -35,16 +36,8 @@ public class AdminCommand implements Command {
     public String executeGet(HttpServletRequest request) {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
 
-        if(!currentUser.isPresent()){
-            //TODO remove in final build
-            User testAdmin = User.builder()
-                    .id(-2L)
-                    .userType(UserType.ADMIN)
-                    .build();
-            request.getSession().setAttribute("user", testAdmin);
-            //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
-        } else if (!currentUser.get().getUserType().equals(UserType.ADMIN)){
-            return "redirect:/"+HotelServlet.pathBasename+'/';
+        if (!currentUser.isPresent() || !currentUser.get().getUserType().equals(UserType.ADMIN)){
+            throw new AccessDeniedException();
         }
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);

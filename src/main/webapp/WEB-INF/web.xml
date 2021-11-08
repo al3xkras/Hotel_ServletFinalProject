@@ -20,6 +20,11 @@
   </welcome-file-list>
 
   <error-page>
+    <exception-type>ua.alexkras.hotel.exception.AccessDeniedException</exception-type>
+    <location>/app/login/redirect</location>
+  </error-page>
+
+  <error-page>
     <exception-type>java.lang.Exception</exception-type>
     <location>/WEB-INF/error_page.jsp</location>
   </error-page>

@@ -47,16 +47,7 @@ public class UserCommand implements Command {
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
         User user;
 
-        if(!currentUser.isPresent()){
-            //TODO remove in final build
-            User testUser = User.builder()
-                    .id(-1L)
-                    .userType(UserType.USER)
-                    .build();
-            request.getSession().setAttribute("user", testUser);
-            currentUser=Optional.of(testUser);
-            //return "redirect:/"+ HotelServlet.pathBasename +'/'+ LoginCommand.pathBasename;
-        } else if (!currentUser.get().getUserType().equals(UserType.USER)){
+        if (!currentUser.isPresent() || !currentUser.get().getUserType().equals(UserType.USER)){
             throw new AccessDeniedException();
         }
 

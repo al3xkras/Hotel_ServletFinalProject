@@ -18,6 +18,14 @@ public class LoginCommand implements Command {
     }
     @Override
     public String executeGet(HttpServletRequest request){
+
+        String command = Command.getCommand(request.getRequestURI(),pathBasename);
+
+        if (command.equals("redirect")){
+            request.getServletContext().log("login: redirect");
+            return "redirect:/app/login";
+        }
+
         request.getServletContext().log("login: get");
         return "/login.jsp";
     }

@@ -9,11 +9,11 @@ public class ExceptionCommand implements Command {
 
     @Override
     public String executeGet(HttpServletRequest request) {
-        throw new RuntimeException("Generated exception");
+        return "redirect:/";
     }
 
     @Override
     public String executePost(HttpServletRequest request) {
-        throw new RuntimeException("Generated exception");
+        return "redirect:/";
     }
 }

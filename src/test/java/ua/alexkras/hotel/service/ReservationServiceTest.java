@@ -1,60 +1,90 @@
 package ua.alexkras.hotel.service;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 import ua.alexkras.hotel.FirstLaunch;
 import ua.alexkras.hotel.dao.ReservationDAO;
 
-public class ReservationServiceTest extends TestCase {
+public class ReservationServiceTest {
 
     ReservationDAO reservationDAO;
 
-    public void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         FirstLaunch.truncateAllTablesOfTestDatabase();
+
         ReservationDAO reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
+    }
+
+    @Test
+    public void testCreate(){
+
 
     }
 
-    public void testCreate() {
-    }
+    @Test
+    public void testFindById(){
 
-    public void testFindById() {
-    }
-
-    public void testFindByReservationStatus() {
-    }
-
-    public void testFindByUserIdAndActiveAndAnyStatusExcept() {
-    }
-
-    public void testGetReservationFullCost() {
-    }
-
-    public void testGetReservationsCountByUserIdAndActiveAndAnyStatusExcept() {
-    }
-
-    public void testGetReservationsCountByActiveAndStatus() {
 
     }
 
-    public void testUpdateStatusById() {
+    @Test
+    public void testFindByReservationStatus(){
+
 
     }
 
-    public void testUpdateStatusAndConfirmationDateById() {
+    @Test
+    public void testFindByUserIdAndActiveAndAnyStatusExcept(){
+
 
     }
 
-    public void testUpdateIsPaidById() {
+    @Test
+    public void testGetReservationFullCost(){
+
 
     }
 
-    public void testUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById() {
+    @Test
+    public void testGetReservationsCountByUserIdAndActiveAndAnyStatusExcept(){
+
 
     }
 
-    public void testUpdateAllExpiredReservations() {
+    @Test
+    public void testGetReservationsCountByActiveAndStatus(){
+
+
+    }
+
+    @Test
+    public void testUpdateStatusById(){
+
+
+    }
+
+    @Test
+    public void testUpdateStatusAndConfirmationDateById(){
+
+
+    }
+
+    @Test
+    public void testUpdateIsPaidById(){
+
+
+    }
+
+    @Test
+    public void testUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(){
+
+
+    }
+
+    @Test
+    public void testUpdateAllExpiredReservations(){
+
 
     }
 }
