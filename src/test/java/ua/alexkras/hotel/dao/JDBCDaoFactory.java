@@ -1,5 +1,6 @@
-package ua.alexkras.hotel.service;
+package ua.alexkras.hotel.dao;
 
+import ua.alexkras.hotel.dao.ConnectionPoolHolder;
 import ua.alexkras.hotel.dao.DaoFactory;
 import ua.alexkras.hotel.dao.impl.*;
 

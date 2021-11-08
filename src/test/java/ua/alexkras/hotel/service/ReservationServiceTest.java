@@ -3,6 +3,7 @@ package ua.alexkras.hotel.service;
 import org.junit.Before;
 import org.junit.Test;
 import ua.alexkras.hotel.FirstLaunch;
+import ua.alexkras.hotel.dao.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.ReservationDAO;
 
 public class ReservationServiceTest {

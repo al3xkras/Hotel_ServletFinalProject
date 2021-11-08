@@ -1,4 +1,4 @@
-package ua.alexkras.hotel.service;
+package ua.alexkras.hotel.dao;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
@@ -13,7 +13,7 @@ public class ConnectionPoolHolder {
             synchronized (ua.alexkras.hotel.dao.impl.ConnectionPoolHolder.class) {
                 if (dataSource == null) {
                     BasicDataSource ds = new BasicDataSource();
-                    ds.setUrl(MySqlStrings.testConnectionUrl);
+                    ds.setUrl(MySqlStrings.connectionUrl);
                     ds.setUsername(MySqlStrings.user);
                     ds.setPassword(MySqlStrings.password);
                     ds.setMinIdle(5);
