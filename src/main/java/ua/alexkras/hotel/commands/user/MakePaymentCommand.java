@@ -64,7 +64,7 @@ public class MakePaymentCommand implements Command {
         }
 
         try{
-            paymentService.transactionalAddPayment(payment);
+            paymentService.transactionalCreate(payment);
             reservationService.transactionalUpdateIsPaidById(payment.getReservationId(),true);
 
             reservationService.commitCurrentTransaction();

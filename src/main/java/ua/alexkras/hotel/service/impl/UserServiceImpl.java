@@ -16,6 +16,12 @@ public class UserServiceImpl implements UserService<Pageable,User> {
         userDao = JDBCDaoFactory.getInstance().createUserDAO();
     }
 
+    /**
+     * Find user entity by id
+     * @param id id of a user
+     * @return Optional of user if present in a data source, Optional.empty() otherwise
+     * @throws RuntimeException if an SQLException was caught when executing query
+     */
     @Override
     public Optional<User> findById(long id){
         return userDao.findById(id);
@@ -23,9 +29,8 @@ public class UserServiceImpl implements UserService<Pageable,User> {
 
     /**
      * Get user from a data source by username (login)
-     *
      * @param username User's login (username)
-     * @return Optional\<User>, if user was found, Optional.empty() otherwise.
+     * @return Optional of User, if found, Optional.empty() otherwise.
      */
     @Override
     public Optional<User> findByUsername(String username) {
@@ -34,19 +39,34 @@ public class UserServiceImpl implements UserService<Pageable,User> {
 
     /**
      * Add new user entity to a data source
-     * @param user User to add
-     * @throws RuntimeException if User was not added to the data source
+     * @param user user to add
+     * @throws RuntimeException if @user is invalid (has null fields, that match not-null columns in the data source)
+     * or any SQLException was caught when executing create statement
      */
     @Override
     public void create(User user){
         userDao.create(user);
     }
 
+    /**
+     * Commit current transaction (transactional connection),
+     * - Committing a transaction from this service also
+     *  commits methods that use transactional connection
+     *  from other services
+     * @throws RuntimeException if failed to commit transaction
+     */
     @Override
     public void commitCurrentTransaction(){
         userDao.commit();
     }
 
+    /**
+     * Rollback transactional connection
+     * - Rollback made from this service also
+     *  affects methods that use transactional connection
+     *  from other services (they will be discarded as well)
+     * @throws RuntimeException if failed to rollback transactional connection
+     */
     @Override
     public void rollbackConnection(){
         userDao.rollback();

@@ -11,7 +11,7 @@ public interface ReservationService<Pageable,Entity>
 
     void createInTransaction(Entity entity);
 
-    List<Entity> findByReservationStatus(
+    List<Entity> findAllByActiveAndStatus(
             boolean isActive,
             ReservationStatus reservationStatus,
             Pageable pageable);

@@ -45,7 +45,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
     /**
      * Find all apartments in a data source, limited by @pageable
      * @param pageable Page, that limits amount of apartments to get from the data source
-     * -extracts total of pageable.getEntriesInPage() entries, starting from pageable.getEntriesStart() item
+     * -retrieves a total of pageable.getEntriesInPage() entries, starting from pageable.getEntriesStart() item
      * @return List of apartments
      * @throws RuntimeException if an SQLException was caught when executing query
      */

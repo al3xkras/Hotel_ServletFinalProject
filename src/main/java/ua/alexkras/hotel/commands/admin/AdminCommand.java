@@ -1,6 +1,5 @@
 package ua.alexkras.hotel.commands.admin;
 
-import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.exception.AccessDeniedException;
@@ -60,7 +59,7 @@ public class AdminCommand implements Command {
 
         request.getServletContext().log(pageable.toString());
 
-        List<Reservation> reservations = reservationService.findByReservationStatus(
+        List<Reservation> reservations = reservationService.findAllByActiveAndStatus(
                 true,
                 ReservationStatus.PENDING,
                 pageable);
