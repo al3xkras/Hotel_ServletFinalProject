@@ -76,32 +76,5 @@
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/reservation/create_reservation.js"></script>
 
-    <script>
-
-        apartmentClass = document.getElementById("apartment-class");
-        places = document.getElementById("places");
-        fromDate= document.getElementById("from-date");
-        toDate = document.getElementById("to-date");
-
-        if (sessionStorage.apartmentClass){
-            apartmentClass.value=sessionStorage.apartmentClass;
-        }
-        if (sessionStorage.places){
-            places.value=sessionStorage.places;
-        }
-        if (sessionStorage.fromDate){
-            fromDate.value=sessionStorage.fromDate;
-        }
-        if (sessionStorage.toDate){
-            toDate.value=sessionStorage.toDate;
-        }
-
-        function savePageVariables(){
-            sessionStorage.apartmentClass=apartmentClass.value;
-            sessionStorage.places=places.value;
-            sessionStorage.fromDate=fromDate.value;
-            sessionStorage.toDate=toDate.value;
-        }
-    </script>
 </body>
 </html>

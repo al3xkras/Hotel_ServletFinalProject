@@ -149,62 +149,11 @@
         </dialog>
     </div>
 
-    <script>
-        fromDate= document.getElementById("fromDate");
-        toDate = document.getElementById("toDate");
-
-        if (sessionStorage.fromDate){
-            fromDate.value=sessionStorage.fromDateApartmentPage;
-        }
-        if (sessionStorage.toDate){
-            toDate.value=sessionStorage.toDateApartmentPage;
-        }
-
-        function savePageVariables(){
-            sessionStorage.fromDateApartmentPage=fromDate.value;
-            sessionStorage.toDateApartmentPage=toDate.value;
-        }
-    </script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/apartment/apartment.js"></script>
 
     <script>
-        const updateButton = document.getElementById('create_reservation');
-        const cancelButton = document.getElementById('cancel');
-        const confirmationDialog = document.getElementById('confirmation_dialog');
-
-
-        updateButton.addEventListener('click', function() {
-            confirmationDialog.showModal();
-        });
-
-        cancelButton.addEventListener('click', function() {
-            confirmationDialog.close();
-        });
-
-
-        let today = new Date();
-        let dd = today.getDate();
-        let mm = today.getMonth() + 1; //January is 0
-        const yyyy = today.getFullYear();
-
-        if (dd < 10) {
-            dd = '0' + dd;
-        }
-
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
-
-        today = yyyy + '-' + mm + '-' + dd;
-        const max_date = (yyyy + 5) + '-' + mm + '-' + dd;
-
-        document.getElementById("fromDate").min = today;
-        document.getElementById("fromDate").max = max_date;
-        document.getElementById("toDate").min = today;
-        document.getElementById("toDate").max = max_date;
-
         const fromDateIsGreaterThanToDate = ${requestScope.fromDateIsGreaterThanToDate?"true":"false"};
         if (fromDateIsGreaterThanToDate) confirmationDialog.showModal();
-
     </script>
 
 
