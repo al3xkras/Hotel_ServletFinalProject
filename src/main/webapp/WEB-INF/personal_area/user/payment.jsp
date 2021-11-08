@@ -41,6 +41,8 @@
                                         <div class="input-group">
                                             <input type="text" id="cardNumber"
                                                    name="cardNumber"
+                                                   pattern="<fmt:message key="card_number.regexp"/>"
+                                                   title="<fmt:message key="card_number.regexp"/>"
                                                    placeholder="<fmt:message key="payment.card.number.placeholder"/>"
                                                    class="form-control " required>
 

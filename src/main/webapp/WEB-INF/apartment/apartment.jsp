@@ -144,10 +144,27 @@
                 </div>
 
                 <button id="cancel" type="button" class="btn btn-primary">Cancel</button>
-                <button type="submit" class="btn btn-secondary" style="float: right">Confirm</button>
+                <button type="submit" onclick="savePageVariables()" class="btn btn-secondary" style="float: right">Confirm</button>
             </form>
         </dialog>
     </div>
+
+    <script>
+        fromDate= document.getElementById("fromDate");
+        toDate = document.getElementById("toDate");
+
+        if (sessionStorage.fromDate){
+            fromDate.value=sessionStorage.fromDateApartmentPage;
+        }
+        if (sessionStorage.toDate){
+            toDate.value=sessionStorage.toDateApartmentPage;
+        }
+
+        function savePageVariables(){
+            sessionStorage.fromDateApartmentPage=fromDate.value;
+            sessionStorage.toDateApartmentPage=toDate.value;
+        }
+    </script>
 
     <script>
         const updateButton = document.getElementById('create_reservation');

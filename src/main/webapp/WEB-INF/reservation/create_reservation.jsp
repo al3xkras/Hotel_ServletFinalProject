@@ -57,23 +57,51 @@
             </div>
 
             <div class="form-group">
-                <label for="from_date"><fmt:message key="reservation.form.from_date"/></label>
-                <input type="date" id="from_date" name="fromDate" required>
+                <label for="from-date"><fmt:message key="reservation.form.from_date"/></label>
+                <input type="date" id="from-date" name="fromDate" required>
             </div>
 
             <div class="form-group">
-                <label for="to_date"><fmt:message key="reservation.form.to_date"/></label>
-                <input type="date" id="to_date" name="toDate" required>
+                <label for="to-date"><fmt:message key="reservation.form.to_date"/></label>
+                <input type="date" id="to-date" name="toDate" required>
                 <c:if test="${requestScope.fromDateIsGreaterThanToDate}">
                     <div class="alert alert-warning"><fmt:message key="reservation.alert.date"/></div>
                 </c:if>
 
             </div>
 
-            <button type="submit" class="btn btn-lg btn-primary btn-block"><fmt:message key="form.submit"/></button>
+            <button type="submit" onclick="savePageVariables()" class="btn btn-lg btn-primary btn-block"><fmt:message key="form.submit"/></button>
         </form>
     </div>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/reservation/create_reservation.js"></script>
+
+    <script>
+
+        apartmentClass = document.getElementById("apartment-class");
+        places = document.getElementById("places");
+        fromDate= document.getElementById("from-date");
+        toDate = document.getElementById("to-date");
+
+        if (sessionStorage.apartmentClass){
+            apartmentClass.value=sessionStorage.apartmentClass;
+        }
+        if (sessionStorage.places){
+            places.value=sessionStorage.places;
+        }
+        if (sessionStorage.fromDate){
+            fromDate.value=sessionStorage.fromDate;
+        }
+        if (sessionStorage.toDate){
+            toDate.value=sessionStorage.toDate;
+        }
+
+        function savePageVariables(){
+            sessionStorage.apartmentClass=apartmentClass.value;
+            sessionStorage.places=places.value;
+            sessionStorage.fromDate=fromDate.value;
+            sessionStorage.toDate=toDate.value;
+        }
+    </script>
 </body>
 </html>
