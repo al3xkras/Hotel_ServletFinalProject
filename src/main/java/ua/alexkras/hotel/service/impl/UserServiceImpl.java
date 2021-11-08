@@ -33,10 +33,7 @@ public class UserServiceImpl implements UserService<Pageable,User> {
     }
 
     /**
-     * Add new user to a data source
-     * -Encode user's password, using HotelUserDetailsService.passwordEncoder(),
-     *   before saving it to the data source
-     *
+     * Add new user entity to a data source
      * @param user User to add
      * @throws RuntimeException if User was not added to the data source
      */

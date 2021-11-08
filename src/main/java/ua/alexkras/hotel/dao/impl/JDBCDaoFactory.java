@@ -10,17 +10,18 @@ public class JDBCDaoFactory extends DaoFactory {
 
     private final DataSource dataSource = ConnectionPoolHolder.getDataSource();
 
-    private Connection  transactionalConnection,
-                        ApartmentDaoConnection,
-                        PaymentDaoConnection,
-                        ReservationDaoConnection,
-                        UserDaoConnection;
+    private Connection  transactionalConnection;
+    private Connection ApartmentDaoConnection;
+    private Connection PaymentDaoConnection;
+    private Connection ReservationDaoConnection;
+    private Connection UserDaoConnection;
 
     public JDBCDaoFactory(){
         transactionalConnection = getConnection();
         try {
             transactionalConnection.setAutoCommit(false);
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
