@@ -57,17 +57,6 @@ public class FirstLaunch {
                 .phoneNumber("+404-12-3456789")
                 .birthday(LocalDate.parse("2002-03-07"))
                 .gender("Male").userType(UserType.ADMIN).build());
-
-        userDAO.create(User.builder()
-                .id(-3L)
-                .name("UserName").surname("UserSurname")
-                .username("zzz").password("q")
-                .phoneNumber("+404-12-3456789")
-                .birthday(LocalDate.parse("2002-03-07"))
-                .gender("Male").userType(UserType.USER).build());
-
-
-
     }
 
     public static void createDatabase(Connection conn){
@@ -80,7 +69,7 @@ public class FirstLaunch {
                      ReservationTableStrings.colUserId+" int not null, FOREIGN KEY ("+ReservationTableStrings.colUserId+")"+
                      " REFERENCES "+databaseName+"."+tableUser+"("+UserTableStrings.colUserId+")" +
                      " ON DELETE CASCADE,"+
-                     colApartmentId+" int, FOREIGN KEY (apartment_id)" +
+                     colApartmentId+" int, FOREIGN KEY ("+colApartmentId+")" +
                      "REFERENCES "+databaseName+"."+ApartmentTableStrings.tableApartment+"("+ApartmentTableStrings.colApartmentId+") ON DELETE NO ACTION, "+
                      colApartmentClass+" varchar(20) not null,"+
                      colApartmentPlaces+" int not null,"+
@@ -97,9 +86,9 @@ public class FirstLaunch {
                      databaseName+"."+tablePayments+" ("+
                      colPaymentId+" int unique primary key auto_increment, "+
                      colUserId+" int not null," +
-                     "FOREIGN KEY (user_id) REFERENCES "+databaseName+"."+tableUser+"("+UserTableStrings.colUserId+") ON DELETE NO ACTION,"+
+                     "FOREIGN KEY ("+colUserId+") REFERENCES "+databaseName+"."+tableUser+"("+UserTableStrings.colUserId+") ON DELETE NO ACTION,"+
                      colReservationId+" int not null," +
-                     "FOREIGN KEY (reservation_id) REFERENCES  "+databaseName+"."+tableReservation+"("+ReservationTableStrings.colReservationId+") ON DELETE NO ACTION,"+
+                     "FOREIGN KEY ("+colReservationId+") REFERENCES  "+databaseName+"."+tableReservation+"("+ReservationTableStrings.colReservationId+") ON DELETE NO ACTION,"+
                      colValue+" int not null,"+
                      colPaymentDate+" DATETIME not null,"+
                      colCardNumber+" varchar(40) not null,"+

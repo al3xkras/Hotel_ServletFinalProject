@@ -64,19 +64,17 @@
                 <label for="name"><fmt:message key="form.name"/></label>
                 <input id="name" minlength="2" name="name" type="text" pattern="${name_regex}"
                        title="${data_invalid_format} ${name_regex}"
-                       value="${requestScope.registrationRequest.name}" required>
+                       required>
                 <c:if test='${requestScope.errorField.equals("name")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
-
-
             <div class="form-group">
                 <label for="surname"><fmt:message key="form.surname"/></label>
                 <input id="surname" minlength="2" name="surname" type="text" pattern="${surname_regex}"
                        title="${data_invalid_format} ${name_regex}"
-                       value="${requestScope.registrationRequest.surname}" required>
+                       required>
 
                 <c:if test='${requestScope.errorField.equals("surname")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
@@ -86,8 +84,7 @@
             <div class="form-group">
                 <label for="username"><fmt:message key="form.username"/></label>
                 <input id="username" minlength="3" maxlength="15" name="username" type="text" pattern="${username_regex}"
-                       title="${data_invalid_format} ${username_regex}"
-                       value="${requestScope.registrationRequest.username}" required>
+                       title="${data_invalid_format} ${username_regex}" required>
                 <c:if test='${requestScope.errorField.equals("username")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
@@ -96,7 +93,7 @@
             <div class="form-group">
                 <label for="password"><fmt:message key="form.password"/></label>
                 <input id="password" minlength="8" maxlength="20" name="password" type="password"
-                       value="${requestScope.registrationRequest.password}" required>
+                       required>
                 <c:if test='${requestScope.errorField.equals("password")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
@@ -105,7 +102,7 @@
             <div class="form-group">
                 <label for="password-confirm"><fmt:message key="form.password_confirm"/></label>
                 <input id="password-confirm" minlength="8" maxlength="20" name="passwordConfirm" type="password"
-                       value="${requestScope.registrationRequest.passwordConfirm}" required>
+                       required>
                 <c:if test='${requestScope.errorField.equals("password")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
@@ -113,8 +110,7 @@
 
             <div class="form-group">
                 <label for="birthday_date"><fmt:message key="form.birthday_date"/></label>
-                <input id="birthday_date" name="birthdayDate" value="${requestScope.registrationRequest.birthdayDate}"
-                       type="date" required>
+                <input id="birthday_date" name="birthdayDate" type="date" required>
                 <c:if test='${requestScope.errorField.equals("birthdayDate")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
@@ -124,10 +120,8 @@
                 <label><fmt:message key="form.gender"/></label>
                 <div>
                     <input type="radio" name="gender" value="Male"
-                           <c:if test='${requestScope.registrationRequest.gender.equals("Male")}'>checked</c:if>
                             /><fmt:message key="form.gender.male"/>
                     <input type="radio" name="gender" value="Female"
-                           <c:if test='${requestScope.registrationRequest.gender.equals("Female")}'>checked</c:if>
                             /><fmt:message key="form.gender.female"/>
                 </div>
                 <c:if test='${requestScope.errorField.equals("gender")}'>
@@ -138,19 +132,23 @@
             <div class="form-group">
                 <label for="phone-number"><fmt:message key="form.phone_number"/></label>
                 <input id="phone-number" name="phoneNumber" type="text" pattern="${phone_regex}"
-                       title="${data_invalid_format} ${phone_regex}"
-                       value="${requestScope.registrationRequest.phoneNumber}" required>
+                       title="${data_invalid_format} ${phone_regex}" required>
                 <c:if test='${requestScope.errorField.equals("phoneNumber")}'>
                     <div class="alert alert-warning"><fmt:message key="${requestScope.errorMessage}"/></div>
                 </c:if>
             </div>
 
-            <button type="submit"><fmt:message key="form.submit"/></button>
+            <button type="submit" onclick="savePageVariables()"><fmt:message key="form.submit"/></button>
         </form>
     </div>
 
     <script>
-        document.getElementById("birthday_date").max = new Date().toLocaleDateString('en-ca')
+        const clear_session_storage = ${requestScope.clear_session_storage==null?false:true};
+        if (clear_session_storage){
+            sessionStorage.clear();
+        }
     </script>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/registration.js"></script>
 </body>
 </html>

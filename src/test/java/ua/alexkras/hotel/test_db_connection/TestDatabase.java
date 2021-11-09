@@ -183,7 +183,7 @@ public class TestDatabase {
 
     public static void deleteTestDatabase(Connection conn){
         if (!databaseName.toLowerCase().endsWith("test")){
-            throw new IllegalStateException("Attempting to Truncate tables of NON-TEST DATABASE");
+            throw new IllegalStateException("Attempting to drop NON-TEST DATABASE");
         }
 
         try (PreparedStatement deleteTestDatabase = conn.prepareStatement("DROP SCHEMA " + databaseName)){

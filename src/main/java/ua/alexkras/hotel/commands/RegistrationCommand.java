@@ -36,14 +36,12 @@ public class RegistrationCommand implements Command {
 
     @Override
     public String executeGet(HttpServletRequest request){
-        request.getServletContext().log("registration: get");
+        request.setAttribute("clear_session_storage",true);
         return "/WEB-INF/registration.jsp";
     }
 
     @Override
     public String executePost(HttpServletRequest request) {
-        request.getServletContext().log("registration: post");
-
         RegistrationRequest registrationRequest = RegistrationRequest.builder()
                 .name(request.getParameter("name"))
                 .surname(request.getParameter("surname"))
@@ -71,7 +69,6 @@ public class RegistrationCommand implements Command {
         if (!validationErrorMessage.isEmpty()){
             request.setAttribute("errorField",validationErrorMap.get(validationErrorMessage));
             request.setAttribute("errorMessage",validationErrorMessage);
-            request.setAttribute("registrationRequest", registrationRequest);
             request.getServletContext().log(validationErrorMessage);
             return "/WEB-INF/registration.jsp";
         }
