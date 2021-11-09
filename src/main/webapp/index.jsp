@@ -35,12 +35,5 @@
 
     </div>
 
-    <div style="margin-top: 15px; margin-left: 30px;">
-        <a href="${pageContext.request.contextPath}/app/admin">/app/admin (test)</a><br/>
-        <div style="margin-top: 15px">
-            <a  href="${pageContext.request.contextPath}/app/user">/app/user (test)</a>
-        </div>
-
-    </div>
 </body>
 </html>

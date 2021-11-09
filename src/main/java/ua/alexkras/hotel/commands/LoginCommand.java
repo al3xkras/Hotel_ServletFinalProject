@@ -21,19 +21,17 @@ public class LoginCommand implements Command {
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
+        request.setAttribute("clear_session_storage",true);
+
         if (command.equals("redirect")){
             request.getServletContext().log("login: redirect");
             return "redirect:/app/login";
         }
-
-        request.getServletContext().log("login: get");
         return "/login.jsp";
     }
 
     @Override
     public String executePost(HttpServletRequest request) {
-        ServletContext context = request.getServletContext();
-        context.log("login: post");
 
         String login = request.getParameter("username");
         String password = request.getParameter("password");
@@ -43,8 +41,6 @@ public class LoginCommand implements Command {
         if (!user.isPresent() || !password.equals(user.get().getPassword())){
             return "redirect:/app/login?error";
         }
-
-        context.log(user.toString());
 
         request.getSession().setAttribute("user",user.get());
 

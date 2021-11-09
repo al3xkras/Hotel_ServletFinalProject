@@ -61,6 +61,14 @@
         </form>
     </div>
 
+    <script>
+        const clear_session_storage = ${requestScope.clear_session_storage==null?false:true};
+
+        if (clear_session_storage){
+            sessionStorage.clear();
+        }
+    </script>
+
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/login.js"></script>
 </body>
 </html>
