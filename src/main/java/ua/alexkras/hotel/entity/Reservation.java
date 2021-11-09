@@ -4,6 +4,7 @@ import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ReservationStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static ua.alexkras.hotel.service.impl.ReservationServiceImpl.daysToCancelPayment;
@@ -26,6 +27,19 @@ public class Reservation {
 
     //@Transient
     private Long daysUntilExpiration;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return places == that.places && isPaid == that.isPaid && isActive == that.isActive && expired == that.expired && id.equals(that.id) && userId.equals(that.userId) && Objects.equals(apartmentId, that.apartmentId) && apartmentClass == that.apartmentClass && Objects.equals(apartmentPrice, that.apartmentPrice) && reservationStatus == that.reservationStatus && fromDate.equals(that.fromDate) && toDate.equals(that.toDate) && submitDate.equals(that.submitDate) && Objects.equals(adminConfirmationDate, that.adminConfirmationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, apartmentId, apartmentClass, places, apartmentPrice, reservationStatus, fromDate, toDate, submitDate, adminConfirmationDate, isPaid, isActive, expired);
+    }
 
     public boolean isCompleted(){
         return apartmentId!=null & apartmentPrice!=null;

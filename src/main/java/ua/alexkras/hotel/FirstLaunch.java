@@ -13,59 +13,16 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.Locale;
 
+import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.*;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.colReservationId;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.colUserId;
 import static ua.alexkras.hotel.model.mysql.ReservationTableStrings.*;
+import static ua.alexkras.hotel.model.mysql.UserTableStrings.tableUser;
 
 public class FirstLaunch {
     public static void main(String[] args) {
-        //Create database if not exists before starting application
-        try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
-             PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
-             PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
-             PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
-             PreparedStatement createReservationTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
-                     MySqlStrings.databaseName+"."+tableReservation+" ("+
-                     ReservationTableStrings.colReservationId+" int unique primary key auto_increment, "+
-                     ReservationTableStrings.colUserId+" int not null, FOREIGN KEY (user_id)" +
-                     " REFERENCES hotel_db_servlet.user(id)" +
-                     " ON DELETE CASCADE,"+
-                     colApartmentId+" int, FOREIGN KEY (apartment_id)" +
-                     "REFERENCES hotel_db_servlet.apartments(id) ON DELETE NO ACTION, "+
-                     colApartmentClass+" varchar(20) not null,"+
-                     colApartmentPlaces+" int not null,"+
-                     colApartmentPrice+" int,"+
-                     colReservationStatus+" varchar(20) not null,"+
-                     colFromDate+" DATE not null,"+
-                     colToDate+" DATE not null,"+
-                     colSubmitDate+" DATETIME not null,"+
-                     colAdminConfirmationDate+" DATE,"+
-                     colIsPaid+" boolean default 0,"+
-                     colIsActive+" boolean default 1,"+
-                     colIsExpired+" boolean default 0) ENGINE=INNODB;");
-             PreparedStatement createPaymentsTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
-                     MySqlStrings.databaseName+"."+tablePayments+" ("+
-                     colPaymentId+" int unique primary key auto_increment, "+
-                     colUserId+" int not null," +
-                     "FOREIGN KEY (user_id) REFERENCES hotel_db_servlet.user(id) ON DELETE NO ACTION,"+
-                     colReservationId+" int not null," +
-                     "FOREIGN KEY (reservation_id) REFERENCES  hotel_db_servlet.reservations(id) ON DELETE NO ACTION,"+
-                     colValue+" int not null,"+
-                     colPaymentDate+" DATETIME not null,"+
-                     colCardNumber+" varchar(40) not null,"+
-                     colCardExpirationDate+" DATE not null,"+
-                     colCardCvv+" varchar(3) not null) ENGINE=INNODB;")
-            ){
-            createDB.execute();
-            createUserTable.execute();
-            createApartmentTable.execute();
-            createReservationTable.execute();
-            createPaymentsTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Unable to create database: "+ MySqlStrings.databaseName);
-        }
+        createDatabase();
 
         ApartmentDao apartmentDao = JDBCDaoFactory.getInstance().createApartmentDAO();
         apartmentDao.create(Apartment.builder()
@@ -96,7 +53,7 @@ public class FirstLaunch {
 
         userDAO.create(User.builder()
                 .id(-3L)
-                .name("AdminName").surname("AdminSurname")
+                .name("UserName").surname("UserSurname")
                 .username("zzz").password("q")
                 .phoneNumber("+404-12-3456789")
                 .birthday(LocalDate.parse("2002-03-07"))
@@ -106,26 +63,52 @@ public class FirstLaunch {
 
     }
 
-    public static void truncateAllTablesOfTestDatabase(){
-        if (!MySqlStrings.databaseName.toLowerCase().endsWith("test")){
-            throw new IllegalStateException("Attempting to Truncate tables of NON-TEST DATABASE");
-        }
-
-        try(Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
-            PreparedStatement truncateUserTable = conn.prepareStatement(UserTableStrings.truncateUserTable);
-            PreparedStatement truncatePaymentsTable = conn.prepareStatement(PaymentTableStrings.truncatePaymentsTable);
-            PreparedStatement truncateApartmentsTable = conn.prepareStatement(ApartmentTableStrings.truncateApartmentsTable);
-            PreparedStatement truncateReservationsTable = conn.prepareStatement(truncateReservationTable)
-            ){
-            truncateUserTable.execute();
-            truncatePaymentsTable.execute();
-            truncateApartmentsTable.execute();
-            truncateReservationsTable.execute();
-
-        } catch (SQLException e){
+    public static void createDatabase(){
+        try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
+             PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
+             PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
+             PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
+             PreparedStatement createReservationTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
+                     databaseName+"."+tableReservation+" ("+
+                     ReservationTableStrings.colReservationId+" int unique primary key auto_increment, "+
+                     ReservationTableStrings.colUserId+" int not null, FOREIGN KEY ("+ReservationTableStrings.colUserId+")"+
+                     " REFERENCES "+databaseName+"."+tableUser+"("+UserTableStrings.colUserId+")" +
+                     " ON DELETE CASCADE,"+
+                     colApartmentId+" int, FOREIGN KEY (apartment_id)" +
+                     "REFERENCES "+databaseName+"."+ApartmentTableStrings.tableApartment+"("+ApartmentTableStrings.colApartmentId+") ON DELETE NO ACTION, "+
+                     colApartmentClass+" varchar(20) not null,"+
+                     colApartmentPlaces+" int not null,"+
+                     colApartmentPrice+" int,"+
+                     colReservationStatus+" varchar(20) not null,"+
+                     colFromDate+" DATE not null,"+
+                     colToDate+" DATE not null,"+
+                     colSubmitDate+" DATETIME not null,"+
+                     colAdminConfirmationDate+" DATE,"+
+                     colIsPaid+" boolean default 0,"+
+                     colIsActive+" boolean default 1,"+
+                     colIsExpired+" boolean default 0) ENGINE=INNODB;");
+             PreparedStatement createPaymentsTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
+                     databaseName+"."+tablePayments+" ("+
+                     colPaymentId+" int unique primary key auto_increment, "+
+                     colUserId+" int not null," +
+                     "FOREIGN KEY (user_id) REFERENCES "+databaseName+"."+tableUser+"("+UserTableStrings.colUserId+") ON DELETE NO ACTION,"+
+                     colReservationId+" int not null," +
+                     "FOREIGN KEY (reservation_id) REFERENCES  "+databaseName+"."+tableReservation+"("+ReservationTableStrings.colReservationId+") ON DELETE NO ACTION,"+
+                     colValue+" int not null,"+
+                     colPaymentDate+" DATETIME not null,"+
+                     colCardNumber+" varchar(40) not null,"+
+                     colCardExpirationDate+" DATE not null,"+
+                     colCardCvv+" varchar(3) not null) ENGINE=INNODB;")
+        ){
+            createDB.execute();
+            createUserTable.execute();
+            createApartmentTable.execute();
+            createReservationTable.execute();
+            createPaymentsTable.execute();
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Unable to create database: "+ databaseName);
         }
-
     }
 
 

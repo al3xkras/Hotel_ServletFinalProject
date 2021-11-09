@@ -38,7 +38,8 @@ public interface ReservationTableStrings {
             colIsExpired+" boolean default 0);";
 
     String addReservation = "INSERT INTO "+ databaseName+"."+tableReservation+
-            '('+colUserId+','+
+            '('+colReservationId+','+
+            colUserId+','+
             colApartmentId+','+
             colApartmentClass+','+
             colApartmentPlaces+','+
@@ -49,7 +50,7 @@ public interface ReservationTableStrings {
             colSubmitDate+','+
             colIsPaid+','+
             colIsActive+','+
-            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
     String selectReservations ="select "+
             colReservationId+','+

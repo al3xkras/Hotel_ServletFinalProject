@@ -1,26 +1,56 @@
 package ua.alexkras.hotel.service;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import ua.alexkras.hotel.FirstLaunch;
-import ua.alexkras.hotel.dao.JDBCDaoFactory;
-import ua.alexkras.hotel.dao.ReservationDAO;
+import ua.alexkras.hotel.dao.CreateTestDatabase;
+import ua.alexkras.hotel.entity.Reservation;
+import ua.alexkras.hotel.model.ApartmentClass;
+import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+
+import java.time.LocalDate;
+
 
 public class ReservationServiceTest {
 
-    ReservationDAO reservationDAO;
+    Reservation testReservation4 = Reservation.builder()
+            .id(4L)
+            .userId(2L)
+            .apartmentId(3L)
+            .apartmentClass(ApartmentClass.ClassC)
+            .places(3)
+            .apartmentPrice(1000)
+            .reservationStatus(ReservationStatus.PENDING)
+            .fromDate(LocalDate.parse("2020-09-07"))
+            .toDate(LocalDate.parse("2020-09-05"))
+            .submitDate(LocalDate.parse("2008-01-11").atStartOfDay())
+            .adminConfirmationDate(null)
+            .isPaid(false)
+            .isActive(true)
+            .expired(false)
+            .build();
+
+    static ReservationServiceImpl reservationService;
+
+    @BeforeClass
+    public static void beforeClass(){
+        CreateTestDatabase.createTestDatabase();
+    }
 
     @Before
     public void setUp() {
-        FirstLaunch.truncateAllTablesOfTestDatabase();
 
-        ReservationDAO reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
     }
 
     @Test
-    public void testCreate(){
+    public void testCreate1(){
+        reservationService.create(testReservation4);
+    }
 
-
+    @Test(expected = RuntimeException.class)
+    public void testCreate2(){
+        reservationService.create(testReservation4);
     }
 
     @Test

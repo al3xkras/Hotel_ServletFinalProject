@@ -6,6 +6,7 @@ import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.mysql.ApartmentTableStrings;
+import ua.alexkras.hotel.model.mysql.ReservationTableStrings;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import java.sql.*;
@@ -39,32 +40,37 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     private void createInConnection(Connection connection, Reservation reservation){
-        try(PreparedStatement addApartment = connection.prepareStatement(addReservation)){
-            addApartment.setLong(1,reservation.getUserId());
+        try(PreparedStatement addReservation = connection.prepareStatement(ReservationTableStrings.addReservation)){
+            if (reservation.getId()!=null){
+                addReservation.setLong(1,reservation.getId());
+            } else {
+                addReservation.setNull(1,Types.INTEGER);
+            }
+            addReservation.setLong(2,reservation.getUserId());
 
             Long apartmentId = reservation.getApartmentId();
             Integer apartmentPrice = reservation.getApartmentPrice();
             if (apartmentId!=null) {
-                addApartment.setLong(2, apartmentId);
+                addReservation.setLong(3, apartmentId);
             } else {
-                addApartment.setNull(2, Types.INTEGER);
+                addReservation.setNull(3, Types.INTEGER);
             }
-            addApartment.setString(3,reservation.getApartmentClass().name());
-            addApartment.setInt(4,reservation.getPlaces());
+            addReservation.setString(4,reservation.getApartmentClass().name());
+            addReservation.setInt(5,reservation.getPlaces());
             if (apartmentPrice!=null) {
-                addApartment.setInt(5, apartmentPrice);
+                addReservation.setInt(6, apartmentPrice);
             } else {
-                addApartment.setNull(5, Types.INTEGER);
+                addReservation.setNull(6, Types.INTEGER);
             }
-            addApartment.setString(6,reservation.getReservationStatus().name());
-            addApartment.setDate(7,Date.valueOf(reservation.getFromDate()));
-            addApartment.setDate(8,Date.valueOf(reservation.getToDate()));
-            addApartment.setTimestamp(9,Timestamp.valueOf(reservation.getSubmitDate()));
-            addApartment.setBoolean(10,reservation.isPaid());
-            addApartment.setBoolean(11,reservation.isActive());
-            addApartment.setBoolean(12,reservation.isExpired());
+            addReservation.setString(7,reservation.getReservationStatus().name());
+            addReservation.setDate(8,Date.valueOf(reservation.getFromDate()));
+            addReservation.setDate(9,Date.valueOf(reservation.getToDate()));
+            addReservation.setTimestamp(10,Timestamp.valueOf(reservation.getSubmitDate()));
+            addReservation.setBoolean(11,reservation.isPaid());
+            addReservation.setBoolean(12,reservation.isActive());
+            addReservation.setBoolean(13,reservation.isExpired());
 
-            addApartment.execute();
+            addReservation.execute();
         } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
