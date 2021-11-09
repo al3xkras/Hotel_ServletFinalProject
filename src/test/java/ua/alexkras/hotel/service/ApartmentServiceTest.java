@@ -1,5 +1,6 @@
 package ua.alexkras.hotel.service;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ua.alexkras.hotel.dao.CreateTestDatabase;
@@ -34,12 +35,17 @@ public class ApartmentServiceTest {
 
     @BeforeClass
     public static void setUp() {
-        CreateTestDatabase.createTestDatabase();
         apartmentService = new ApartmentServiceImpl();
+    }
+
+    @Before
+    public void beforeTest(){
+        CreateTestDatabase.createTestDatabase();
     }
 
     @Test
     public void testCreateAndGetApartmentsCount() {
+
         assertEquals(3,apartmentService.getApartmentsCount());
         apartmentService.create(testApartment4);
         assertEquals(4,apartmentService.getApartmentsCount());
@@ -47,6 +53,7 @@ public class ApartmentServiceTest {
 
     @Test
     public void testFindById() {
+
         Apartment testApartment1 = CreateTestDatabase.testApartment1;
 
         Apartment foundById = apartmentService
@@ -58,6 +65,7 @@ public class ApartmentServiceTest {
 
     @Test
     public void testFindAllApartments() {
+
         Apartment testApartment1 = CreateTestDatabase.testApartment1;
         Apartment testApartment3 = CreateTestDatabase.testApartment3;
 

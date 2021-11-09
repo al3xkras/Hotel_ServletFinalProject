@@ -1,6 +1,8 @@
 package ua.alexkras.hotel.dao;
 
 import ua.alexkras.hotel.FirstLaunch;
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
+import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
@@ -13,13 +15,11 @@ import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 import ua.alexkras.hotel.service.impl.UserServiceImpl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 
 import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
+import static ua.alexkras.hotel.model.mysql.MySqlStrings.sqlCreateDatabaseIfNotExists;
 
 public class CreateTestDatabase {
     public static User testUser1 = User.builder()
@@ -136,43 +136,62 @@ public class CreateTestDatabase {
             .expired(false)
             .build();
 
-    public static void deleteTestDatabase(){
+    public static void deleteTestDatabase(Connection conn){
         if (!databaseName.toLowerCase().endsWith("test")){
             throw new IllegalStateException("Attempting to Truncate tables of NON-TEST DATABASE");
         }
 
-        try(Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
-            PreparedStatement deleteTestDatabase = conn.prepareStatement("DROP SCHEMA "+databaseName)
-        ){
+        try (PreparedStatement deleteTestDatabase = conn.prepareStatement("DROP SCHEMA " + databaseName)){
             deleteTestDatabase.execute();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
-
     public static void createTestDatabase(){
-        try {
-            deleteTestDatabase();
-        } catch (RuntimeException ignored){
-
+        Connection connection;
+        try{
+            connection = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
+            connection.setAutoCommit(false);
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        FirstLaunch.createDatabase();
 
-        UserServiceImpl userService = new UserServiceImpl();
-        ReservationServiceImpl reservationService = new ReservationServiceImpl();
-        ApartmentServiceImpl apartmentService = new ApartmentServiceImpl();
+        deleteTestDatabase(connection);
+        FirstLaunch.createDatabase(connection);
 
-        userService.create(testUser1);
-        userService.create(testUser2);
-        userService.create(testUser3);
-        apartmentService.create(testApartment1);
-        apartmentService.create(testApartment2);
-        apartmentService.create(testApartment3);
+        try {
+            connection.commit();
+            connection.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
 
-        reservationService.create(testReservation1);
-        reservationService.create(testReservation2);
-        reservationService.create(testReservation3);
+
+        UserDAO userDAO = JDBCDaoFactory.getInstance().createUserDAO();
+        userDAO.create(testUser1);
+        userDAO.create(testUser2);
+        userDAO.create(testUser3);
+        userDAO.close();
+
+        ApartmentDao apartmentDao = JDBCDaoFactory.getInstance().createApartmentDAO();
+        apartmentDao.create(testApartment1);
+        apartmentDao.create(testApartment2);
+        apartmentDao.create(testApartment3);
+        apartmentDao.close();
+
+        ReservationDAO reservationDAO = JDBCDaoFactory.getInstance().createReservationDAO();
+        reservationDAO.create(testReservation1);
+        reservationDAO.create(testReservation2);
+        reservationDAO.create(testReservation3);
+        reservationDAO.close();
+
+
+
     }
+
+
 }

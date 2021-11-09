@@ -2,6 +2,7 @@ package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.dao.ApartmentDao;
 import ua.alexkras.hotel.dao.UserDAO;
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.User;
@@ -22,7 +23,13 @@ import static ua.alexkras.hotel.model.mysql.UserTableStrings.tableUser;
 
 public class FirstLaunch {
     public static void main(String[] args) {
-        createDatabase();
+
+        try (Connection connection = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password)){
+            createDatabase(connection);
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
 
         ApartmentDao apartmentDao = JDBCDaoFactory.getInstance().createApartmentDAO();
         apartmentDao.create(Apartment.builder()
@@ -63,9 +70,8 @@ public class FirstLaunch {
 
     }
 
-    public static void createDatabase(){
-        try (Connection conn = DriverManager.getConnection(MySqlStrings.root, MySqlStrings.user, MySqlStrings.password);
-             PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
+    public static void createDatabase(Connection conn){
+        try (PreparedStatement createDB = conn.prepareStatement(MySqlStrings.sqlCreateDatabaseIfNotExists);
              PreparedStatement createUserTable = conn.prepareStatement(UserTableStrings.sqlCreateUserTableIfNotExists);
              PreparedStatement createApartmentTable = conn.prepareStatement(ApartmentTableStrings.sqlCreateApartmentTableIfNotExists);
              PreparedStatement createReservationTable = conn.prepareStatement("CREATE TABLE IF NOT EXISTS "+
@@ -105,6 +111,7 @@ public class FirstLaunch {
             createApartmentTable.execute();
             createReservationTable.execute();
             createPaymentsTable.execute();
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to create database: "+ databaseName);
