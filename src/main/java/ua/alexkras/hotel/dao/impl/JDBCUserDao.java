@@ -55,14 +55,19 @@ public class JDBCUserDao implements UserDAO {
     }
 
     private void prepareUserStatement(User user, PreparedStatement addUserIfNotExists) throws SQLException {
-        addUserIfNotExists.setString(1, user.getName());
-        addUserIfNotExists.setString(2, user.getSurname());
-        addUserIfNotExists.setString(3, user.getUsername());
-        addUserIfNotExists.setString(4, user.getPassword());
-        addUserIfNotExists.setDate(5, Date.valueOf(user.getBirthday()));
-        addUserIfNotExists.setString(6, user.getGender());
-        addUserIfNotExists.setString(7, user.getPhoneNumber());
-        addUserIfNotExists.setString(8, user.getUserType().name());
+        if (user.getId()==null){
+            addUserIfNotExists.setNull(1,Types.INTEGER);
+        } else {
+            addUserIfNotExists.setLong(1,user.getId());
+        }
+        addUserIfNotExists.setString(2, user.getName());
+        addUserIfNotExists.setString(3, user.getSurname());
+        addUserIfNotExists.setString(4, user.getUsername());
+        addUserIfNotExists.setString(5, user.getPassword());
+        addUserIfNotExists.setDate(6, Date.valueOf(user.getBirthday()));
+        addUserIfNotExists.setString(7, user.getGender());
+        addUserIfNotExists.setString(8, user.getPhoneNumber());
+        addUserIfNotExists.setString(9, user.getUserType().name());
     }
 
     @Override

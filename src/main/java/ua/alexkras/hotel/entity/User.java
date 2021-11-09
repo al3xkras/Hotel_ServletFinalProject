@@ -6,39 +6,19 @@ import ua.alexkras.hotel.model.UserType;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Objects;
 
 import static ua.alexkras.hotel.model.mysql.MySqlStrings.dateFormat;
 
 public class User {
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
-     */
     private Long id;
-
-    //@Column(name = "NAME", nullable = false, length = 25)
     private String name;
-
-    //@Column(name = "SURNAME", nullable = false, length = 30)
     private String surname;
-
-    //@Column(name = "USERNAME", nullable = false, length = 15)
     private String username;
-
-    //@Column(name = "PASSWORD", nullable = false)
     private String password;
-
-    //@Column(name = "BIRTHDAY", nullable = false)
     private LocalDate birthday;
-
-    //@Column(name = "GENDER", length = 10, nullable = false)
     private String gender;
-
-    //@Column(name = "PHONE_NUMBER", length = 30, nullable = false)
     private String phoneNumber;
-
-    //@Column(name = "USER_TYPE", nullable = false)
-    //@Enumerated(EnumType.STRING)
     private UserType userType;
 
     public User(RegistrationRequest dto, UserType userType){
@@ -100,6 +80,19 @@ public class User {
 
     public UserType getUserType() {
         return userType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && name.equals(user.name) && surname.equals(user.surname) && username.equals(user.username) && password.equals(user.password) && birthday.equals(user.birthday) && gender.equals(user.gender) && phoneNumber.equals(user.phoneNumber) && userType == user.userType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, username, password, birthday, gender, phoneNumber, userType);
     }
 
     @Override
