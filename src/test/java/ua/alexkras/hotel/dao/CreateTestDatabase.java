@@ -121,6 +121,23 @@ public class CreateTestDatabase {
 
     public static Reservation testReservation3 = Reservation.builder()
             .id(3L)
+            .userId(2L)
+            .apartmentId(3L)
+            .apartmentClass(ApartmentClass.ClassD)
+            .places(3)
+            .apartmentPrice(1000)
+            .reservationStatus(ReservationStatus.CONFIRMED)
+            .fromDate(LocalDate.parse("2021-10-10"))
+            .toDate(LocalDate.parse("2021-10-20"))
+            .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
+            .adminConfirmationDate(null)
+            .isPaid(false)
+            .isActive(true)
+            .expired(false)
+            .build();
+
+    public static Reservation testReservation4 = Reservation.builder()
+            .id(4L)
             .userId(1L)
             .apartmentId(3L)
             .apartmentClass(ApartmentClass.ClassD)
@@ -132,8 +149,8 @@ public class CreateTestDatabase {
             .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
             .adminConfirmationDate(null)
             .isPaid(false)
-            .isActive(true)
-            .expired(false)
+            .isActive(false)
+            .expired(true)
             .build();
 
     public static void deleteTestDatabase(Connection conn){
@@ -187,9 +204,8 @@ public class CreateTestDatabase {
         reservationDAO.create(testReservation1);
         reservationDAO.create(testReservation2);
         reservationDAO.create(testReservation3);
+        reservationDAO.create(testReservation4);
         reservationDAO.close();
-
-
 
     }
 

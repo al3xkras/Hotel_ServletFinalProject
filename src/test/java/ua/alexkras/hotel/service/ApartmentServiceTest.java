@@ -34,7 +34,8 @@ public class ApartmentServiceTest {
     Reservation matchReservation2 = CreateTestDatabase.matchReservation2;
 
     @BeforeClass
-    public static void setUp() {
+    public static void beforeClass() {
+        CreateTestDatabase.createTestDatabase();
         apartmentService = new ApartmentServiceImpl();
     }
 
@@ -45,7 +46,6 @@ public class ApartmentServiceTest {
 
     @Test
     public void testCreateAndGetApartmentsCount() {
-
         assertEquals(3,apartmentService.getApartmentsCount());
         apartmentService.create(testApartment4);
         assertEquals(4,apartmentService.getApartmentsCount());
@@ -90,7 +90,7 @@ public class ApartmentServiceTest {
 
     @Test
     public void testGetApartmentsMatchingReservationCount(){
-        assertEquals(2,apartmentService.getApartmentsMatchingReservationCount(matchReservation1));
+        assertEquals(1,apartmentService.getApartmentsMatchingReservationCount(matchReservation1));
         assertEquals(0,apartmentService.getApartmentsMatchingReservationCount(matchReservation2));
     }
 
