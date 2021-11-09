@@ -31,15 +31,6 @@ public class FirstLaunch {
             throw new RuntimeException();
         }
 
-        ApartmentDao apartmentDao = JDBCDaoFactory.getInstance().createApartmentDAO();
-        apartmentDao.create(Apartment.builder()
-                        .name("-")
-                        .places(0)
-                        .apartmentClass(ApartmentClass.ClassA)
-                        .status(ApartmentStatus.OCCUPIED)
-                        .price(0)
-                        .build());
-
         UserDAO userDAO = JDBCDaoFactory.getInstance().createUserDAO();
 
         userDAO.create(User.builder()

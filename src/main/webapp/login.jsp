@@ -57,9 +57,10 @@
                        class="form-control" required>
             </p>
             <button class="btn btn-lg btn-primary btn-block"
-                    type="submit"><fmt:message key="form.sign_in"/></button>
+                    type="submit" onclick="savePageVariables()"><fmt:message key="form.sign_in"/></button>
         </form>
     </div>
 
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/login.js"></script>
 </body>
 </html>
