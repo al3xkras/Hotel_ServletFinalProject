@@ -66,9 +66,14 @@ public class JDBCReservationDao implements ReservationDAO {
             addReservation.setDate(8,Date.valueOf(reservation.getFromDate()));
             addReservation.setDate(9,Date.valueOf(reservation.getToDate()));
             addReservation.setTimestamp(10,Timestamp.valueOf(reservation.getSubmitDate()));
-            addReservation.setBoolean(11,reservation.isPaid());
-            addReservation.setBoolean(12,reservation.isActive());
-            addReservation.setBoolean(13,reservation.isExpired());
+            if (reservation.getAdminConfirmationDate()!=null){
+                addReservation.setDate(11,Date.valueOf(reservation.getAdminConfirmationDate()));
+            } else {
+                addReservation.setNull(11,Types.DATE);
+            }
+            addReservation.setBoolean(12,reservation.isPaid());
+            addReservation.setBoolean(13,reservation.isActive());
+            addReservation.setBoolean(14,reservation.isExpired());
 
             addReservation.execute();
         } catch (Exception e){
@@ -328,7 +333,7 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-    public void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate){
+    public void updateStatusAndConfirmationDateById(long id, ReservationStatus status, LocalDate confirmationDate){
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateStatusAndConfirmationDateById)){
 
             preparedStatement.setString(1,status.name());

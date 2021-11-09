@@ -3,7 +3,8 @@ package ua.alexkras.hotel.service;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ua.alexkras.hotel.dao.CreateTestDatabase;
+import ua.alexkras.hotel.test_db_connection.TestDatabase;
+import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.Pageable;
@@ -18,8 +19,8 @@ import static org.junit.Assert.*;
 
 public class ReservationServiceTest {
 
-    Reservation testReservation4 = Reservation.builder()
-            .id(5L)
+    Reservation testReservation = Reservation.builder()
+            .id(100L)
             .userId(2L)
             .apartmentId(3L)
             .apartmentClass(ApartmentClass.ClassC)
@@ -39,24 +40,24 @@ public class ReservationServiceTest {
 
     @BeforeClass
     public static void beforeClass(){
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
         reservationService = new ReservationServiceImpl();
     }
 
     @Before
     public void beforeTest() {
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
     }
 
     @Test
     public void testCreate1(){
-        reservationService.create(testReservation4);
+        reservationService.create(testReservation);
     }
 
     @Test(expected = RuntimeException.class)
     public void testCreate2(){
-        reservationService.create(testReservation4);
-        reservationService.create(testReservation4);
+        reservationService.create(testReservation);
+        reservationService.create(testReservation);
     }
 
     @Test(expected = RuntimeException.class)
@@ -66,30 +67,31 @@ public class ReservationServiceTest {
 
     @Test
     public void testFindById1(){
-        reservationService.create(testReservation4);
+        reservationService.create(testReservation);
 
-        Reservation testReservation1 = CreateTestDatabase.testReservation1;
+        Reservation testReservation1 = TestDatabase.testReservation1;
 
         Reservation actual1 = reservationService.findById(testReservation1.getId())
                 .orElseThrow(IllegalStateException::new);
-        Reservation actual4 = reservationService.findById(testReservation4.getId())
+        Reservation actual = reservationService.findById(testReservation.getId())
                 .orElseThrow(IllegalStateException::new);
+
         assertEquals(testReservation1, actual1);
-        assertEquals(testReservation4,actual4);
+        assertEquals(testReservation,actual);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testFindById2(){
-        Reservation unknown = reservationService.findById(-1000)
+        reservationService.findById(-1000)
                 .orElseThrow(IllegalStateException::new);
     }
 
     @Test
     public void testGetReservationsCountByActiveAndStatus(){
         assertEquals(2,reservationService.getReservationsCountByActiveAndStatus(true,ReservationStatus.PENDING));
-        reservationService.create(testReservation4);
+        reservationService.create(testReservation);
         assertEquals(3,reservationService.getReservationsCountByActiveAndStatus(true,ReservationStatus.PENDING));
-        assertEquals(0,reservationService.getReservationsCountByActiveAndStatus(false,ReservationStatus.PENDING));
+        assertEquals(1,reservationService.getReservationsCountByActiveAndStatus(false,ReservationStatus.PENDING));
         assertEquals(1,reservationService.getReservationsCountByActiveAndStatus(false,ReservationStatus.CANCELLED));
     }
 
@@ -106,8 +108,8 @@ public class ReservationServiceTest {
         assertEquals(2,actual1.size());
         assertEquals(1,actual2.size());
         assertEquals(1,actual3.size());
-        assertEquals(actual3.get(0),CreateTestDatabase.testReservation4);
-        assertEquals(0,actual4.size());
+        assertEquals(actual3.get(0), TestDatabase.testReservation4);
+        assertEquals(1,actual4.size());
     }
 
     @Test
@@ -121,8 +123,8 @@ public class ReservationServiceTest {
         int actual4 = reservationService.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(
                 1L,false,ReservationStatus.PENDING);
 
-        assertEquals(2,actual1);
-        assertEquals(0,actual2);
+        assertEquals(3,actual1);
+        assertEquals(1,actual2);
         assertEquals(1,actual3);
         assertEquals(1,actual4);
     }
@@ -141,20 +143,20 @@ public class ReservationServiceTest {
         List<Reservation> actual4 = reservationService.findByUserIdAndActiveAndAnyStatusExcept(
                 3L,false,ReservationStatus.PENDING,pageable2);
 
-        assertTrue(actual1.contains(CreateTestDatabase.testReservation2));
-        assertEquals(2,actual1.size());
+        assertTrue(actual1.contains(TestDatabase.testReservation2));
+        assertEquals(3,actual1.size());
         assertEquals(1,actual2.size());
 
         assertEquals(1,actual3.size());
-        assertEquals(actual3.get(0),CreateTestDatabase.testReservation3);
+        assertEquals(actual3.get(0), TestDatabase.testReservation3);
 
         assertEquals(actual4.size(),0);
     }
 
     @Test
     public void testGetReservationFullCost(){
-        Reservation test1 = CreateTestDatabase.testReservation1;
-        Reservation test2 = CreateTestDatabase.testReservation2;
+        Reservation test1 = TestDatabase.testReservation1;
+        Reservation test2 = TestDatabase.testReservation2;
 
         assertEquals(test1.getApartmentPrice().longValue(),reservationService.getReservationFullCost(test1));
         assertEquals(test2.getApartmentPrice().longValue()*5L,reservationService.getReservationFullCost(test2));
@@ -162,30 +164,79 @@ public class ReservationServiceTest {
 
     @Test
     public void testUpdateStatusById(){
+        Reservation beforeUpdate = testReservation;
 
+        reservationService.create(beforeUpdate);
+        reservationService.updateStatusById(beforeUpdate.getId(),ReservationStatus.CANCELLED_BY_ADMIN);
+
+        Reservation afterUpdate = reservationService.findById(beforeUpdate.getId())
+                .orElseThrow(IllegalStateException::new);
+
+        assertEquals(afterUpdate.getReservationStatus(),ReservationStatus.CANCELLED_BY_ADMIN);
     }
 
     @Test
     public void testUpdateStatusAndConfirmationDateById(){
+        Reservation beforeUpdate = testReservation;
 
+        LocalDate confirmationDate = LocalDate.now();
 
+        reservationService.create(beforeUpdate);
+        reservationService.updateStatusAndConfirmationDateById(
+                beforeUpdate.getId(),ReservationStatus.CONFIRMED,confirmationDate);
+
+        Reservation afterUpdate = reservationService.findById(beforeUpdate.getId())
+                .orElseThrow(IllegalStateException::new);
+
+        assertEquals(afterUpdate.getReservationStatus(),ReservationStatus.CONFIRMED);
+        assertEquals(afterUpdate.getAdminConfirmationDate(),confirmationDate);
     }
 
     @Test
     public void testUpdateIsPaidById(){
+        Reservation beforeUpdate = testReservation;
 
+        reservationService.create(beforeUpdate);
 
+        reservationService.updateIsPaidById(beforeUpdate.getId(),true);
+
+        Reservation afterUpdate = reservationService.findById(beforeUpdate.getId())
+                .orElseThrow(IllegalStateException::new);
+
+        assertTrue(afterUpdate.isPaid());
     }
 
     @Test
-    public void testUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(){
+    public void testUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById1(){
+        Reservation toUpdate = TestDatabase.testReservation5;
+        Apartment updateWithApartment1 = TestDatabase.testApartment1;
+        LocalDate confirmationDate = LocalDate.now();
 
+        reservationService.updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+                toUpdate.getId(),updateWithApartment1.getId(),confirmationDate);
 
+        Reservation afterUpdate = reservationService.findById(toUpdate.getId())
+                .orElseThrow(IllegalStateException::new);
+
+        assertEquals(afterUpdate.getApartmentId(),updateWithApartment1.getId());
+        assertEquals(afterUpdate.getApartmentPrice(),updateWithApartment1.getPrice());
+        assertEquals(afterUpdate.getAdminConfirmationDate(),confirmationDate);
     }
 
     @Test
-    public void testUpdateAllExpiredReservations(){
+    public void testUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById2(){
+        Reservation toUpdate = TestDatabase.testReservation5;
+        Apartment updateWithApartment2 = TestDatabase.testApartment2;
+        LocalDate confirmationDate = LocalDate.now();
 
+        reservationService.updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
+                toUpdate.getId(),updateWithApartment2.getId(),confirmationDate);
 
+        Reservation afterUpdate = reservationService.findById(toUpdate.getId())
+                .orElseThrow(IllegalStateException::new);
+
+        assertEquals(afterUpdate.getApartmentId(),updateWithApartment2.getId());
+        assertEquals(afterUpdate.getApartmentPrice(),updateWithApartment2.getPrice());
+        assertEquals(afterUpdate.getAdminConfirmationDate(),confirmationDate);
     }
 }

@@ -22,10 +22,10 @@ public interface ReservationService<Pageable,Entity>
 
     int getReservationFullCost(Reservation reservation);
 
-    void updateStatusById(int id, ReservationStatus reservationStatus);
-    void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate);
+    void updateStatusById(long id, ReservationStatus reservationStatus);
+    void updateStatusAndConfirmationDateById(long id, ReservationStatus status, LocalDate confirmationDate);
 
-    void transactionalUpdateStatusById(int id, ReservationStatus reservationStatus);
+    void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus);
 
     void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long id, long apartmentId, LocalDate confirmationDate);

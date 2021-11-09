@@ -3,7 +3,7 @@ package ua.alexkras.hotel.service;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ua.alexkras.hotel.dao.CreateTestDatabase;
+import ua.alexkras.hotel.test_db_connection.TestDatabase;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.ApartmentClass;
@@ -30,18 +30,18 @@ public class ApartmentServiceTest {
 
     static ApartmentServiceImpl apartmentService;
 
-    Reservation matchReservation1 = CreateTestDatabase.matchReservation1;
-    Reservation matchReservation2 = CreateTestDatabase.matchReservation2;
+    Reservation matchReservation1 = TestDatabase.matchReservation1;
+    Reservation matchReservation2 = TestDatabase.matchReservation2;
 
     @BeforeClass
     public static void beforeClass() {
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
         apartmentService = new ApartmentServiceImpl();
     }
 
     @Before
     public void beforeTest(){
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ApartmentServiceTest {
     @Test
     public void testFindById() {
 
-        Apartment testApartment1 = CreateTestDatabase.testApartment1;
+        Apartment testApartment1 = TestDatabase.testApartment1;
 
         Apartment foundById = apartmentService
                 .findById(testApartment1.getId())
@@ -66,8 +66,8 @@ public class ApartmentServiceTest {
     @Test
     public void testFindAllApartments() {
 
-        Apartment testApartment1 = CreateTestDatabase.testApartment1;
-        Apartment testApartment3 = CreateTestDatabase.testApartment3;
+        Apartment testApartment1 = TestDatabase.testApartment1;
+        Apartment testApartment3 = TestDatabase.testApartment3;
 
         Pageable pageable1 = new Pageable(2,apartmentService.getApartmentsCount());
         List<Apartment> found1 = apartmentService.findAllApartments(pageable1);
@@ -96,7 +96,7 @@ public class ApartmentServiceTest {
 
     @Test
     public void testFindApartmentsMatchingReservation() {
-        Apartment testApartment2 = CreateTestDatabase.testApartment2;
+        Apartment testApartment2 = TestDatabase.testApartment2;
 
         assertEquals(3,apartmentService.getApartmentsCount());
 
@@ -121,7 +121,7 @@ public class ApartmentServiceTest {
     @Test
     public void testUpdateApartment(){
 
-        Apartment testApartment1 = CreateTestDatabase.testApartment1;
+        Apartment testApartment1 = TestDatabase.testApartment1;
         apartmentService.create(testApartment1);
 
         Apartment testUpdate = Apartment.builder()
@@ -144,7 +144,7 @@ public class ApartmentServiceTest {
 
     @Test
     public void testUpdateApartmentStatusById() {
-        Apartment testApartment1 = CreateTestDatabase.testApartment1;
+        Apartment testApartment1 = TestDatabase.testApartment1;
 
         Apartment apartment1AfterUpdate = Apartment.builder()
                 .id(testApartment1.getId())

@@ -137,7 +137,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @throws RuntimeException if an SQLException was caught when executing update
      */
     @Override
-    public void updateStatusById(int id, ReservationStatus reservationStatus){
+    public void updateStatusById(long id, ReservationStatus reservationStatus){
         reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
         reservationDAO.commit();
     }
@@ -149,7 +149,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @throws RuntimeException if an SQLException was caught when executing update
      */
     @Override
-    public void transactionalUpdateStatusById(int id, ReservationStatus reservationStatus){
+    public void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus){
         reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
     }
 
@@ -161,7 +161,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @throws RuntimeException if an SQLException was caught when executing update
      */
     @Override
-    public void updateStatusAndConfirmationDateById(int id, ReservationStatus status, LocalDate confirmationDate){
+    public void updateStatusAndConfirmationDateById(long id, ReservationStatus status, LocalDate confirmationDate){
         reservationDAO.updateStatusAndConfirmationDateById(id,status,confirmationDate);
     }
 

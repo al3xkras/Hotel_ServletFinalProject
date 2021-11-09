@@ -48,9 +48,10 @@ public interface ReservationTableStrings {
             colFromDate+','+
             colToDate+','+
             colSubmitDate+','+
+            colAdminConfirmationDate+','+
             colIsPaid+','+
             colIsActive+','+
-            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);";
+            colIsExpired+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
     String selectReservations ="select "+
             colReservationId+','+

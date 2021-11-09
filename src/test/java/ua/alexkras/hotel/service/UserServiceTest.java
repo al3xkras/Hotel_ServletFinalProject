@@ -3,7 +3,7 @@ package ua.alexkras.hotel.service;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ua.alexkras.hotel.dao.CreateTestDatabase;
+import ua.alexkras.hotel.test_db_connection.TestDatabase;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.impl.UserServiceImpl;
@@ -25,18 +25,18 @@ public class UserServiceTest {
 
     @BeforeClass
     public static void beforeClass() {
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
         userService = new UserServiceImpl();
     }
 
     @Before
     public void beforeTest(){
-        CreateTestDatabase.createTestDatabase();
+        TestDatabase.createTestDatabase();
     }
 
     @Test
     public void testFindByUsername1(){
-        User testUser = CreateTestDatabase.testUser1;
+        User testUser = TestDatabase.testUser1;
 
         User actual = userService.findByUsername(testUser.getUsername())
                 .orElseThrow(IllegalStateException::new);

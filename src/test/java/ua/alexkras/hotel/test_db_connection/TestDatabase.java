@@ -1,7 +1,9 @@
-package ua.alexkras.hotel.dao;
+package ua.alexkras.hotel.test_db_connection;
 
 import ua.alexkras.hotel.FirstLaunch;
-import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
+import ua.alexkras.hotel.dao.ApartmentDao;
+import ua.alexkras.hotel.dao.ReservationDAO;
+import ua.alexkras.hotel.dao.UserDAO;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
@@ -11,17 +13,13 @@ import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
-import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
-import ua.alexkras.hotel.service.impl.UserServiceImpl;
 
 import java.sql.*;
 import java.time.LocalDate;
 
 import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
-import static ua.alexkras.hotel.model.mysql.MySqlStrings.sqlCreateDatabaseIfNotExists;
 
-public class CreateTestDatabase {
+public class TestDatabase {
     public static User testUser1 = User.builder()
             .id(1L)
             .name("UserName1").surname("UserSurname1")
@@ -96,7 +94,7 @@ public class CreateTestDatabase {
             .fromDate(LocalDate.parse("2021-10-10"))
             .toDate(LocalDate.parse("2021-10-11"))
             .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
-            .adminConfirmationDate(null)
+            .adminConfirmationDate(LocalDate.parse("2020-09-08"))
             .isPaid(false)
             .isActive(true)
             .expired(false)
@@ -113,7 +111,7 @@ public class CreateTestDatabase {
             .fromDate(LocalDate.parse("2021-10-10"))
             .toDate(LocalDate.parse("2021-10-15"))
             .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
-            .adminConfirmationDate(null)
+            .adminConfirmationDate(LocalDate.parse("2020-09-08"))
             .isPaid(false)
             .isActive(true)
             .expired(false)
@@ -127,10 +125,10 @@ public class CreateTestDatabase {
             .places(3)
             .apartmentPrice(1000)
             .reservationStatus(ReservationStatus.CONFIRMED)
-            .fromDate(LocalDate.parse("2021-10-10"))
-            .toDate(LocalDate.parse("2021-10-20"))
-            .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
-            .adminConfirmationDate(null)
+            .fromDate(LocalDate.parse("2020-10-10"))
+            .toDate(LocalDate.parse("2020-10-20"))
+            .submitDate(LocalDate.parse("2009-09-08").atStartOfDay())
+            .adminConfirmationDate(LocalDate.parse("2009-09-08"))
             .isPaid(false)
             .isActive(true)
             .expired(false)
@@ -147,10 +145,40 @@ public class CreateTestDatabase {
             .fromDate(LocalDate.parse("2021-10-10"))
             .toDate(LocalDate.parse("2021-10-20"))
             .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
-            .adminConfirmationDate(null)
+            .adminConfirmationDate(LocalDate.parse("2020-09-08"))
             .isPaid(false)
             .isActive(false)
             .expired(true)
+            .build();
+
+    public static Reservation testReservation5 = Reservation.builder()
+            .id(5L)
+            .userId(1L)
+            .apartmentClass(ApartmentClass.ClassA)
+            .places(3)
+            .reservationStatus(ReservationStatus.PENDING)
+            .fromDate(LocalDate.parse("2021-10-10"))
+            .toDate(LocalDate.parse("2021-10-20"))
+            .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
+            .adminConfirmationDate(LocalDate.parse("2020-09-08"))
+            .isPaid(false)
+            .isActive(false)
+            .expired(true)
+            .build();
+
+    public static Reservation testReservation6 = Reservation.builder()
+            .id(6L)
+            .userId(1L)
+            .apartmentClass(ApartmentClass.ClassA)
+            .places(3)
+            .reservationStatus(ReservationStatus.RESERVED)
+            .fromDate(LocalDate.parse("2021-10-10"))
+            .toDate(LocalDate.parse("2021-10-20"))
+            .submitDate(LocalDate.parse("2021-09-08").atStartOfDay())
+            .adminConfirmationDate(LocalDate.parse("2020-09-08"))
+            .isPaid(true)
+            .isActive(true)
+            .expired(false)
             .build();
 
     public static void deleteTestDatabase(Connection conn){
@@ -205,6 +233,8 @@ public class CreateTestDatabase {
         reservationDAO.create(testReservation2);
         reservationDAO.create(testReservation3);
         reservationDAO.create(testReservation4);
+        reservationDAO.create(testReservation5);
+        reservationDAO.create(testReservation6);
         reservationDAO.close();
 
     }
