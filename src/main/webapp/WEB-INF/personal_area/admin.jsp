@@ -62,7 +62,7 @@
             <div class="custom-dropdown-content" style="left: 85%; width: 14.5%">
                 <a href="${pageContext.request.contextPath}/app/admin/add_apartment"><fmt:message key="new_apartment.header"/></a>
                 <a href="${pageContext.request.contextPath}/app/apartments"><fmt:message key="navbar.all_apartments"/></a>
-                <a href="${pageContext.request.contextPath}/app/personal_data"><fmt:message key="navbar.personal_data"/></a>
+                <a href="${pageContext.request.contextPath}/app/profile"><fmt:message key="navbar.personal_data"/></a>
             </div>
         </div>
 

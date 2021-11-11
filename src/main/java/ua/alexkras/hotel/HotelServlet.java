@@ -3,6 +3,7 @@ package ua.alexkras.hotel;
 import ua.alexkras.hotel.commands.*;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
 import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
+import ua.alexkras.hotel.commands.admin_or_user.ProfileCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
@@ -40,6 +41,7 @@ public class HotelServlet extends HttpServlet {
 
         commands.put(LoginCommand.pathBasename,new LoginCommand(userService));
         commands.put(LogoutCommand.pathBasename, new LogoutCommand());
+        commands.put(ProfileCommand.pathBasename, new ProfileCommand());
 
         commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(apartmentService, reservationService));
 

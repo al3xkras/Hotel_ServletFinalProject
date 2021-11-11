@@ -48,9 +48,6 @@
 
                                             <div class="input-group-append">
                                                 <span class="input-group-text text-muted">
-                                                    <i class="fab fa-cc-visa mx-1"></i>
-                                                    <i class="fab fa-cc-mastercard mx-1"></i>
-                                                    <i class="fab fa-cc-amex mx-1"></i>
                                                 </span>
                                             </div>
                                         </div>

@@ -24,7 +24,6 @@ public class LoginCommand implements Command {
         request.setAttribute("clear_session_storage",true);
 
         if (command.equals("redirect")){
-            request.getServletContext().log("login: redirect");
             return "redirect:/app/login";
         }
         return "/login.jsp";

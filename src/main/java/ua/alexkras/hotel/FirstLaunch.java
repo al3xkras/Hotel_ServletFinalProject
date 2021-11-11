@@ -1,18 +1,12 @@
 package ua.alexkras.hotel;
 
-import ua.alexkras.hotel.dao.ApartmentDao;
 import ua.alexkras.hotel.dao.UserDAO;
-import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
-import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.ApartmentClass;
-import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.mysql.*;
 import ua.alexkras.hotel.model.UserType;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Locale;
 
 import static ua.alexkras.hotel.model.mysql.MySqlStrings.databaseName;
 import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.*;
