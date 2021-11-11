@@ -93,28 +93,58 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <label>
-                                            <fmt:message key="table.user.id"/>: ${reservation.userId}
-                                        </label>
+                                    <div style="margin-top: 24px; margin-bottom: 16px">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label><fmt:message key="table.user.id"/></label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label>${reservation.userId}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <label><fmt:message key="reservation.id"/></label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label>${reservation.id}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <label><fmt:message key="new_apartment.price"/></label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label>${reservation.apartmentPrice}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <label><fmt:message key="payment.price"/></label>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label>${requestScope.totalValue}</label>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row">
-                                        <label>
-                                            <fmt:message key="reservation.id"/>: ${reservation.id}
-                                        </label>
+
                                     </div>
 
                                     <div class="row">
-                                        <label>
-                                            <fmt:message key="new_apartment.price"/>: ${reservation.apartmentPrice}
-                                        </label>
+
                                     </div>
 
                                     <div class="row">
-                                        <label>
-                                            <fmt:message key="payment.price"/>: ${requestScope.totalValue}
-                                        </label>
+
+                                    </div>
+
+                                    <div class="row">
+
                                     </div>
 
                                     <div class="card-footer">
