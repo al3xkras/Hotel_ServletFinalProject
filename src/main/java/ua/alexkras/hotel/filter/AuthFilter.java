@@ -5,6 +5,8 @@ import ua.alexkras.hotel.commands.LoginCommand;
 import ua.alexkras.hotel.commands.LogoutCommand;
 import ua.alexkras.hotel.commands.RegistrationCommand;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
+import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
+import ua.alexkras.hotel.commands.admin_or_user.ProfileCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.exception.AccessDeniedException;
@@ -17,17 +19,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = {"/*"})
 public class AuthFilter implements Filter {
 
     private static User currentLoginUser;
 
+    private final Set<String> anonymousCommands = new HashSet<>();
+
+    private String previousPageUrl = "";
+
     @Override
     public void init(FilterConfig filterConfig) {
+        anonymousCommands.add(LoginCommand.pathBasename);
+        anonymousCommands.add(RegistrationCommand.pathBasename);
 
+        //adminOrUserCommands.add(ApartmentCommand.pathBasename);
+        //adminOrUserCommands.add(ProfileCommand.pathBasename);
     }
 
     @Override
@@ -42,6 +51,12 @@ public class AuthFilter implements Filter {
         currentLoginUser = (User)session.getAttribute("user");
 
         String url = req.getRequestURI();
+        if (previousPageUrl.equals(url)){
+            filterChain.doFilter(request,response);
+            return;
+        }
+        previousPageUrl = url;
+
         String command = Command.getCommand(url,HotelServlet.pathBasename);
 
         if (currentLoginUser!=null) {
@@ -49,6 +64,7 @@ public class AuthFilter implements Filter {
                 currentLoginUser=null;
                 session.setAttribute("user",null);
             } else if (!command.isEmpty()){
+                request.getServletContext().log(command);
                 filterByUserType(currentLoginUser.getUserType(), command);
             } else {
                 res.sendRedirect(req.getContextPath()+'/'+
@@ -58,11 +74,9 @@ public class AuthFilter implements Filter {
             //req.getServletContext().log("filtered by user type");
         } else {
             //request.getServletContext().log(url);
-            if (    !command.equals(LoginCommand.pathBasename) &&
-                    !command.equals(RegistrationCommand.pathBasename) &&
-                    !command.isEmpty()
-                    ){
-                request.getServletContext().log("Attempting to access command: \""+command+"\" from an anonymous user");
+            if (    !command.isEmpty() &
+                    !anonymousCommands.contains(command)){
+                //request.getServletContext().log("Attempting to access command: \""+command+"\" from an anonymous user");
                 throw new AccessDeniedException();
             }
         }
@@ -71,13 +85,10 @@ public class AuthFilter implements Filter {
     }
 
     private void filterByUserType(UserType userType, String command) throws AccessDeniedException{
-        if (    command.equals(LoginCommand.pathBasename) ||
-                (command.startsWith(UserCommand.pathBasename) && userType.equals(UserType.USER)) ||
-                (command.startsWith(AdminCommand.pathBasename) && userType.equals(UserType.ADMIN))
-            ){
-            return;
+        if ((command.startsWith(UserCommand.pathBasename) && !userType.equals(UserType.USER)) ||
+                (command.startsWith(AdminCommand.pathBasename) && !userType.equals(UserType.ADMIN))){
+            throw new AccessDeniedException();
         }
-        throw new AccessDeniedException();
     }
 
     public static Optional<User> getCurrentLoginUser(){
