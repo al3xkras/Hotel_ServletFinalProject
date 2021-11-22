@@ -44,12 +44,14 @@ public class UserCommand implements Command {
 
     @Override
     public String executeGet(HttpServletRequest request) {
-        Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
-        User user;
+        //Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
+        User user = AuthFilter.getCurrentLoginUser().orElseThrow(AccessDeniedException::new);
 
+        /*
         if (!currentUser.isPresent() || !currentUser.get().getUserType().equals(UserType.USER)){
             throw new AccessDeniedException();
         }
+         */
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
         if (!command.isEmpty()){
@@ -58,7 +60,7 @@ public class UserCommand implements Command {
                     .executeGet(request);
         }
 
-        user=currentUser.get();
+        //user=currentUser.get();
 
         String pageParam=request.getParameter("page");
         int page = (pageParam==null)?1:Integer.parseInt(pageParam);
@@ -86,9 +88,12 @@ public class UserCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
+        /*
         if (!AuthFilter.getCurrentLoginUser().orElseThrow(UserNotFoundException::new).getUserType().equals(UserType.USER)){
             throw new AccessDeniedException();
         }
+
+         */
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 

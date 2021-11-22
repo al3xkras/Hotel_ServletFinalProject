@@ -33,11 +33,14 @@ public class AdminCommand implements Command {
     }
     @Override
     public String executeGet(HttpServletRequest request) {
+        /*
         Optional<User> currentUser = AuthFilter.getCurrentLoginUser();
 
         if (!currentUser.isPresent() || !currentUser.get().getUserType().equals(UserType.ADMIN)){
             throw new AccessDeniedException();
         }
+
+         */
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
@@ -52,12 +55,12 @@ public class AdminCommand implements Command {
         int reservationsCount = reservationService.getReservationsCountByActiveAndStatus(
                 true,ReservationStatus.PENDING);
 
-        request.getServletContext().log(""+reservationsCount);
+        //request.getServletContext().log(""+reservationsCount);
 
         Pageable pageable = new Pageable(5,reservationsCount);
         pageable.seekToPage(page);
 
-        request.getServletContext().log(pageable.toString());
+        //request.getServletContext().log(pageable.toString());
 
         List<Reservation> reservations = reservationService.findAllByActiveAndStatus(
                 true,
@@ -71,9 +74,12 @@ public class AdminCommand implements Command {
 
     @Override
     public String executePost(HttpServletRequest request) {
+        /*
         if (!AuthFilter.getCurrentLoginUser().orElseThrow(IllegalStateException::new).getUserType().equals(UserType.ADMIN)){
             throw new RuntimeException();
         }
+
+         */
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 

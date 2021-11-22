@@ -34,7 +34,7 @@ public class ApartmentCommand implements Command{
     @Override
     public String executeGet(HttpServletRequest request) {
 
-        AuthFilter.getCurrentLoginUser().orElseThrow(AccessDeniedException::new);
+        //AuthFilter.getCurrentLoginUser().orElseThrow(AccessDeniedException::new);
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 
