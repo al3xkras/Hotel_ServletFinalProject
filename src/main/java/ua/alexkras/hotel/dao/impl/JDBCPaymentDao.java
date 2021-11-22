@@ -13,23 +13,21 @@ import static ua.alexkras.hotel.model.mysql.PaymentTableStrings.*;
 public class JDBCPaymentDao implements PaymentDAO {
 
     private final Connection connection;
-    private final Connection transactional;
 
-    public JDBCPaymentDao(Connection connection, Connection transactional) {
+    public JDBCPaymentDao(Connection connection) {
         this.connection = connection;
-        this.transactional = transactional;
     }
 
     @Override
     public void create(Payment payment) {
-        createInConnection(connection,payment);
+        _create(payment, connection);
     }
 
-    public void createInTransaction(Payment payment){
-        createInConnection(transactional,payment);
+    public void create(Payment payment, Connection connection){
+        _create(payment, connection);
     }
 
-    private void createInConnection(Connection connection, Payment payment){
+    private void _create(Payment payment, Connection connection){
         try(PreparedStatement create = connection.prepareStatement(createPayment)
             ){
             setStatementValues(payment, create);
@@ -128,26 +126,6 @@ public class JDBCPaymentDao implements PaymentDAO {
         try {
             connection.close();
         } catch (SQLException e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void commit(){
-        try {
-            transactional.commit();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void rollback(){
-        try {
-            transactional.rollback();
-        } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }

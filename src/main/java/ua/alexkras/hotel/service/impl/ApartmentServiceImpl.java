@@ -9,6 +9,7 @@ import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.service.ApartmentService;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,9 +109,8 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @param apartment Apartment to be updated
      * @throws RuntimeException if an SQLException was caught when executing update
      */
-    @Override
-    public void transactionalUpdateApartment(Apartment apartment){
-        apartmentDAO.transactionalUpdateApartment(apartment);
+    public void transactionalUpdateApartment(Apartment apartment, Connection connection){
+        apartmentDAO.transactionalUpdateApartment(apartment, connection);
     }
 
     /**
@@ -123,7 +123,6 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
     @Override
     public void updateApartmentStatusById(long id, ApartmentStatus status){
         apartmentDAO.updateApartmentStatusById(id,status);
-        apartmentDAO.commit();
     }
 
     /**
@@ -133,32 +132,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @param status apartment's status after update
      * @throws RuntimeException if an SQLException was caught when executing update
      */
-    @Override
-    public void transactionalUpdateApartmentStatusById(long id, ApartmentStatus status){
-        apartmentDAO.updateApartmentStatusById(id,status);
-    }
-
-    /**
-     * Commit current transaction (transactional connection),
-     * - Committing a transaction from this service also
-     *  commits methods that use transactional connection
-     *  from other services
-     * @throws RuntimeException if failed to commit transaction
-     */
-    @Override
-    public void commitCurrentTransaction(){
-        apartmentDAO.commit();
-    }
-
-    /**
-     * Rollback transactional connection
-     * - Rollback made from this service also
-     *  affects methods that use transactional connection
-     *  from other services (they will be discarded as well)
-     * @throws RuntimeException if failed to rollback transactional connection
-     */
-    @Override
-    public void rollbackConnection(){
-        apartmentDAO.rollback();
+    public void transactionalUpdateApartmentStatusById(long id, ApartmentStatus status, Connection connection){
+        apartmentDAO.transactionalUpdateApartmentStatusById(id,status, connection);
     }
 }

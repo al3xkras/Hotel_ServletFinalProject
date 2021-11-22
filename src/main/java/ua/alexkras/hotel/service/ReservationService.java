@@ -9,8 +9,6 @@ import java.util.List;
 public interface ReservationService<Pageable,Entity>
         extends Service<Pageable,Entity>{
 
-    void createInTransaction(Entity entity);
-
     List<Entity> findAllByActiveAndStatus(
             boolean isActive,
             ReservationStatus reservationStatus,
@@ -25,17 +23,9 @@ public interface ReservationService<Pageable,Entity>
     void updateStatusById(long id, ReservationStatus reservationStatus);
     void updateStatusAndConfirmationDateById(long id, ReservationStatus status, LocalDate confirmationDate);
 
-    void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus);
 
     void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long id, long apartmentId, LocalDate confirmationDate);
-    void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-            long id, long apartmentId, LocalDate confirmationDate);
 
     void updateIsPaidById(long reservationId, boolean isPaid);
-
-    void transactionalUpdateIsPaidById(long reservationId, boolean isPaid);
-
-    void updateAllExpiredReservations();
-
 }

@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface ReservationDAO extends GenericDao<Reservation> {
     Optional<Reservation> findById(long id);
 
-    void transactionalUpdateReservationStatusById(long id, ReservationStatus reservationStatus);
-
     void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long reservationId,
             long apartmentId,

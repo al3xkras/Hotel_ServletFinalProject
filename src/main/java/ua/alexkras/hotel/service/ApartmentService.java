@@ -12,8 +12,6 @@ public interface ApartmentService<Pageable,Entity> extends Service<Pageable, Ent
     List<Apartment> findAllApartments(Pageable pageable);
     List<Apartment> findApartmentsMatchingReservation(Reservation reservation, Pageable pageable);
     void updateApartment(Apartment apartment);
-    void transactionalUpdateApartment(Apartment apartment);
     void updateApartmentStatusById(long id, ApartmentStatus status);
-    void transactionalUpdateApartmentStatusById(long id, ApartmentStatus status);
 
 }

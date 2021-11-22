@@ -1,11 +1,16 @@
 package ua.alexkras.hotel;
 
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
+import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +23,26 @@ public class ScheduledTasks implements ServletContextListener {
     private final ReservationServiceImpl reservationService = new ReservationServiceImpl();
 
     public void scheduleUpdateExpiredReservations() {
-        reservationService.updateAllExpiredReservations();
+        Connection connection;
+        try {
+            connection = ConnectionPoolHolder.getDataSource().getConnection();
+            connection.setAutoCommit(false);
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        try{
+            reservationService.updateAllExpiredReservations(connection);
+
+            connection.commit();
+            connection.close();
+        } catch (Exception e){
+            try {
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
 
         servletContext.log("scheduled task executed");
     }

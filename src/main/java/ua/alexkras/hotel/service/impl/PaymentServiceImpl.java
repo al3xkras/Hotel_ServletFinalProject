@@ -9,6 +9,7 @@ import ua.alexkras.hotel.model.mysql.MySqlStrings;
 import ua.alexkras.hotel.service.PaymentService;
 import ua.alexkras.hotel.service.Service;
 
+import java.sql.Connection;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,8 +41,8 @@ public class PaymentServiceImpl implements PaymentService<Pageable,Payment> {
      * @throws RuntimeException if @payment is invalid (has null fields, that match not-null columns in the data source)
      * or any SQLException was caught when executing create statement
      */
-    public void transactionalCreate(Payment payment){
-        paymentDAO.createInTransaction(payment);
+    public void create(Payment payment, Connection connection){
+        paymentDAO.create(payment, connection);
     }
 
     /**
@@ -73,30 +74,5 @@ public class PaymentServiceImpl implements PaymentService<Pageable,Payment> {
                 .cardCvv(CVV)
                 .cardExpirationDate(MySqlStrings.dateFormat.parse(expirationDate)
                         .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    }
-
-
-    /**
-     * Commit current transaction (transactional connection),
-     * - Committing a transaction from this service also
-     *  commits methods that use transactional connection
-     *  from other services
-     * @throws RuntimeException if failed to commit transaction
-     */
-    @Override
-    public void commitCurrentTransaction(){
-        paymentDAO.commit();
-    }
-
-    /**
-     * Rollback transactional connection
-     * - Rollback made from this service also
-     *  affects methods that use transactional connection
-     *  from other services (they will be discarded as well)
-     * @throws RuntimeException if failed to rollback transactional connection
-     */
-    @Override
-    public void rollbackConnection(){
-        paymentDAO.rollback();
     }
 }

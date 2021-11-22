@@ -1,5 +1,6 @@
 package ua.alexkras.hotel.commands.user;
 
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
@@ -11,6 +12,8 @@ import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -80,13 +83,26 @@ public class SelectApartmentCommand implements Command {
                 .submitDate(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
 
+        Connection connection;
         try {
-            reservationService.createInTransaction(reservation);
-            apartmentService.transactionalUpdateApartment(apartment);
-
-            reservationService.commitCurrentTransaction();
+            connection = ConnectionPoolHolder.getDataSource().getConnection();
+            connection.setAutoCommit(false);
         } catch (Exception e){
-            reservationService.rollbackConnection();
+            throw new RuntimeException(e);
+        }
+        try{
+            reservationService.createInTransaction(reservation,connection);
+            apartmentService.transactionalUpdateApartment(apartment,connection);
+
+            connection.commit();
+            connection.close();
+        } catch (Exception e){
+            try {
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return "redirect:/app/"+UserCommand.pathBasename;

@@ -23,11 +23,9 @@ public class JDBCReservationDao implements ReservationDAO {
     public static final int requestMaxReservations = 50;
 
     private final Connection connection;
-    private final Connection transactional;
 
-    public JDBCReservationDao(Connection connection, Connection transactional) {
+    public JDBCReservationDao(Connection connection) {
         this.connection = connection;
-        this.transactional = transactional;
     }
 
     @Override
@@ -35,8 +33,8 @@ public class JDBCReservationDao implements ReservationDAO {
         createInConnection(connection,reservation);
     }
 
-    public void createInTransaction(Reservation reservation){
-        createInConnection(transactional,reservation);
+    public void createInTransaction(Reservation reservation, Connection connection){
+        createInConnection(connection,reservation);
     }
 
     private void createInConnection(Connection connection, Reservation reservation){
@@ -240,9 +238,16 @@ public class JDBCReservationDao implements ReservationDAO {
 
     }
 
-    @Override
-    public void transactionalUpdateReservationStatusById(long id, ReservationStatus reservationStatus){
-        try (PreparedStatement preparedStatement = transactional.prepareStatement(updateStatusById)){
+    public void updateReservationStatusById(long id, ReservationStatus reservationStatus){
+        _updateReservationStatusById(id,reservationStatus,connection);
+    }
+
+    public void transactionalUpdateReservationStatusById(long id, ReservationStatus reservationStatus, Connection connection){
+        _updateReservationStatusById(id,reservationStatus,connection);
+    }
+
+    private void _updateReservationStatusById(long id, ReservationStatus reservationStatus, Connection connection){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateStatusById)){
 
             preparedStatement.setString(1,reservationStatus.name());
             preparedStatement.setLong(2,id);
@@ -255,22 +260,18 @@ public class JDBCReservationDao implements ReservationDAO {
     }
 
     @Override
-    public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-            long reservationId, long apartmentId, LocalDate confirmationDate){
-
-        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
-                connection,reservationId,apartmentId,confirmationDate);
+    public void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(long reservationId, long apartmentId, LocalDate confirmationDate){
+        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(connection,reservationId, apartmentId,confirmationDate);
     }
 
-    public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-            long reservationId, long apartmentId, LocalDate confirmationDate){
-
-        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
-                transactional,reservationId,apartmentId,confirmationDate);
+    public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(long reservationId, long apartmentId, LocalDate confirmationDate, Connection connection){
+        updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(connection,reservationId, apartmentId,confirmationDate);
     }
 
     private void updateReservationApartmentDataAndConfirmationDateByIdWithApartmentByIdInConnection(
-            Connection connection,long reservationId, long apartmentId, LocalDate confirmationDate){
+            Connection connection,long reservationId,
+            long apartmentId, LocalDate confirmationDate){
+
         try (PreparedStatement getApartmentIntoVariable = connection.prepareStatement(selectApartmentByIdIntoVariable);
              PreparedStatement updateReservation = connection.prepareStatement(updateReservationByIdAndUserIdWithApartment)
 
@@ -294,8 +295,8 @@ public class JDBCReservationDao implements ReservationDAO {
         updateIsPaidByIdInConnection(connection,id,isPaid);
     }
 
-    public void transactionalUpdateIsPaidById(long id, boolean isPaid){
-        updateIsPaidByIdInConnection(transactional,id,isPaid);
+    public void transactionalUpdateIsPaidById(long id, boolean isPaid, Connection connection){
+        updateIsPaidByIdInConnection(connection,id,isPaid);
     }
 
     private void updateIsPaidByIdInConnection(Connection connection, long id, boolean isPaid){
@@ -310,10 +311,10 @@ public class JDBCReservationDao implements ReservationDAO {
         }
     }
 
-    public void updateAllExpiredReservations(){
-        try (PreparedStatement updateExpired = transactional.prepareStatement(updateAllExpiredReservations);
-             PreparedStatement setExpiredReservationApartmentsAvailable = transactional.prepareStatement(ApartmentTableStrings.setExpiredReservationApartmentsAvailable);
-             PreparedStatement updateActive = transactional.prepareStatement(updateActiveReservations)
+    public void updateAllExpiredReservations(Connection connection) throws SQLException {
+        try (PreparedStatement updateExpired = connection.prepareStatement(updateAllExpiredReservations);
+             PreparedStatement setExpiredReservationApartmentsAvailable = connection.prepareStatement(ApartmentTableStrings.setExpiredReservationApartmentsAvailable);
+             PreparedStatement updateActive = connection.prepareStatement(updateActiveReservations)
         ){
             updateExpired.setString(1,ReservationStatus.CANCELLED.name());
             updateExpired.setDate(2, Date.valueOf(LocalDate.now()));
@@ -325,11 +326,10 @@ public class JDBCReservationDao implements ReservationDAO {
             setExpiredReservationApartmentsAvailable.executeUpdate();
             updateActive.executeUpdate();
 
-            commit();
+            connection.commit();
         } catch (SQLException e){
-            rollback();
-            e.printStackTrace();
-            throw new RuntimeException();
+            connection.rollback();
+            throw new RuntimeException(e);
         }
     }
 
@@ -349,7 +349,7 @@ public class JDBCReservationDao implements ReservationDAO {
 
     @Override
     public void delete(long id) {
-
+        throw new RuntimeException("Method is not implemented");
     }
 
     @Override
@@ -357,26 +357,6 @@ public class JDBCReservationDao implements ReservationDAO {
         try {
             connection.close();
         } catch (SQLException e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void commit(){
-        try {
-            transactional.commit();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void rollback(){
-        try {
-            transactional.rollback();
-        } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }

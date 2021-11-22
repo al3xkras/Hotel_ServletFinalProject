@@ -1,6 +1,7 @@
 package ua.alexkras.hotel.commands.user.reservation;
 
 import ua.alexkras.hotel.commands.user.UserCommand;
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
@@ -9,6 +10,8 @@ import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.model.ReservationStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 
@@ -62,13 +65,26 @@ public class CancelReservationCommand implements Command {
             reservationId = Integer.parseInt(command);
         }
 
+        Connection connection;
         try {
-            reservationService.transactionalUpdateStatusById(reservationId, cancelledStatus);
-            apartmentId.ifPresent(id -> apartmentService.transactionalUpdateApartmentStatusById(id, ApartmentStatus.AVAILABLE));
-
-            reservationService.commitCurrentTransaction();
+            connection = ConnectionPoolHolder.getDataSource().getConnection();
+            connection.setAutoCommit(false);
         } catch (Exception e){
-            reservationService.rollbackConnection();
+            throw new RuntimeException(e);
+        }
+        try {
+            reservationService.transactionalUpdateStatusById(reservationId, cancelledStatus,connection);
+            apartmentId.ifPresent(id -> apartmentService.transactionalUpdateApartmentStatusById(id, ApartmentStatus.AVAILABLE,connection));
+
+            connection.commit();
+            connection.close();
+        } catch (Exception e){
+            try {
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
     }

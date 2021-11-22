@@ -7,6 +7,8 @@ import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.service.ReservationService;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,9 +41,8 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @throws RuntimeException if @reservation is invalid (has null fields, that match not-null columns in the data source)
      * or any SQLException was caught when executing create statement
      */
-    @Override
-    public void createInTransaction(Reservation reservation){
-        reservationDAO.createInTransaction(reservation);
+    public void createInTransaction(Reservation reservation, Connection connection){
+        reservationDAO.createInTransaction(reservation, connection);
     }
 
     /**
@@ -138,8 +139,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      */
     @Override
     public void updateStatusById(long id, ReservationStatus reservationStatus){
-        reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
-        reservationDAO.commit();
+        reservationDAO.updateReservationStatusById(id, reservationStatus);
     }
 
     /**
@@ -148,9 +148,8 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param reservationStatus reservation status after an update
      * @throws RuntimeException if an SQLException was caught when executing update
      */
-    @Override
-    public void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus){
-        reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus);
+    public void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus, Connection connection){
+        reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus, connection);
     }
 
     /**
@@ -182,9 +181,8 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param isPaid new payment status
      * @throws RuntimeException if an SQLException was caught when executing update
      */
-    @Override
-    public void transactionalUpdateIsPaidById(long id, boolean isPaid){
-        reservationDAO.transactionalUpdateIsPaidById(id,isPaid);
+    public void transactionalUpdateIsPaidById(long id, boolean isPaid, Connection connection){
+        reservationDAO.transactionalUpdateIsPaidById(id,isPaid, connection);
     }
 
     /**
@@ -211,11 +209,10 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param apartmentId id of apartment to associate with Reservation
      * @param confirmationDate confirmation date by Admin
      */
-    @Override
     public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-            long id, long apartmentId, LocalDate confirmationDate){
+            long id, long apartmentId, LocalDate confirmationDate, Connection connection){
         reservationDAO.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-                id,apartmentId,confirmationDate);
+                id,apartmentId,confirmationDate, connection);
     }
 
     /**
@@ -225,32 +222,11 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * -All expired reservations are marked as 'inactive'
      * @throws RuntimeException if an SQLException was caught when executing update
      */
-    @Override
-    public void updateAllExpiredReservations(){
-        reservationDAO.updateAllExpiredReservations();
-    }
-
-    /**
-     * Commit current transaction (transactional connection),
-     * - Committing a transaction from this service also
-     *  commits methods that use transactional connection
-     *  from other services
-     * @throws RuntimeException if failed to commit transaction
-     */
-    @Override
-    public void commitCurrentTransaction(){
-        reservationDAO.commit();
-    }
-
-    /**
-     * Rollback transactional connection
-     * - Rollback made from this service also
-     *  affects methods that use transactional connection
-     *  from other services (they will be discarded as well)
-     * @throws RuntimeException if failed to rollback transactional connection
-     */
-    @Override
-    public void rollbackConnection(){
-        reservationDAO.rollback();
+    public void updateAllExpiredReservations(Connection connection){
+        try {
+            reservationDAO.updateAllExpiredReservations(connection);
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -12,11 +12,9 @@ import java.util.Optional;
 public class JDBCUserDao implements UserDAO {
 
     private final Connection connection;
-    private final Connection transactional;
 
-    public JDBCUserDao(Connection connection, Connection transactional) {
+    public JDBCUserDao(Connection connection) {
         this.connection = connection;
-        this.transactional = transactional;
     }
 
     @Override
@@ -150,26 +148,6 @@ public class JDBCUserDao implements UserDAO {
             connection.close();
         } catch (Exception e){
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void commit(){
-        try {
-            transactional.commit();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void rollback(){
-        try {
-            transactional.rollback();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
         }
     }
 

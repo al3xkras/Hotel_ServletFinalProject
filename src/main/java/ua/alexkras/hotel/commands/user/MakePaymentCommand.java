@@ -1,6 +1,7 @@
 package ua.alexkras.hotel.commands.user;
 
 import ua.alexkras.hotel.HotelServlet;
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.Command;
@@ -8,6 +9,8 @@ import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class MakePaymentCommand implements Command {
@@ -63,14 +66,28 @@ public class MakePaymentCommand implements Command {
             throw new RuntimeException();
         }
 
-        try{
-            paymentService.transactionalCreate(payment);
-            reservationService.transactionalUpdateIsPaidById(payment.getReservationId(),true);
 
-            reservationService.commitCurrentTransaction();
+
+        Connection connection;
+        try {
+            connection = ConnectionPoolHolder.getDataSource().getConnection();
+            connection.setAutoCommit(false);
         } catch (Exception e){
-            e.printStackTrace();
-            paymentService.rollbackConnection();
+            throw new RuntimeException(e);
+        }
+        try{
+            paymentService.create(payment, connection);
+            reservationService.transactionalUpdateIsPaidById(payment.getReservationId(),true, connection);
+
+            connection.commit();
+            connection.close();
+        } catch (Exception e){
+            try {
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return "redirect:/"+ HotelServlet.pathBasename+'/'+UserCommand.pathBasename;

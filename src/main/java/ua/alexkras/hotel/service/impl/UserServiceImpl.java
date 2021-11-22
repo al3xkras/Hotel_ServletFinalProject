@@ -48,29 +48,6 @@ public class UserServiceImpl implements UserService<Pageable,User> {
         userDao.create(user);
     }
 
-    /**
-     * Commit current transaction (transactional connection),
-     * - Committing a transaction from this service also
-     *  commits methods that use transactional connection
-     *  from other services
-     * @throws RuntimeException if failed to commit transaction
-     */
-    @Override
-    public void commitCurrentTransaction(){
-        userDao.commit();
-    }
-
-    /**
-     * Rollback transactional connection
-     * - Rollback made from this service also
-     *  affects methods that use transactional connection
-     *  from other services (they will be discarded as well)
-     * @throws RuntimeException if failed to rollback transactional connection
-     */
-    @Override
-    public void rollbackConnection(){
-        userDao.rollback();
-    }
 
 
 }

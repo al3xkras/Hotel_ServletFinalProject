@@ -15,11 +15,9 @@ import static ua.alexkras.hotel.model.mysql.ApartmentTableStrings.*;
 public class JDBCApartmentDao implements ApartmentDao {
 
     private final Connection connection;
-    private final Connection transactional;
 
-    public JDBCApartmentDao(Connection connection, Connection transactional) {
+    public JDBCApartmentDao(Connection connection) {
         this.connection = connection;
-        this.transactional = transactional;
     }
 
     public int getApartmentsByApartmentClassAndPlacesAndStatusCount(
@@ -45,11 +43,18 @@ public class JDBCApartmentDao implements ApartmentDao {
     }
 
 
-    //@Transactional
     @Override
     public void updateApartmentStatusById(long id, ApartmentStatus apartmentStatus){
-        try (PreparedStatement updateStatusById = transactional.prepareStatement(updateApartmentStatusById)
-            ){
+        _updateApartmentStatusById(id,apartmentStatus,connection);
+    }
+
+    public void transactionalUpdateApartmentStatusById(long id, ApartmentStatus apartmentStatus, Connection connection){
+        _updateApartmentStatusById(id,apartmentStatus,connection);
+    }
+
+    private void _updateApartmentStatusById(long id, ApartmentStatus apartmentStatus, Connection connection){
+        try (PreparedStatement updateStatusById = connection.prepareStatement(updateApartmentStatusById)
+        ){
             updateStatusById.setString(1,apartmentStatus.name());
             updateStatusById.setLong(2,id);
 
@@ -183,8 +188,8 @@ public class JDBCApartmentDao implements ApartmentDao {
         updateInConnection(connection,apartment);
     }
 
-    public void transactionalUpdateApartment(Apartment apartment){
-        updateInConnection(transactional,apartment);
+    public void transactionalUpdateApartment(Apartment apartment, Connection connection){
+        updateInConnection(connection,apartment);
     }
 
     private void updateInConnection(Connection connection, Apartment apartment){
@@ -224,26 +229,6 @@ public class JDBCApartmentDao implements ApartmentDao {
     public void close() {
         try {
             connection.close();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void commit(){
-        try {
-            transactional.commit();
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void rollback(){
-        try {
-            transactional.rollback();
         } catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();

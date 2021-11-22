@@ -2,6 +2,7 @@ package ua.alexkras.hotel.commands.admin.reservation;
 
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
+import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
@@ -10,6 +11,8 @@ import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class SelectReservationCommand implements Command {
@@ -46,15 +49,26 @@ public class SelectReservationCommand implements Command {
 
         request.getServletContext().log("id: "+reservationId+' '+apartmentId);
 
+        Connection connection;
         try {
-            reservationService.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
-                    reservationId, apartmentId, LocalDate.now());
-
-            apartmentService.transactionalUpdateApartmentStatusById(apartmentId, ApartmentStatus.RESERVED);
-
-            reservationService.commitCurrentTransaction();
+            connection = ConnectionPoolHolder.getDataSource().getConnection();
+            connection.setAutoCommit(false);
         } catch (Exception e){
-            apartmentService.rollbackConnection();
+            throw new RuntimeException(e);
+        }
+        try{
+            reservationService.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(reservationId, apartmentId, LocalDate.now(),connection);
+            apartmentService.transactionalUpdateApartmentStatusById(apartmentId, ApartmentStatus.RESERVED,connection);
+
+            connection.commit();
+            connection.close();
+        } catch (Exception e){
+            try {
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return "redirect:/"+HotelServlet.pathBasename+'/'+ AdminCommand.pathBasename;
