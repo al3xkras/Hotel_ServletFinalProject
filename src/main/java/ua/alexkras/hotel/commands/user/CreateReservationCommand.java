@@ -6,9 +6,10 @@ import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -20,9 +21,9 @@ public class CreateReservationCommand implements Command {
 
     public static final String pathBasename = "create_reservation";
 
-    private final ReservationServiceImpl reservationService;
+    private final ReservationService<Pageable> reservationService;
 
-    public CreateReservationCommand(ReservationServiceImpl reservationService){
+    public CreateReservationCommand(ReservationService<Pageable> reservationService){
         this.reservationService = reservationService;
     }
 

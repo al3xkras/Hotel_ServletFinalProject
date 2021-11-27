@@ -6,8 +6,9 @@ import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,11 +20,11 @@ public class SelectReservationCommand implements Command {
 
     public static final String pathBasename = "select";
 
-    private final ReservationServiceImpl reservationService;
-    private final ApartmentServiceImpl apartmentService;
+    private final ReservationService<Pageable> reservationService;
+    private final ApartmentService<Pageable> apartmentService;
 
-    public SelectReservationCommand(ReservationServiceImpl reservationService,
-                                    ApartmentServiceImpl apartmentService){
+    public SelectReservationCommand(ReservationService<Pageable> reservationService,
+                                    ApartmentService<Pageable> apartmentService){
         this.reservationService=reservationService;
         this.apartmentService=apartmentService;
     }

@@ -3,7 +3,10 @@ package ua.alexkras.hotel.commands.admin.reservation;
 import ua.alexkras.hotel.HotelServlet;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
@@ -15,11 +18,11 @@ public class CancelReservationCommand implements Command {
 
     public static final String pathBasename = "cancel";
 
-    private final ReservationServiceImpl reservationService;
-    private final ApartmentServiceImpl apartmentService;
+    private final ReservationService<Pageable> reservationService;
+    private final ApartmentService<Pageable> apartmentService;
 
-    public CancelReservationCommand(ReservationServiceImpl reservationService,
-                                    ApartmentServiceImpl apartmentService){
+    public CancelReservationCommand(ReservationService<Pageable> reservationService,
+                                    ApartmentService<Pageable> apartmentService){
         this.reservationService=reservationService;
         this.apartmentService=apartmentService;
     }

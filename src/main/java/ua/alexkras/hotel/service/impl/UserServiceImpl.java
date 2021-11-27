@@ -8,7 +8,7 @@ import ua.alexkras.hotel.service.UserService;
 
 import java.util.Optional;
 
-public class UserServiceImpl implements UserService<Pageable,User> {
+public class UserServiceImpl implements UserService<Pageable> {
 
     private final JDBCUserDao userDao;
 

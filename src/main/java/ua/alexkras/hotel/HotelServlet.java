@@ -6,6 +6,11 @@ import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
 import ua.alexkras.hotel.commands.admin_or_user.ProfileCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.PaymentService;
+import ua.alexkras.hotel.service.ReservationService;
+import ua.alexkras.hotel.service.UserService;
 import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
 import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
@@ -29,22 +34,18 @@ public class HotelServlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
 
     public void init(){
-        ReservationServiceImpl reservationService = new ReservationServiceImpl();
-        UserServiceImpl userService = new UserServiceImpl();
-        ApartmentServiceImpl apartmentService = new ApartmentServiceImpl();
-        PaymentServiceImpl paymentService = new PaymentServiceImpl();
+        ReservationService<Pageable> reservationService = new ReservationServiceImpl();
+        UserService<Pageable> userService = new UserServiceImpl();
+        ApartmentService<Pageable> apartmentService = new ApartmentServiceImpl();
+        PaymentService<Pageable> paymentService = new PaymentServiceImpl();
 
         commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService,paymentService));
         commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));
-
         commands.put(RegistrationCommand.pathBasename, new RegistrationCommand(userService));
-
         commands.put(LoginCommand.pathBasename,new LoginCommand(userService));
         commands.put(LogoutCommand.pathBasename, new LogoutCommand());
         commands.put(ProfileCommand.pathBasename, new ProfileCommand());
-
         commands.put(ApartmentCommand.pathBasename,new ApartmentCommand(apartmentService, reservationService));
-
         commands.put(ExceptionCommand.pathBasename, new ExceptionCommand());
     }
 

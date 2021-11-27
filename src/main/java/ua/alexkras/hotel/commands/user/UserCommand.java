@@ -6,15 +6,14 @@ import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.exception.AccessDeniedException;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
-import ua.alexkras.hotel.exception.UserNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.UserType;
-import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.PaymentService;
+import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -25,10 +24,10 @@ public class UserCommand implements Command {
 
     private final Map<String, Command> commands;
 
-    private final ReservationServiceImpl reservationService;
+    private final ReservationService<Pageable> reservationService;
 
-    public UserCommand(ReservationServiceImpl reservationService, ApartmentServiceImpl apartmentService,
-                       PaymentServiceImpl paymentService){
+    public UserCommand(ReservationService<Pageable> reservationService, ApartmentService<Pageable> apartmentService,
+                       PaymentService<Pageable> paymentService){
         HashMap<String,Command> commands = new HashMap<>();
 
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
@@ -92,8 +91,7 @@ public class UserCommand implements Command {
         if (!AuthFilter.getCurrentLoginUser().orElseThrow(UserNotFoundException::new).getUserType().equals(UserType.USER)){
             throw new AccessDeniedException();
         }
-
-         */
+        */
 
         String command = Command.getCommand(request.getRequestURI(),pathBasename);
 

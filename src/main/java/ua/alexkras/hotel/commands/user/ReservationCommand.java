@@ -9,8 +9,10 @@ import ua.alexkras.hotel.exception.CommandNotFoundException;
 import ua.alexkras.hotel.exception.UserNotFoundException;
 import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,11 +23,11 @@ public class ReservationCommand implements Command {
 
     public static final String pathBasename = "reservation";
 
-    private final ReservationServiceImpl reservationService;
+    private final ReservationService<Pageable> reservationService;
 
     private final Map<String,Command> commands = new HashMap<>();
 
-    public ReservationCommand(ReservationServiceImpl reservationService, ApartmentServiceImpl apartmentService){
+    public ReservationCommand(ReservationService<Pageable> reservationService, ApartmentService<Pageable> apartmentService){
         commands.put(ConfirmReservationCommand.pathBasename,new ConfirmReservationCommand(reservationService));
         commands.put(CancelReservationCommand.pathBasename, new CancelReservationCommand(reservationService,apartmentService));
 

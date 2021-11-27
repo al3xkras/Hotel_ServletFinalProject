@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment> {
+public class ApartmentServiceImpl implements ApartmentService<Pageable> {
     private final JDBCApartmentDao apartmentDAO;
 
     public ApartmentServiceImpl(){
@@ -74,6 +74,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @return count of apartments
      * @throws RuntimeException if an SQLException was caught when executing query
      */
+    @Override
     public int getApartmentsCount(){
         return  apartmentDAO.getApartmentsCount();
     }
@@ -88,6 +89,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @return count of apartments in a data source, that match @reservation
      * @throws RuntimeException if an SQLException was caught when executing query
      */
+    @Override
     public int getApartmentsMatchingReservationCount(Reservation reservation){
         return apartmentDAO.getApartmentsByApartmentClassAndPlacesAndStatusCount(
                 reservation.getApartmentClass(), reservation.getPlaces(),
@@ -109,6 +111,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @param apartment Apartment to be updated
      * @throws RuntimeException if an SQLException was caught when executing update
      */
+    @Override
     public void transactionalUpdateApartment(Apartment apartment, Connection connection){
         apartmentDAO.transactionalUpdateApartment(apartment, connection);
     }
@@ -132,6 +135,7 @@ public class ApartmentServiceImpl implements ApartmentService<Pageable,Apartment
      * @param status apartment's status after update
      * @throws RuntimeException if an SQLException was caught when executing update
      */
+    @Override
     public void transactionalUpdateApartmentStatusById(long id, ApartmentStatus status, Connection connection){
         apartmentDAO.transactionalUpdateApartmentStatusById(id,status, connection);
     }

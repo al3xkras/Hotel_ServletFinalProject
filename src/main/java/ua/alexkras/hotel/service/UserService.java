@@ -1,8 +1,10 @@
 package ua.alexkras.hotel.service;
 
+import ua.alexkras.hotel.entity.User;
+
 import java.util.Optional;
 
-public interface UserService<Pageable,Entity> extends Service<Pageable,Entity>{
+public interface UserService<Pageable> extends Service<Pageable, User>{
 
-    Optional<Entity> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 }

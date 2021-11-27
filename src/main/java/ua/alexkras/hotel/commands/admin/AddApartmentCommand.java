@@ -5,16 +5,17 @@ import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.model.ApartmentClass;
 import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.ApartmentService;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class AddApartmentCommand implements Command {
     public static final String pathBasename = "add_apartment";
 
-    private final ApartmentServiceImpl apartmentService;
+    private final ApartmentService<Pageable> apartmentService;
 
-    public AddApartmentCommand(ApartmentServiceImpl apartmentService){
+    public AddApartmentCommand(ApartmentService<Pageable> apartmentService){
         this.apartmentService=apartmentService;
     }
 

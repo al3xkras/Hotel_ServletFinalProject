@@ -5,8 +5,9 @@ import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
 import ua.alexkras.hotel.entity.Payment;
 import ua.alexkras.hotel.entity.Reservation;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.PaymentService;
+import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Connection;
@@ -16,12 +17,12 @@ import java.time.LocalDateTime;
 public class MakePaymentCommand implements Command {
     public static final String pathBasename="make_payment";
 
-    private final PaymentServiceImpl paymentService;
-    private final ReservationServiceImpl reservationService;
+    private final PaymentService<Pageable> paymentService;
+    private final ReservationService<Pageable> reservationService;
 
     private Reservation reservation;
 
-    public MakePaymentCommand(PaymentServiceImpl paymentService, ReservationServiceImpl reservationService) {
+    public MakePaymentCommand(PaymentService<Pageable> paymentService, ReservationService<Pageable> reservationService) {
         this.paymentService = paymentService;
         this.reservationService = reservationService;
     }

@@ -1,16 +1,13 @@
 package ua.alexkras.hotel.commands.admin;
 
+import ua.alexkras.hotel.entity.Apartment;
 import ua.alexkras.hotel.entity.Reservation;
-import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.exception.AccessDeniedException;
 import ua.alexkras.hotel.exception.CommandNotFoundException;
-import ua.alexkras.hotel.filter.AuthFilter;
 import ua.alexkras.hotel.model.Command;
 import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.ReservationStatus;
-import ua.alexkras.hotel.model.UserType;
-import ua.alexkras.hotel.service.impl.ApartmentServiceImpl;
-import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
+import ua.alexkras.hotel.service.ApartmentService;
+import ua.alexkras.hotel.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,11 +18,12 @@ import java.util.Optional;
 public class AdminCommand implements Command {
 
     public static final String pathBasename = "admin";
-    private final ReservationServiceImpl reservationService;
+    private final ReservationService<Pageable> reservationService;
 
     private final Map<String, Command> commands = new HashMap<>();
 
-    public AdminCommand(ApartmentServiceImpl apartmentService, ReservationServiceImpl reservationService){
+    public AdminCommand(ApartmentService<Pageable> apartmentService,
+                        ReservationService<Pageable> reservationService){
         this.reservationService=reservationService;
 
         commands.put(AddApartmentCommand.pathBasename,new AddApartmentCommand(apartmentService));

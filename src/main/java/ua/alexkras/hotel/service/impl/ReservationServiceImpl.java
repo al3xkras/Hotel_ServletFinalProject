@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class ReservationServiceImpl implements ReservationService<Pageable,Reservation> {
+public class ReservationServiceImpl implements ReservationService<Pageable> {
 
     private final JDBCReservationDao reservationDAO;
 
@@ -41,6 +41,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @throws RuntimeException if @reservation is invalid (has null fields, that match not-null columns in the data source)
      * or any SQLException was caught when executing create statement
      */
+    @Override
     public void createInTransaction(Reservation reservation, Connection connection){
         reservationDAO.createInTransaction(reservation, connection);
     }
@@ -116,6 +117,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @return count of reservations, that match conditions listed above
      * @throws RuntimeException if an SQLException was caught when executing query
      */
+    @Override
     public int getReservationsCountByUserIdAndActiveAndAnyStatusExcept(long userId, boolean isActive, ReservationStatus illegalStatus){
         return reservationDAO.getReservationsCountByUserIdAndActiveAndAnyStatusExcept(userId,isActive,illegalStatus);
     }
@@ -127,6 +129,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @return count of reservations, that match conditions listed above
      * @throws RuntimeException if an SQLException was caught when executing query
      */
+    @Override
     public int getReservationsCountByActiveAndStatus(boolean isActive, ReservationStatus status){
         return reservationDAO.getReservationsCountByActiveAndStatus(isActive,status);
     }
@@ -148,6 +151,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param reservationStatus reservation status after an update
      * @throws RuntimeException if an SQLException was caught when executing update
      */
+    @Override
     public void transactionalUpdateStatusById(long id, ReservationStatus reservationStatus, Connection connection){
         reservationDAO.transactionalUpdateReservationStatusById(id, reservationStatus, connection);
     }
@@ -181,6 +185,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param isPaid new payment status
      * @throws RuntimeException if an SQLException was caught when executing update
      */
+    @Override
     public void transactionalUpdateIsPaidById(long id, boolean isPaid, Connection connection){
         reservationDAO.transactionalUpdateIsPaidById(id,isPaid, connection);
     }
@@ -209,6 +214,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * @param apartmentId id of apartment to associate with Reservation
      * @param confirmationDate confirmation date by Admin
      */
+    @Override
     public void transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
             long id, long apartmentId, LocalDate confirmationDate, Connection connection){
         reservationDAO.transactionalUpdateReservationApartmentDataAndConfirmationDateByIdWithApartmentById(
@@ -222,6 +228,7 @@ public class ReservationServiceImpl implements ReservationService<Pageable,Reser
      * -All expired reservations are marked as 'inactive'
      * @throws RuntimeException if an SQLException was caught when executing update
      */
+    @Override
     public void updateAllExpiredReservations(Connection connection){
         try {
             reservationDAO.updateAllExpiredReservations(connection);
