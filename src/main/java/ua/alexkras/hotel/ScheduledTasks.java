@@ -1,6 +1,8 @@
 package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
+import ua.alexkras.hotel.model.Pageable;
+import ua.alexkras.hotel.service.ReservationService;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.ServletContext;
@@ -18,7 +20,7 @@ public class ScheduledTasks implements ServletContextListener {
 
     private ScheduledExecutorService scheduler;
     private ServletContext servletContext;
-    private final ReservationServiceImpl reservationService = new ReservationServiceImpl();
+    private final ReservationService<Pageable> reservationService = new ReservationServiceImpl();
 
     public void scheduleUpdateExpiredReservations() {
         Connection connection;
