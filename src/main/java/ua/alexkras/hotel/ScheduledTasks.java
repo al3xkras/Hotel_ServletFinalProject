@@ -1,7 +1,6 @@
 package ua.alexkras.hotel;
 
 import ua.alexkras.hotel.dao.impl.ConnectionPoolHolder;
-import ua.alexkras.hotel.model.ApartmentStatus;
 import ua.alexkras.hotel.service.impl.ReservationServiceImpl;
 
 import javax.servlet.ServletContext;
@@ -10,7 +9,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
