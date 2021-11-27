@@ -2,7 +2,6 @@ package ua.alexkras.hotel.commands;
 
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.UserService;
 
@@ -12,8 +11,8 @@ import java.util.Optional;
 public class LoginCommand implements Command {
     public static final String pathBasename = "login";
 
-    private final UserService<Pageable> userService;
-    public LoginCommand(UserService<Pageable> userService){
+    private final UserService userService;
+    public LoginCommand(UserService userService){
         this.userService=userService;
     }
     @Override

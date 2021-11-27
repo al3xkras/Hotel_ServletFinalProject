@@ -3,7 +3,6 @@ package ua.alexkras.hotel.service.impl;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCPaymentDao;
 import ua.alexkras.hotel.entity.Payment;
-import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.mysql.MySqlStrings;
 import ua.alexkras.hotel.service.PaymentService;
 
@@ -12,7 +11,7 @@ import java.text.ParseException;
 import java.time.ZoneId;
 import java.util.Optional;
 
-public class PaymentServiceImpl implements PaymentService<Pageable> {
+public class PaymentServiceImpl implements PaymentService {
 
     private final JDBCPaymentDao paymentDAO;
 

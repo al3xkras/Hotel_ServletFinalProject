@@ -7,8 +7,7 @@ import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ReservationService<Pageable>
-        extends Service<Pageable,Reservation>{
+public interface ReservationService<Pageable> extends Service<Reservation>{
 
     List<Reservation> findAllByActiveAndStatus(
             boolean isActive,

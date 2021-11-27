@@ -17,12 +17,12 @@ import java.time.LocalDateTime;
 public class MakePaymentCommand implements Command {
     public static final String pathBasename="make_payment";
 
-    private final PaymentService<Pageable> paymentService;
+    private final PaymentService paymentService;
     private final ReservationService<Pageable> reservationService;
 
     private Reservation reservation;
 
-    public MakePaymentCommand(PaymentService<Pageable> paymentService, ReservationService<Pageable> reservationService) {
+    public MakePaymentCommand(PaymentService paymentService, ReservationService<Pageable> reservationService) {
         this.paymentService = paymentService;
         this.reservationService = reservationService;
     }

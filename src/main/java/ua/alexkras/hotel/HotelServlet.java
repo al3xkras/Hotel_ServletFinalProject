@@ -35,9 +35,9 @@ public class HotelServlet extends HttpServlet {
 
     public void init(){
         ReservationService<Pageable> reservationService = new ReservationServiceImpl();
-        UserService<Pageable> userService = new UserServiceImpl();
+        UserService userService = new UserServiceImpl();
         ApartmentService<Pageable> apartmentService = new ApartmentServiceImpl();
-        PaymentService<Pageable> paymentService = new PaymentServiceImpl();
+        PaymentService paymentService = new PaymentServiceImpl();
 
         commands.put(UserCommand.pathBasename, new UserCommand(reservationService, apartmentService,paymentService));
         commands.put(AdminCommand.pathBasename, new AdminCommand(apartmentService,reservationService));

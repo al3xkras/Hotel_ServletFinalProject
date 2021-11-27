@@ -8,7 +8,7 @@ import ua.alexkras.hotel.model.ApartmentStatus;
 import java.sql.Connection;
 import java.util.List;
 
-public interface ApartmentService<Pageable> extends Service<Pageable, Apartment> {
+public interface ApartmentService<Pageable> extends Service<Apartment> {
 
     List<Apartment> findAllApartments(Pageable pageable);
     List<Apartment> findApartmentsMatchingReservation(Reservation reservation, Pageable pageable);

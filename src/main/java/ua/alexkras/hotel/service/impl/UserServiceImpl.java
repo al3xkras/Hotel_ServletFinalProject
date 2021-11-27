@@ -3,12 +3,11 @@ package ua.alexkras.hotel.service.impl;
 import ua.alexkras.hotel.dao.impl.JDBCDaoFactory;
 import ua.alexkras.hotel.dao.impl.JDBCUserDao;
 import ua.alexkras.hotel.entity.User;
-import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.service.UserService;
 
 import java.util.Optional;
 
-public class UserServiceImpl implements UserService<Pageable> {
+public class UserServiceImpl implements UserService {
 
     private final JDBCUserDao userDao;
 

@@ -3,7 +3,6 @@ package ua.alexkras.hotel.commands;
 import ua.alexkras.hotel.dto.RegistrationRequest;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.model.Command;
-import ua.alexkras.hotel.model.Pageable;
 import ua.alexkras.hotel.model.UserType;
 import ua.alexkras.hotel.service.UserService;
 
@@ -15,10 +14,10 @@ import java.util.Map;
 public class RegistrationCommand implements Command {
     public static final String pathBasename = "registration";
 
-    private final UserService<Pageable> userService;
+    private final UserService userService;
     public final Map<String,String> validationErrorMap;
 
-    public RegistrationCommand(UserService<Pageable> userService){
+    public RegistrationCommand(UserService userService){
         this.userService=userService;
         Map<String,String> map = new HashMap<>();
         map.put("name.isempty","name");

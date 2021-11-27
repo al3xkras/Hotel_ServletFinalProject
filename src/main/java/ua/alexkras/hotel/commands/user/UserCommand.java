@@ -13,7 +13,6 @@ import ua.alexkras.hotel.model.ReservationStatus;
 import ua.alexkras.hotel.service.ApartmentService;
 import ua.alexkras.hotel.service.PaymentService;
 import ua.alexkras.hotel.service.ReservationService;
-import ua.alexkras.hotel.service.impl.PaymentServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -27,7 +26,7 @@ public class UserCommand implements Command {
     private final ReservationService<Pageable> reservationService;
 
     public UserCommand(ReservationService<Pageable> reservationService, ApartmentService<Pageable> apartmentService,
-                       PaymentService<Pageable> paymentService){
+                       PaymentService paymentService){
         HashMap<String,Command> commands = new HashMap<>();
 
         commands.put(CreateReservationCommand.pathBasename,new CreateReservationCommand(reservationService));
