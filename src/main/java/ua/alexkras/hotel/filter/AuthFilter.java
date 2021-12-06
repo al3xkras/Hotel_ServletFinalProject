@@ -5,8 +5,6 @@ import ua.alexkras.hotel.commands.LoginCommand;
 import ua.alexkras.hotel.commands.LogoutCommand;
 import ua.alexkras.hotel.commands.RegistrationCommand;
 import ua.alexkras.hotel.commands.admin.AdminCommand;
-import ua.alexkras.hotel.commands.admin_or_user.ApartmentCommand;
-import ua.alexkras.hotel.commands.admin_or_user.ProfileCommand;
 import ua.alexkras.hotel.commands.user.UserCommand;
 import ua.alexkras.hotel.entity.User;
 import ua.alexkras.hotel.exception.AccessDeniedException;
@@ -27,14 +25,13 @@ public class AuthFilter implements Filter {
     private static User currentLoginUser;
 
     private final Set<String> anonymousCommands = new HashSet<>();
-
-    private String previousPageUrl = "";
-
     @Override
     public void init(FilterConfig filterConfig) {
         anonymousCommands.add(LoginCommand.pathBasename);
         anonymousCommands.add(RegistrationCommand.pathBasename);
-
+        anonymousCommands.add("css");
+        anonymousCommands.add("js");
+        anonymousCommands.add("favicon.ico");
         //adminOrUserCommands.add(ApartmentCommand.pathBasename);
         //adminOrUserCommands.add(ProfileCommand.pathBasename);
     }
@@ -51,11 +48,6 @@ public class AuthFilter implements Filter {
         currentLoginUser = (User)session.getAttribute("user");
 
         String url = req.getRequestURI();
-        if (previousPageUrl.equals(url)){
-            filterChain.doFilter(request,response);
-            return;
-        }
-        previousPageUrl = url;
 
         String command = Command.getCommand(url,HotelServlet.pathBasename);
 
@@ -76,7 +68,7 @@ public class AuthFilter implements Filter {
             //request.getServletContext().log(url);
             if (    !command.isEmpty() &
                     !anonymousCommands.contains(command)){
-                //request.getServletContext().log("Attempting to access command: \""+command+"\" from an anonymous user");
+                request.getServletContext().log("Attempting to access command: \""+command+"\" from an anonymous user");
                 throw new AccessDeniedException();
             }
         }

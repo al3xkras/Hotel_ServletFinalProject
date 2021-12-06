@@ -116,7 +116,7 @@ public interface ReservationTableStrings {
             colIsExpired+"=true "+
             "WHERE not "+colIsExpired+" and not "+colIsPaid+" and " +
             colAdminConfirmationDate+" is not null and " +
-            "DATEDIFF("+colAdminConfirmationDate+",?)>=?";
+            "DATEDIFF(?,"+colAdminConfirmationDate+")>=?";
 
     String updateActiveReservations = "UPDATE " +
             databaseName+'.'+tableReservation+" SET " +
